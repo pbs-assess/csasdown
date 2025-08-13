@@ -1,0 +1,8 @@
+# MATHEMATICS {#math-sci}
+
+You can include most valid TeX math and it will render in all formats:
+
+\begin{equation}
+  1 + 1 = 2
+  (\#eq:reaction)
+\end{equation}

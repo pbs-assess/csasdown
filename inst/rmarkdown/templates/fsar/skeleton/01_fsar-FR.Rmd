@@ -1,0 +1,222 @@
+## AVIS SCIENTIFIQUE
+
+[Obligatoire. Maximum de 500&nbsp;mots. Cette section est destinée aux points sommaires représentant les principales conclusions scientifiques de la réunion, en mettant l'accent sur celles qui sont les plus pertinentes pour la prise de décisions. Chaque point sommaire doit refléter l'information présentée dans le corps du rapport. Veuillez consulter les instructions et les exemples donnés dans le document d'orientation.]
+
+### État du stock
+
+::: {custom-style="fsar-bullet"}
+
+-   [Point(s) sommaire(s) obligatoire(s)]
+
+:::
+
+### Tendances du stock
+
+::: {custom-style="List Bullet"}
+
+-   [Point(s) sommaire(s) obligatoire(s)]
+
+:::
+
+### Considérations liées à l'écosystème et aux changements climatiques
+
+::: {custom-style="List Bullet"}
+
+-   [Point(s) sommaire(s) obligatoire(s), section facultative pour la RSP]
+
+:::
+
+### Avis sur le stock
+
+::: {custom-style="List Bullet"}
+
+-   [Point(s) sommaire(s) obligatoire(s)]
+
+:::
+
+### Autres questions de gestion [le cas échéant, ne pas inclure sinon]
+
+::: {custom-style="List Bullet"}
+
+-   [Autres points sommaires le cas échéant]
+
+:::
+
+## FONDEMENT DE L'ÉVALUATION
+
+### Détails de l'évaluation
+
+[Obligatoire]
+
+#### Année d\'approbation de l\'approche d\'évaluation 
+
+[Obligatoire; année et référence]
+
+#### Type d'évaluation 
+
+[Obligatoire; sélectionnez l'une des options suivantes&nbsp;: Évaluation complète, Mise à jour de l'année intermédiaire. Consultez les définitions dans le document d'orientation.]
+
+#### Date de l'évaluation la plus récente
+
+::: {custom-style="List Bullet"}
+
+1.  Dernière évaluation complète&nbsp;: [date et référence]
+
+2.  Dernière mise à jour de l'année intermédiaire&nbsp;: [date et référence]
+
+:::
+
+#### Approche d'évaluation du stock
+
+::: {custom-style="List Bullet"}
+
+1.  Catégorie générale&nbsp;: [Sélectionnez l'une des options suivantes&nbsp;: pauvre en données (p.&nbsp;ex. prises-RMD, données très limitées), fondée sur un indice (tendances dans les indices empiriques seulement), modèle d'évaluation d'un stock unique, ensemble de modèles, ESG (complète ou allégée), évaluation intégrée selon la Politique concernant le saumon sauvage, approches multiples, autre (précisez).]
+
+2.  Catégorie spécifique&nbsp;: [Sélectionnez une ou plusieurs options&nbsp;: aucune donnée, fondée sur des indices (indices dépendants de la pêche seulement), fondée sur des indices (y compris les indices dépendants de la pêche et les indices indépendants de la pêche), modèle de différence des décalages, dynamique de la biomasse, analyse de population virtuelle, modèle statistique des prises selon la longueur, modèle statistique des prises selon l'âge, modèle d'espace-état, analyse séquentielle de population, production excédentaire, relation stock-recrutement, prélèvement biologique potentiel, autre (veuillez expliquer).]
+
+:::
+
+[Sommaire facultatif en langage clair de la méthodologie d'évaluation du stock. Ajoutez une référence à un document de recherche ou à une autre publication, et/ou une note de bas de page au document de travail. Moins de 100&nbsp;mots.]
+
+#### Approche d'évaluation de l'écosystème et des changements climatiques
+
+[Sommaire facultatif en langage clair de la méthodologie utilisée pour examiner/évaluer les variables écosystémiques dans l'avis. Ajoutez une référence à un document de recherche ou à une autre publication, et/ou une note de bas de page au document de travail. Maximum de 100&nbsp;mots.]
+
+#### Modèles opérationnels [titre alternatif&nbsp;: Scénarios de modélisation]
+
+[Facultatif. Descriptions générales (texte, tableau ou figures) qui indiquent aux décideurs les principales incertitudes et les scénarios représentés lorsque plusieurs modèles sont utilisés dans l'avis sur le stock. N'incluez pas les équations. Ajoutez une référence à un document de recherche ou à une autre publication, et/ou une note de bas de page au document de travail.]
+
+### Hypothèse relative à la structure du stock
+
+[Obligatoire. Maximum de 150&nbsp;mots. Résumez brièvement les hypothèses actuelles concernant la structure et la répartition du stock afin de fournir un contexte permettant de comprendre l'échelle des points de référence, la gestion et l'évaluation.]
+
+### Points de référence
+
+[Obligatoire. Vous pouvez remplacer les points sommaires par un tableau pour cette section. Consultez les autres instructions dans le document d'orientation.]
+
+::: {custom-style="List Bullet"}
+
+-   Point de référence limite (PRL)&nbsp;:
+
+-   Point de référence supérieur du stock (PRS)&nbsp;:
+
+-   Taux d'exploitation de référence (TER)&nbsp;:
+
+-   Point de référence cible (PRC)&nbsp;:
+
+:::
+
+#### Autres points de référence du stock
+
+[Le cas échéant (ne pas inclure sinon). Vous pouvez remplacer les points sommaires par un tableau pour cette section.] (p.&nbsp;ex., écloserie, habitat, écosystème)
+
+### Objectifs de gestion
+
+[Facultatif (s'il y a lieu et si fournis par les gestionnaires des pêches; ne pas inclure sinon). Décrivez les objectifs mesurables ou les paramètres de rendement pour l'avis fourni.]
+
+Peut inclure la règle de décision pour les pêches (RDP), les plans de gestion, le plan d'amélioration, le plan de restauration de l'habitat.
+
+### Données
+
+[Obligatoire. Maximum de 200&nbsp;mots. Résumez brièvement les principales données utilisées pour l'évaluation.]
+
+Modifications des données&nbsp;: [Facultatif (ne pas inclure sinon).]
+
+## ÉVALUATION
+
+[La figure standard, s'il y a lieu, vient en premier&nbsp;-- exemple illustré ci-dessous. Toutes les figures et tous les tableaux doivent être référencés dans le texte. Consultez le document d'orientation pour les exceptions, les options et les instructions supplémentaires.]
+
+(ref:caption) (A -- panneau supérieur gauche) Captures (débarquements) et total autorisé des captures; (B -- panneau supérieur droit) Biomasse du stock reproducteur (BSR) par rapport au point de référence limite (PRL; X) et au point de référence supérieur du stock (proposé) (PRS; X); (C -- panneau inférieur gauche) Mortalité par la pêche (F, X) à gauche par rapport au taux d'exploitation de référence (TER) et à la mortalité naturelle (M); (D -- panneau inférieur droit) Recrutement (nombre d'individus).
+
+```{r base1, fig.cap="(ref:caption)"}
+source("fake-data.R")
+source("plot-timeseries.R")
+in.df <- sim_fsar_data("long")
+
+## French template
+fsar_plot_base(in.df, "French")
+```
+
+[Facultatif. Ajoutez un panneau facultatif supplémentaire de quatre indicateurs s'il est pertinent pour l'élaboration de l'avis.]
+
+[Facultatif. Si l'ASP ou la RSP est utilisé pour produire des avis pour plus d'un stock ou d'une sous-unité, les panneaux obligatoires et facultatifs peuvent être répétés pour chaque stock ou sous-unité.]
+
+### État du stock et tendances 
+
+[Obligatoire. Longueur maximale de la section&nbsp;: une page. Doit être la première section de la partie Évaluation. Au besoin, cette section peut être reproduite pour chaque stock ou sous-unité, bien qu'il puisse être préférable de conserver une seule section dans laquelle tous les stocks et sous-unités sont décrits.]
+
+[Fournissez des renseignements sur l'état du stock et tous les indicateurs clés pour le ou les stocks pertinents pour la prise de décisions, sur des échelles de temps utiles pour le stock. Des tableaux peuvent être utilisés s'ils sont utiles pour la prise de décisions. Citez les figures et les tableaux obligatoires et facultatifs dans le texte, au besoin. Indiquez les tendances des indicateurs pertinents, un par paragraphe, dans le format suivant&nbsp;:]
+
+#### [Indicateur&nbsp;1] [précisez le nom, p.&nbsp;ex. Abondance]
+
+[Indiquez les valeurs et décrivez les tendances du stock (le cas échéant). Utilisez autant d'indicateurs que possible pour produire l'avis en vue de la prise de décisions.]
+
+#### État actuel
+
+[Obligatoire. Indiquez l'état du stock par rapport à ses points de référence ou précisez que l'état est inconnu s'il n'y a pas de points de référence.]
+
+#### Inconnu
+
+[Facultatif. Précisez les indicateurs qui ne sont pas disponibles pour le stock (le cas échéant); ne pas inclure sinon.]
+
+### Historique de [gestion; débarquements/pêche/effort, TAC et avis sur les prises]
+
+[Obligatoire. Le titre peut varier. Longueur maximale de la section&nbsp;: une page. Comme pour l'état et les tendances du stock, cette section vise à fournir des renseignements sur les indicateurs clés passés et présents et sur les niveaux de référence de la gestion des pêches, des écloseries ou de l'habitat qui sont pertinents pour la prise de décisions, sur des échelles de temps utiles pour le stock.]
+
+#### Historique de la production en écloserie et des activités d'ensemencement
+
+[Le cas échéant (ne pas inclure sinon).]
+
+#### Historique des impacts sur les habitats d'eau douce
+
+[Le cas échéant (ne pas inclure sinon).]
+
+### Considérations liées à l'écosystème et aux changements climatiques
+
+[Obligatoire. Moins de 300&nbsp;mots. Des sous-titres, des tableaux ou des figures peuvent être utilisés. Cette section vise à décrire brièvement les facteurs environnementaux, écosystémiques, écologiques ou liés aux changements climatiques qui ont une incidence sur le ou les stock(s) de poissons, et à expliquer comment ils ont été pris en compte dans l'avis, de manière à ce que les décideurs puissent facilement les consulter.]
+
+### Avis sur le stock [titres facultatifs&nbsp;: Projections, Simulations, Scénarios futurs]
+
+[Obligatoire. Le titre peut varier. Il est possible d'utiliser des sous-titres. Cette section vise à fournir à la Gestion des pêches des avis scientifiques prospectifs sur les perspectives du stock, généralement dans le contexte des niveaux de prélèvement actuels ou proposés, des règles de décision concernant les prélèvements, ou d'autres mesures, procédures ou scénarios de gestion qui peuvent être envisagés par les décideurs. Il n'y a pas de limite de longueur pour cette section, cependant, les directives de longueur globales du document s'applique toujours. Des tableaux ou des figures peuvent être utilisés au besoin pour soutenir la prise de décisions.]
+
+#### Règle de décision sur les prises
+
+[Le cas échéant (ne pas inclure sinon). Fourniture des renseignements nécessaires pour appliquer une règle de décision sur les prises pour le stock.]
+
+### Circonstances exceptionnelles
+
+[Le cas échéant (ne pas inclure sinon). Proposition ou évaluation des circonstances exceptionnelles déjà établies qui pourraient dénoter la nécessité de réévaluer les procédures de gestion dans le contexte d'une ESG.]
+
+## **PROCÉDURE POUR LES MISES À JOUR DES ANNÉES INTERMÉDIAIRES** 
+
+[Facultatif (ne pas inclure sinon). Si un processus de mise à jour pour une année intermédiaire (MPO 2016) est établi pour la première fois durant cette réunion ou s'il existe un processus établi pour le stock, décrivez-le brièvement dans cette section.]
+
+### Évaluation des déclencheurs de l'évaluation
+
+[Le cas échéant (ne pas inclure sinon). S'applique pendant les mises à jour pour une année intermédiaire. Évaluation de tout déclencheur qui déclencherait une évaluation du stock plus tôt que le cycle préétabli.]
+
+## PRISES ACCESSOIRES
+
+[Facultatif (ne pas inclure sinon). Estimations des prises accessoires d'espèces non ciblées. Si l'espèce ciblée visée par cette évaluation est capturée dans d'autres pêches, cette information doit être résumée dans la partie de l'évaluation consacrée aux débarquements.
+
+## AUTRES QUESTIONS DE GESTION
+
+[Facultatif (ne pas inclure sinon). S'il y a d'autres questions de gestion à aborder pendant une évaluation complète, comme d'autres types de mesures de gestion ou de rétablissement, des avis sur des points de référence possibles ou des objectifs mesurables demandés par la Gestion des pêches ou des avis concernant d'autres politiques du Cadre pour la pêche durable, un bref sommaire de l'évaluation peut être placé ici. Le contenu doit être pertinent pour la prise de décisions, et les points sommaires correspondants peuvent ensuite être ajoutés à la section sur l'avis scientifique sous la rubrique facultative des autres questions de gestion. Il est possible d'utiliser des tableaux ou des figures, s'ils sont utiles pour l'avis.]
+
+## SOURCES D'INCERTITUDE
+
+[Obligatoire. Moins de 500&nbsp;mots. Cernez et expliquez les principales incertitudes, y compris les hypothèses, qui peuvent avoir une incidence sur l'avis, afin d'éviter une mauvaise interprétation de l'avis présenté dans les sections précédentes.]
+
+## LISTE DES PARTICIPANTS DE LA RÉUNION
+
+[Obligatoire. La liste doit comprendre le nom de chaque participant et son organisme d'appartenance.]
+
+## SOURCES DE RENSEIGNEMENTS
+
+[Obligatoire.]
+
+[Les références ne doivent être incluses que pour permettre de comprendre l'avis et non pour reconnaître le travail, comme c'est le cas dans le document de recherche. Les renvois au document de travail non publié doivent être intégrés en tant que notes de bas de page dans l'ensemble de ce document.]
+
+[Les références doivent être formatées conformément au [*Guide pour la préparation des séries de rapports scientifiques de Pêches et Océans Canada*. Inclure des hyperliens seulement si le site est hébergé par le gouvernement du Canada ou si un système de gestion des DOI est utilisé.]](https://publications.gc.ca/collections/collection_2020/mpo-dfo/Fs23-176-2019-fra.pdf)
+
+[Les références énumérées dans la section Références citées doivent être accessibles au public lorsque le rapport est publié sur le site Web. La seule exception s'applique aux livres et articles qui ont été acceptés pour publication (à l'étape de la mise en page ou s'il existe une lettre d'acceptation). Ceux-ci peuvent être énumérés, suivis de la mention «&nbsp;sous presse&nbsp;». Tous les autres doivent être inclus dans le texte en tant que données inédites ou documents de travail avec des notes de bas de page.]
