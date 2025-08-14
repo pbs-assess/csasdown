@@ -82,53 +82,45 @@ output:
 knit: (function(input, ...) csasdown::render())
 link-citations: true
 bibliography: bib/refs.bib
-# Any extra LaTeX code for the header:
-# header-includes:
-# - \usepackage{tikz}
 ---
 
 ```{r setup, echo=FALSE, cache=FALSE, message=FALSE, results='hide', warning=FALSE}
 library(knitr)
-if (is_latex_output()) {
-  knitr_figs_dir <- "knitr-figs-pdf/"
-  knitr_cache_dir <- "knitr-cache-pdf/"
-  fig_out_type <- "png"
-} else {
-  knitr_figs_dir <- "knitr-figs-docx/"
-  knitr_cache_dir <- "knitr-cache-docx/"
-  fig_out_type <- "png"
-}
-fig_asp <- 0.618
-fig_width <- 9
-fig_out_width <- if (is_latex_output()) "6in" else NULL
-fig_dpi <- 180
-fig_align <- "center"
-fig_pos <- "htb"
 opts_chunk$set(
   collapse = TRUE,
   warning = FALSE,
   message = FALSE,
+  results = "hide",
   comment = "#>",
-  fig.path = knitr_figs_dir,
-  cache.path = knitr_cache_dir,
-  fig.asp = fig_asp,
-  fig.width = fig_width,
-  out.width = fig_out_width,
+  fig.path = "knitr-figs-docx",
+  cache.path = "knitr-cache-docx",
+  fig.asp = 0.618, # golden ratio
+  fig.width = 5,
   echo = FALSE,
   #  autodep = TRUE,
   #  cache = TRUE,
-  cache.comments = FALSE,
-  dev = fig_out_type,
-  dpi = fig_dpi,
-  fig.align = fig_align,
-  fig.pos = fig_pos
+  dev = "png",
+  dpi = 180,
+  fig.align = "center"
 )
 ```
 
-```{r load-libraries, echo = FALSE, cache = FALSE, message = FALSE, results = 'hide', warning = FALSE}
-# add other packages here:
+
+```{r table-settings}
+# recommended table settings to match CSAS table style and accessibility standards
+set_flextable_defaults(
+  font.size = 10,
+  padding.left = 3, 
+  padding.right = 3, 
+  padding.top = 1, 
+  padding.bottom = 1,
+  na_str = "-",
+  theme_fun = "theme_box"
+)
+```
+
+```{r load-libraries}
 library(dplyr)
-library(readr)
-library(tibble)
-library(csasdown)
+library(ggplot2)
+library(flextable) # recommended package for adding tables
 ```

@@ -18,6 +18,9 @@ test_that("resdoc builds", {
   setwd(testing_path)
   suppressMessages(draft("resdoc", create_dir = FALSE, edit = FALSE))
   suppressWarnings(render())
+  if (FALSE) {
+    system("open _book/resdoc.docx")
+  }
   expect_true(file.exists("_book/fsar.docx"))
   setwd(wd)
 })

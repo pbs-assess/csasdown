@@ -17,14 +17,14 @@ context: |
   \
   [See Guidance Document for examples of additional information to provide in the Context section.]
 output:
-  csasdown::fsar_docx
+  csasdown2::fsar_docx
 link-citations: false
 bibliography: bib/refs.bib
 csl: csl/csas.csl
 # End of options to set
 title: ""
 knit: (function(input, ...) {
-       csasdown::render_sar()
+       csasdown2::render_fsar()
       })
 ---
 
@@ -71,7 +71,7 @@ theme_update(axis.text = element_text(size = 10),
 
 
 ```{r tab-settings}
-# recommended table settings to match CSAS table style and accesability standards
+# recommended table settings to match CSAS table style and accessibility standards
 set_flextable_defaults(
   font.size = 10,
   padding.left = 3, 

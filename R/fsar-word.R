@@ -9,7 +9,7 @@
 #' @return A Word Document in the `.docx` format based on the FSAR template.
 #' @importFrom cli cli_inform cli_abort cli_warn
 #' @export
-fsar_word <- function(...) {
+fsar_docx <- function(...) {
   ## Several modifications were made to the fsar template
   ## 1) bookmarks were added to headers and footers for officer replacement below
   ## 2) a border was added to the context style and the table was removed
