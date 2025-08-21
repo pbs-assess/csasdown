@@ -132,6 +132,7 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
   content <- officer::read_docx(book_filename) |>
     officer::cursor_begin() |>
     officer::body_remove() |>
+    officer::body_remove() |>
     officer::body_remove()
   print(content, target = "tmp-content.docx")
 
@@ -148,8 +149,7 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
     officer::cursor_reach(keyword = "ABSTRACT") |>
     officer::body_add_docx("tmp-abstract.docx", pos = "after") |>
     officer::cursor_end() |>
-    officer::body_remove() |>
-    officer::body_add_break()
+    officer::body_remove()
   print(frontmatter, target = "tmp-frontmatter.docx")
 
   doc <- officer::read_docx("tmp-frontmatter.docx") |>
