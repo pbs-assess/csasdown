@@ -21,6 +21,6 @@ test_that("resdoc builds", {
   if (FALSE) {
     system("open _book/resdoc.docx")
   }
-  expect_true(file.exists("_book/fsar.docx"))
+  expect_true(file.exists("_book/resdoc.docx"))
   setwd(wd)
 })

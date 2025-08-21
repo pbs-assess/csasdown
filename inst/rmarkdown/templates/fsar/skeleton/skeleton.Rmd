@@ -34,6 +34,7 @@ knitr::opts_chunk$set(
   warning = FALSE,
   message = FALSE,
   fig.path = "knitr-figs-docx/",
+  cache.path = "knitr-cache-docx/",
   fig.asp = 0.618,
   fig.width = 6.5,
   echo = FALSE,
@@ -52,7 +53,7 @@ library(flextable) # recommended package for adding tables
 ```
 
 
-```{r fig-settings, eval = FALSE}
+```{r fig-settings, eval=FALSE}
 # Optional: specify custom ggplot settings. If using, set eval to TRUE
 theme_set(theme_bw())
 theme_update(axis.text = element_text(size = 10),

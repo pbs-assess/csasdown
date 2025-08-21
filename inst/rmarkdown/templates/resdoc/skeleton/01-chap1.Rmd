@@ -28,7 +28,7 @@ This is a reference to a table: Table \@ref(tab:example-table).
 
 ## TABLES
 
-```{r example-table, results='asis'}
+```{r example-table, tab.cap = "Table showing random numbers."}
 set.seed(1)
 df1 <- data.frame(year = 1:10, index = rlnorm(10))
 flextable(df1) |> 
@@ -37,7 +37,7 @@ flextable(df1) |>
 
 ## FIGURES
 
-```{r example-fig, fig.width=5}
+```{r example-fig, fig.width = 5, fig.cap = "Figure showing random numbers."}
 df2 <- data.frame(x = rnorm(10), y = rnorm(10))
 ggplot(df2, aes(x, y)) + geom_point() + theme_light()
 ```
