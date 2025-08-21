@@ -47,9 +47,7 @@ knitr::opts_chunk$set(
 # add other packages here:
 library(dplyr)
 library(ggplot2)
-
 library(rosettafish)
-library(csasdown)
 library(flextable) # recommended package for adding tables
 ```
 

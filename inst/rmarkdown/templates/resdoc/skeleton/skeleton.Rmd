@@ -79,7 +79,7 @@ output:
    highlight: tango
 # ------------
 # End of options to set
-knit: (function(input, ...) csasdown::render())
+knit: (function(input, ...) csasdown2::render())
 link-citations: true
 bibliography: bib/refs.bib
 ---
@@ -106,6 +106,13 @@ opts_chunk$set(
 ```
 
 
+```{r load-libraries}
+library(dplyr)
+library(ggplot2)
+library(flextable) # recommended package for adding tables
+```
+
+
 ```{r table-settings}
 # recommended table settings to match CSAS table style and accessibility standards
 set_flextable_defaults(
@@ -119,8 +126,3 @@ set_flextable_defaults(
 )
 ```
 
-```{r load-libraries}
-library(dplyr)
-library(ggplot2)
-library(flextable) # recommended package for adding tables
-```
