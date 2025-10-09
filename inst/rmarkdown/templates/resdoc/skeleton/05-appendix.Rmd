@@ -1,4 +1,4 @@
-# APPENDIX A. BIOLOGICAL DATA {-}
+# APPENDIX A. BIOLOGICAL DATA
 
 ```{r setup-appendix-a}
 # Set the current appendix letter and configure automatic figure/table numbering
@@ -53,7 +53,7 @@ hist(length_data$length_cm,
 ```
 
 
-# APPENDIX B. ADDITIONAL ANALYSES {-}
+# APPENDIX B. ADDITIONAL ANALYSES
 
 ```{r setup-appendix-b}
 # Reset numbering for Appendix B (B.1, B.2, etc.)
@@ -87,7 +87,6 @@ model_params <- data.frame(
 
 flextable::flextable(model_params)
 ```
-
 
 # APPENDIX C. SUPPLEMENTARY FIGURES {-}
 

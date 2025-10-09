@@ -14,8 +14,7 @@ Imports:
     yaml
 Suggests:
     testthat (>= 4.1.0),
-    flextable
-VignetteBuilder: 
+    flextable,
     knitr
 Config/testthat/edition: 3
 Config/testthat/parallel: true
