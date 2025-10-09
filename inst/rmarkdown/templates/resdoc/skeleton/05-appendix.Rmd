@@ -18,7 +18,7 @@ plot(length_data$length_cm, length_data$weight_kg,
 
 You can also create tables with appendix numbering:
 
-```{r tab-biology-summary, tab.cap="Summary statistics.."}
+```{r tab-biology-summary, tab.cap="Summary statistics."}
 summary_table <- data.frame(
   Statistic = c("Mean Length", "SD Length", "Mean Weight", "SD Weight"),
   Value = c(
