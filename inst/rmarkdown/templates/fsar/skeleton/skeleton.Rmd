@@ -71,7 +71,7 @@ theme_update(axis.text = element_text(size = 10),
 
 ```{r tab-settings}
 # recommended table settings to match CSAS table style and accessibility standards
-set_flextable_defaults(
+flextable::set_flextable_defaults(
   font.size = 10,
   padding.left = 3, 
   padding.right = 3, 

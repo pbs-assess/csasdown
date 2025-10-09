@@ -1,10 +1,10 @@
 # INTRODUCTION
 
-Introduction is not mandatory, but when available, it begins on page 1
+Introduction is not mandatory, but when available, it begins on page 1.
 
 # OTHER HEADINGS AS APPROPRIATE
 
-Research Documents explain technical information and data to support the advice. Other headings may include: Methods, Results & Discussion. These headings are optional and context dependent.
+Research Documents explain technical information and data to support the advice. Other headings may include Methods, Results, and Discussion. These headings are optional and context dependent.
 
 ## LISTS
 
@@ -26,13 +26,16 @@ This is a reference to a figure: Figure \@ref(fig:example-fig).
 
 This is a reference to a table: Table \@ref(tab:example-table).
 
+This is a reference to an equation: Equation \@ref(eq:example-eq).
+
 ## TABLES
 
 ```{r example-table, tab.cap = "Table showing random numbers."}
 set.seed(1)
-df1 <- data.frame(year = 1:10, index = rlnorm(10))
+df1 <- data.frame(Year = 1:10, Index = round(rlnorm(10), 2))
 flextable(df1) |> 
-  set_table_properties(layout = "autofit", width = 1)
+  set_table_properties(layout = "autofit") |>
+  set_caption(caption = "My caption.")
 ```
 
 ## FIGURES
@@ -41,3 +44,28 @@ flextable(df1) |>
 df2 <- data.frame(x = rnorm(10), y = rnorm(10))
 ggplot(df2, aes(x, y)) + geom_point() + theme_light()
 ```
+
+## MATH {#math}
+
+You can include most valid LaTeX math:
+
+\begin{equation}
+  1 + 1 = 2
+  (\#eq:example-eq)
+\end{equation}
+
+## FOOTNOTES
+
+You might want to footnote something.^[Footnote text.]
+
+## BIBLIOGRAPHIES
+
+Here's a reference: [@francis2011]. This `francis2011` entry appears in a file called `refs.bib` in the `bib` folder. This bibliography database file was created by a program called BibTeX. You can call this file something else if you like (look at the YAML header in the main .Rmd file). Another example: @edwards2013 shows that. And another example: [e.g., @francis2011; @edwards2013, @swainbenoit2015].
+
+**Tips for Bibliographies**
+
+- The cite key (a citation's label) needs to be unique from the other entries.
+- Bibliographies made using BibTeX (whether manually or using a manager) accept LaTeX markup, so you can italicize and add symbols as necessary.
+- To force capitalization in an article title or where all lowercase is generally used, bracket the capitalized word in curly braces. E.g. `{Pacific Cod}`.
+
+CSAS style requires the bibliography to be before the appendices and before tables and figures if you keep those together at the end of your document.

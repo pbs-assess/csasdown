@@ -13,7 +13,8 @@ Imports:
     rmarkdown,
     yaml
 Suggests:
-    testthat (>= 4.1.0)
+    testthat (>= 4.1.0),
+    flextable
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3

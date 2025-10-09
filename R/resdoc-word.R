@@ -24,6 +24,7 @@ resdoc_docx <- function(...) {
   file <- "resdoc-content.docx"
   base <- officedown::rdocx_document(...,
     base_format = "bookdown::word_document2",
+    number_sections = FALSE,
     tables = list(
       style = "Compact", layout = "autofit", width = 1,
       caption = list(
@@ -51,6 +52,11 @@ resdoc_docx <- function(...) {
     ),
     mapstyles = list(
       "Body Text" = c("Normal", "First Paragraph")
+      # "Heading 1 with numbers" = "heading 1",
+      # "Heading 2 with numbers" = "heading 2",
+      # "Heading 3 with numbers" = "heading 3",
+      # "Heading 4 with numbers" = "heading 4",
+      # "Heading 5 with numbers" = "heading 5"
     ),
     reference_docx = system.file("csas-docx",
       file,

@@ -1,11 +1,13 @@
 ---
 title: |
-  "Title Here (*Latin Species Name*)"
-french_title: "Titre ici (*Nom latin de l'espèce*)"
+  Title Here (*Latin Species Name*)
+french_title: |
+  Titre ici (*Nom latin de l'espèce*)
 author: |
   First. M. Last^1^ and
   Alex B. Smith^2^
-author_list: "Last, F.M. and Smith, A.B."
+author_list: |
+  Last, F.M. and Smith, A.B.
 address: |
   ^1^Pacific Biological Station\
      Fisheries and Oceans Canada, 3190 Hammond Bay Road\
@@ -107,6 +109,7 @@ opts_chunk$set(
 
 
 ```{r load-libraries}
+library(csasdown2) # for appendix_fig(), appendix_tab(), set_appendix()
 library(dplyr)
 library(ggplot2)
 library(flextable) # recommended package for adding tables
@@ -115,14 +118,13 @@ library(flextable) # recommended package for adding tables
 
 ```{r table-settings}
 # recommended table settings to match CSAS table style and accessibility standards
-set_flextable_defaults(
+flextable::set_flextable_defaults(
   font.size = 10,
   padding.left = 3, 
   padding.right = 3, 
   padding.top = 1, 
   padding.bottom = 1,
   na_str = "-",
-  theme_fun = "theme_box"
+  theme_fun = "theme_booktabs"
 )
 ```
-
