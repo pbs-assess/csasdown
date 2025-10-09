@@ -14,17 +14,8 @@ uses the value set by \code{\link[=set_appendix]{set_appendix()}}}
 Invisible NULL (sets chunk options as a side effect)
 }
 \description{
-Sets chunk options for appendix figures with automatic numbering (e.g., A.1, A.2).
-This should be called at the start of each appendix in a setup chunk to configure
-figure numbering for that appendix.
+Internal function to set chunk options for appendix figures with automatic
+numbering (e.g., A.1, A.2). This is called automatically by \code{\link[=set_appendix]{set_appendix()}}
+and \code{\link[=new_appendix]{new_appendix()}}. Users should not need to call this directly.
 }
-\examples{
-\dontrun{
-# In a setup chunk at the start of Appendix A
-set_appendix("A")
-appendix_fig_opts()
-
-# Or specify the letter directly
-appendix_fig_opts("B")
-}
-}
+\keyword{internal}

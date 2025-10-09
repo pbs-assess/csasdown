@@ -24,6 +24,9 @@ render <- function(
 
   add_resdoc_word_frontmatter("index.Rmd", yaml_fn = config_file, verbose = verbose, keep_files = FALSE)
 
+  # Reset appendix counter for next render
+  options(csasdown2_current_appendix = NULL)
+
   invisible()
 }
 
@@ -143,6 +146,9 @@ render_sar <- function(config_file = "_bookdown.yml", ...) {
 
   print(doc, target = "_book/fsar.docx")
   cli_inform("Render completed")
+
+  # Reset appendix counter for next render
+  options(csasdown2_current_appendix = NULL)
 
   invisible()
 }

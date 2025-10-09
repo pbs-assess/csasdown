@@ -1,9 +1,69 @@
+#' Start a new appendix with auto-incremented letter
+#'
+#' @description
+#' Automatically increments to the next appendix letter (A → B → C, etc.) and
+#' configures figure and table numbering for that appendix. This is the primary
+#' function users should call at the start of each appendix.
+#'
+#' @return Character. The appendix letter that was set.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # At the start of your first appendix
+#' new_appendix()  # Sets to "A"
+#'
+#' # At the start of your second appendix
+#' new_appendix()  # Sets to "B"
+#'
+#' # Use in heading: # APPENDIX `r new_appendix()`. BIOLOGICAL DATA
+#' }
+new_appendix <- function() {
+  current <- getOption("csasdown2_current_appendix", NULL)
+
+  if (is.null(current)) {
+    next_letter <- "A"
+  } else {
+    # Convert letter to next letter (A→B, B→C, etc.)
+    current_num <- utf8ToInt(current) - utf8ToInt("A") + 1
+    if (current_num >= 26) {
+      cli::cli_abort("Cannot create more than 26 appendices (A-Z)")
+    }
+    next_letter <- LETTERS[current_num + 1]
+  }
+
+  set_appendix(next_letter)
+  next_letter
+}
+
+#' Get the current appendix letter
+#'
+#' @description
+#' Returns the current appendix letter. Useful for including in appendix headings
+#' to ensure the heading matches the automatic numbering.
+#'
+#' @return Character. The current appendix letter, or "A" if none has been set.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' new_appendix()
+#' current_appendix()  # Returns "A"
+#'
+#' # Use in heading: # APPENDIX `r current_appendix()`. TITLE HERE
+#' }
+current_appendix <- function() {
+  getOption("csasdown2_current_appendix", "A")
+}
+
 #' Set the current appendix letter
 #'
 #' @description
 #' Sets the current appendix context for automatic figure and table numbering.
-#' This function stores the appendix letter in a global option so that
-#' [appendix_fig_opts()] and [appendix_tab_opts()] can automatically use it.
+#' This function stores the appendix letter and automatically configures both
+#' figure and table numbering. For most users, [new_appendix()] is preferred
+#' as it auto-increments. Use this function when you need to explicitly set
+#' a specific appendix letter.
 #'
 #' @param letter Character. The appendix letter (e.g., "A", "B", "C")
 #'
@@ -12,10 +72,10 @@
 #'
 #' @examples
 #' \dontrun{
-#' # At the start of Appendix A
+#' # Explicitly set to Appendix A
 #' set_appendix("A")
 #'
-#' # At the start of Appendix B
+#' # Explicitly set to Appendix B
 #' set_appendix("B")
 #' }
 set_appendix <- function(letter) {
@@ -23,31 +83,26 @@ set_appendix <- function(letter) {
     cli::cli_abort("{.arg letter} must be a single character string")
   }
   options(csasdown2_current_appendix = letter)
+
+  # Automatically configure both figure and table numbering
+  appendix_fig_opts(letter)
+  appendix_tab_opts(letter)
+
   invisible()
 }
 
 #' Set appendix figure chunk options
 #'
 #' @description
-#' Sets chunk options for appendix figures with automatic numbering (e.g., A.1, A.2).
-#' This should be called at the start of each appendix in a setup chunk to configure
-#' figure numbering for that appendix.
+#' Internal function to set chunk options for appendix figures with automatic
+#' numbering (e.g., A.1, A.2). This is called automatically by [set_appendix()]
+#' and [new_appendix()]. Users should not need to call this directly.
 #'
 #' @param appendix_letter Character. The appendix letter (e.g., "A", "B"). If NULL,
 #'   uses the value set by [set_appendix()]
 #'
 #' @return Invisible NULL (sets chunk options as a side effect)
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' # In a setup chunk at the start of Appendix A
-#' set_appendix("A")
-#' appendix_fig_opts()
-#'
-#' # Or specify the letter directly
-#' appendix_fig_opts("B")
-#' }
+#' @keywords internal
 appendix_fig_opts <- function(appendix_letter = NULL) {
   if (is.null(appendix_letter)) {
     appendix_letter <- getOption("csasdown2_current_appendix")
@@ -75,25 +130,15 @@ appendix_fig_opts <- function(appendix_letter = NULL) {
 #' Set appendix table chunk options
 #'
 #' @description
-#' Sets chunk options for appendix tables with automatic numbering (e.g., A.1, A.2).
-#' This should be called at the start of each appendix in a setup chunk to configure
-#' table numbering for that appendix.
+#' Internal function to set chunk options for appendix tables with automatic
+#' numbering (e.g., A.1, A.2). This is called automatically by [set_appendix()]
+#' and [new_appendix()]. Users should not need to call this directly.
 #'
 #' @param appendix_letter Character. The appendix letter (e.g., "A", "B"). If NULL,
 #'   uses the value set by [set_appendix()]
 #'
 #' @return Invisible NULL (sets chunk options as a side effect)
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' # In a setup chunk at the start of Appendix A
-#' set_appendix("A")
-#' appendix_tab_opts()
-#'
-#' # Or specify the letter directly
-#' appendix_tab_opts("B")
-#' }
+#' @keywords internal
 appendix_tab_opts <- function(appendix_letter = NULL) {
   if (is.null(appendix_letter)) {
     appendix_letter <- getOption("csasdown2_current_appendix")
@@ -124,29 +169,30 @@ appendix_tab_opts <- function(appendix_letter = NULL) {
 #'
 #' @param caption Character. The table caption text
 #' @param appendix_letter Character. The appendix letter (e.g., "A", "B"). If NULL,
-#'   uses the value set by [set_appendix()]
+#'   uses the value set by [set_appendix()] or [new_appendix()]
 #'
 #' @return Character. A formatted caption string
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' # Using set_appendix() first
+#' # Using new_appendix() first
+#' new_appendix()
+#' flextable(df) %>%
+#'   set_caption(appendix_table_caption("Summary statistics"))
+#'
+#' # Or with set_appendix()
 #' set_appendix("A")
 #' flextable(df) %>%
-#'   set_caption(appendix_tab_cap("Summary statistics"))
-#'
-#' # Or specify the letter directly
-#' flextable(df) %>%
-#'   set_caption(appendix_tab_cap("Model parameters", "B"))
+#'   set_caption(appendix_table_caption("Model parameters"))
 #' }
-appendix_tab_cap <- function(caption, appendix_letter = NULL) {
+appendix_table_caption <- function(caption, appendix_letter = NULL) {
   if (is.null(appendix_letter)) {
     appendix_letter <- getOption("csasdown2_current_appendix")
     if (is.null(appendix_letter)) {
       cli::cli_abort(
         c("No appendix letter specified",
-          "i" = "Either provide {.arg appendix_letter} or call {.fn set_appendix} first")
+          "i" = "Either provide {.arg appendix_letter} or call {.fn set_appendix} or {.fn new_appendix} first")
       )
     }
   }

@@ -109,7 +109,7 @@ opts_chunk$set(
 
 
 ```{r load-libraries}
-library(csasdown2) # for appendix_fig(), appendix_tab(), set_appendix()
+library(csasdown2) # for new_appendix(), current_appendix(), appendix_table_caption()
 library(dplyr)
 library(ggplot2)
 library(flextable) # recommended package for adding tables
