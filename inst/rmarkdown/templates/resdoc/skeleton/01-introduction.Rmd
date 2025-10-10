@@ -34,7 +34,7 @@ This is a reference to an equation: Equation \@ref(eq:example-eq).
 
 This is a reference to a section: Section \@ref(sec:math).
 
-This is a reference to an appendix: Appendix \@ref(app:biology).
+This is a reference to an appendix: Appendix \@ref(app:biology). And the other appendix: Appendix \@ref(app:additional).
 
 ## TABLES
 

@@ -1,6 +1,6 @@
 \newpage
 
-# APPENDIX `r new_appendix()`. ADDITIONAL ANALYSES
+# APPENDIX `r new_appendix()`. ADDITIONAL ANALYSES {#app:additional}
 
 This appendix demonstrates that figure and table numbering restarts for each appendix.
 

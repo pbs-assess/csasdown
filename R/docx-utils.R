@@ -185,6 +185,178 @@ fix_appendix_crossrefs_xml <- function(xml_content) {
     xml_content <- gsub(hyperlink_pattern, replacement, xml_content, perl = TRUE)
   }
 
+  # Fix appendix section cross-references (e.g., "Appendix 3" -> "Appendix A")
+  xml_content <- fix_appendix_section_refs_xml(xml_content)
+
+  xml_content
+}
+
+#' Fix appendix section cross-references in Word XML
+#'
+#' @description Replaces chapter numbers with appendix letters in cross-references
+#' to appendix sections (e.g., "Appendix 3" becomes "Appendix A"). Bookdown treats
+#' appendices as regular chapters, so \@ref(app:biology) resolves to a chapter
+#' number rather than a letter. This function identifies which chapters are
+#' appendices and replaces their numbers with the corresponding letters.
+#'
+#' @param xml_content Character string containing XML content
+#' @return Modified XML content as character string
+#' @keywords internal
+#' @noRd
+fix_appendix_section_refs_xml <- function(xml_content) {
+  # Strategy:
+  # 1. Find appendix headings with bookmarks (e.g., app:biology) and their letters
+  # 2. Find cross-references to those bookmarks that appear as "Appendix <number>"
+  # 3. Replace the number with the corresponding letter
+
+  # Build a mapping from bookmark names to appendix letters
+  # Pattern: Find bookmarks like app:biology that are near "APPENDIX A." text
+  bookmark_to_letter <- list()
+
+  # Find all appendix bookmarks (bookmarks that start with "app:")
+  bookmark_pattern <- '<w:bookmarkStart[^>]+w:name="(app:[^"]+)"'
+  bookmark_matches <- gregexpr(bookmark_pattern, xml_content, perl = TRUE)
+
+  if (bookmark_matches[[1]][1] != -1) {
+    match_starts <- bookmark_matches[[1]]
+
+    for (i in seq_along(match_starts)) {
+      pos <- match_starts[i]
+
+      # Extract the full match to get the bookmark name
+      match_len <- attr(bookmark_matches[[1]], "match.length")[i]
+      full_match <- substr(xml_content, pos, pos + match_len - 1)
+
+      # Extract bookmark name using capture group
+      name_match <- regexpr('w:name="(app:[^"]+)"', full_match, perl = TRUE)
+      if (name_match > 0) {
+        name_start <- attr(name_match, "capture.start")[1]
+        name_len <- attr(name_match, "capture.length")[1]
+        bookmark_name <- substr(full_match, name_start, name_start + name_len - 1)
+
+        # Look ahead in the document for "APPENDIX [LETTER]." text
+        # It should appear within ~500 characters after the bookmark
+        text_chunk <- substr(xml_content, pos, min(nchar(xml_content), pos + 500))
+
+        appendix_pattern <- '<w:t[^>]*>APPENDIX ([A-Z])\\.'
+        appendix_match <- regexpr(appendix_pattern, text_chunk, perl = TRUE)
+
+        if (appendix_match > 0) {
+          # Extract the letter
+          letter_start <- attr(appendix_match, "capture.start")[1]
+          letter_len <- attr(appendix_match, "capture.length")[1]
+          appendix_letter <- substr(text_chunk, letter_start, letter_start + letter_len - 1)
+
+          bookmark_to_letter[[bookmark_name]] <- appendix_letter
+        }
+      }
+    }
+  }
+
+  # Now we have a mapping of bookmark names to letters
+  # But cross-references in the text don't show the bookmark name - they just show a number
+  # We need to figure out which numbers correspond to which appendices
+
+  # The challenge: "Appendix 3" doesn't tell us which bookmark it refers to
+  # We need to find patterns and infer the mapping
+
+  # Alternative: Find all "Appendix X" patterns and look at the surrounding context
+  # to see if there are any clues (like nearby hyperlinks or REF fields)
+
+  # Actually, let's try a simpler approach:
+  # Find appendix headings with their letters and count which chapter number they are
+  # But count ONLY numbered chapters (exclude those that might be unnumbered)
+
+  # Better approach: Build chapter-to-letter mapping by looking at actual appendix headings
+  # and inferring their sequential position among appendices
+
+  appendix_letters_in_order <- c()
+
+  # Find appendix headings in document order
+  appendix_heading_pattern <- '<w:t[^>]*>APPENDIX ([A-Z])\\.'
+  appendix_heading_matches <- gregexpr(appendix_heading_pattern, xml_content, perl = TRUE)
+
+  if (appendix_heading_matches[[1]][1] != -1) {
+    positions <- appendix_heading_matches[[1]]
+
+    for (i in seq_along(positions)) {
+      pos <- positions[i]
+      match_len <- attr(appendix_heading_matches[[1]], "match.length")[i]
+      full_match <- substr(xml_content, pos, pos + match_len - 1)
+
+      # Extract letter
+      letter_match <- regexpr('>APPENDIX ([A-Z])\\.', full_match, perl = TRUE)
+      if (letter_match > 0) {
+        letter_start <- attr(letter_match, "capture.start")[1]
+        letter_len <- attr(letter_match, "capture.length")[1]
+        letter <- substr(full_match, letter_start, letter_start + letter_len - 1)
+
+        appendix_letters_in_order <- c(appendix_letters_in_order, letter)
+      }
+    }
+  }
+
+  # Now find all "Appendix X" cross-references and figure out what X values exist
+  # Pattern: "Appendix" followed by a space and a number
+  # Note: There can be a lot of XML/whitespace between "Appendix" and the number
+  # Use (?s) to make . match newlines (DOTALL mode)
+  ref_pattern <- '(?s)Appendix</w:t>.*?<w:t[^>]*>(\\d+)</w:t>'
+  ref_matches <- gregexpr(ref_pattern, xml_content, perl = TRUE)
+
+  chapter_numbers_found <- c()
+
+  if (ref_matches[[1]][1] != -1) {
+    for (i in seq_along(ref_matches[[1]])) {
+      pos <- ref_matches[[1]][i]
+      match_len <- attr(ref_matches[[1]], "match.length")[i]
+      full_match <- substr(xml_content, pos, pos + match_len - 1)
+
+      # Extract the number
+      num_match <- regexpr('<w:t[^>]*>(\\d+)</w:t>', full_match, perl = TRUE)
+      if (num_match > 0) {
+        num_start <- attr(num_match, "capture.start")[1]
+        num_len <- attr(num_match, "capture.length")[1]
+        chapter_num <- substr(full_match, num_start, num_start + num_len - 1)
+
+        if (!(chapter_num %in% chapter_numbers_found)) {
+          chapter_numbers_found <- c(chapter_numbers_found, chapter_num)
+        }
+      }
+    }
+  }
+
+  # Sort the chapter numbers and map them to letters in order
+  chapter_numbers_found <- sort(as.numeric(chapter_numbers_found))
+  chapter_to_letter <- list()
+
+  for (i in seq_along(chapter_numbers_found)) {
+    if (i <= length(appendix_letters_in_order)) {
+      chapter_num <- as.character(chapter_numbers_found[i])
+      chapter_to_letter[[chapter_num]] <- appendix_letters_in_order[i]
+    }
+  }
+
+  # Now replace "Appendix X" with "Appendix LETTER"
+  for (chapter_num in names(chapter_to_letter)) {
+    letter <- chapter_to_letter[[chapter_num]]
+
+    # Pattern: Appendix</w:t> ... <w:t>CHAPTER_NUM</w:t>
+    # Use (?s) to make . match newlines in DOTALL mode
+    # The (?:(?!</w:p>).) construct ensures we don't cross paragraph boundaries
+    # even with DOTALL mode enabled
+    pattern <- sprintf(
+      '(?s)(Appendix</w:t>)((?:(?!</w:p>).)*?)(<w:t[^>]*>)%s(</w:t>)',
+      chapter_num
+    )
+
+    replacement <- sprintf(
+      '\\1\\2\\3%s\\4',
+      letter
+    )
+
+    xml_content <- gsub(pattern, replacement, xml_content, perl = TRUE)
+  }
+
   xml_content
 }
 
