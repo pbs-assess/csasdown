@@ -42,6 +42,17 @@ fix_table_caption_xml <- function(xml_content) {
     perl = TRUE
   )
 
+  # Fix appendix caption separator spacing: remove extra space in ". " separator
+  # The pattern is: after a SEQ field ends, there's a text element with ".  " (period + 2 spaces)
+  # We want to change it to ". " (period + single space)
+  # Pattern: <w:t ...>.  </w:t> -> <w:t ...>. </w:t>
+  xml_content <- gsub(
+    '<w:t([^>]*)>\\.  </w:t>',
+    '<w:t\\1>. </w:t>',
+    xml_content,
+    perl = TRUE
+  )
+
   # Fix appendix cross-references
   xml_content <- fix_appendix_crossrefs_xml(xml_content)
 

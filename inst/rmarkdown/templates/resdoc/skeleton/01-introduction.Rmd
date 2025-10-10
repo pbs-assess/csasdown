@@ -55,7 +55,7 @@ ggplot(df2, aes(x, y)) + geom_point() + theme_light()
 
 This version has an output width that differs from the one set in the opening `opts_chunk$set()` call in index.Rmd. I have also demonstrated reducing the default internal `fig.width` here so the text isn't too small after scaling the output width.
 
-```{r example-fig2, fig.cap = "Figure showing random numbers.", fig.width=4, out.width="50%"}
+```{r example-fig2, fig.cap = "Figure showing random numbers.", fig.width=4, out.width="60%"}
 df2 <- data.frame(x = rnorm(10), y = rnorm(10))
 ggplot(df2, aes(x, y)) + geom_point() + theme_light()
 ```
