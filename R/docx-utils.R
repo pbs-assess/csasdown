@@ -25,6 +25,23 @@ fix_table_caption_xml <- function(xml_content) {
     fixed = TRUE
   )
 
+  # Fix appendix caption spacing: remove trailing space after "Table A." in <w:t> tags
+  # Pattern: <w:t ...>Table A. </w:t> -> <w:t ...>Table A.</w:t>
+  xml_content <- gsub(
+    '(Table [A-Z])\\. </w:t>',
+    '\\1.</w:t>',
+    xml_content,
+    perl = TRUE
+  )
+
+  # Fix appendix figure spacing: remove trailing space after "Figure A." in <w:t> tags
+  xml_content <- gsub(
+    '(Figure [A-Z])\\. </w:t>',
+    '\\1.</w:t>',
+    xml_content,
+    perl = TRUE
+  )
+
   xml_content
 }
 
