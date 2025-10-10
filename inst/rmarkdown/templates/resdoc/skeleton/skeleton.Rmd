@@ -20,14 +20,12 @@ english_address: |
   ^1^Pacific Biological Station\
      Fisheries and Oceans Canada, 3190 Hammond Bay Road\
      Nanaimo, British Columbia, V9T 6N7, Canada\
-  \smallskip
   ^2^Far, far away\
      Another Galaxy
 french_address: |
   ^1^Station biologique du Pacifique\
      Pêches et Océans Canada, 3190 Hammond Bay Road\
      Nanaimo, Colombie-Britannique, V9T 6N7, Canada\
-  \smallskip
   ^2^Loin, très loin\
      Une autre galaxie
      
