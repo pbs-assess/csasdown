@@ -16,8 +16,8 @@ add_resdoc_word_frontmatter(
 
 \item{yaml_fn}{The Bookdown YAML file name. '_bookdown.yml' by default}
 
-\item{keep_files}{If \code{TRUE}, keep the temporary files created by
-post processing (\verb{tmp-*.md} and \verb{tmp-*.docx})}
+\item{keep_files}{If \code{TRUE}, keep the temporary files created by post
+processing (\verb{tmp-*.md} and \verb{tmp-*.docx})}
 }
 \value{
 A merged .docx

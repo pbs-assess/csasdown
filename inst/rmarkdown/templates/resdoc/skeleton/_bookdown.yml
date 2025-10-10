@@ -1,6 +1,7 @@
 book_filename: "resdoc"
 rmd_files: ["index.Rmd",
-            "01-chap1.Rmd",
-            "04-references.Rmd",
-            "05-appendix.Rmd"]
+            "01-introduction.Rmd",
+            "98-references.Rmd",
+            "99-appendix.Rmd",
+            "99-appendix2.Rmd"]
 delete_merged_file: true

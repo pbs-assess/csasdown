@@ -1,14 +1,110 @@
+#' Fix table caption alignment in Word document
+#'
+#' @description Removes center justification override from table captions when
+#' ft.align="center" is used. This is a workaround for an officedown issue where
+#' ft.align applies to both the table and its caption.
+#'
+#' @param docx_file Path to the .docx file to fix
+#' @keywords internal
+fix_table_caption_alignment <- function(docx_file) {
+  # Create temporary directory for extraction
+  temp_dir <- tempfile()
+  dir.create(temp_dir)
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+
+  # Extract the .docx (which is a zip file)
+  utils::unzip(docx_file, exdir = temp_dir)
+
+  # Function to process XML content
+  fix_xml_content <- function(xml_content) {
+    # Remove center justification from TableCaption styles (resdoc)
+    xml_content <- gsub(
+      '<w:pStyle w:val="TableCaption"/>\\s*<w:jc w:val="center"/>',
+      '<w:pStyle w:val="TableCaption"/>',
+      xml_content,
+      perl = TRUE
+    )
+
+    # Remove center justification from Caption - Table styles (fsar)
+    xml_content <- gsub(
+      '<w:pStyle w:val="Caption - Table"/>\\s*<w:jc w:val="center"/>',
+      '<w:pStyle w:val="Caption - Table"/>',
+      xml_content,
+      perl = TRUE
+    )
+
+    xml_content
+  }
+
+  # Process main document.xml
+  doc_xml_path <- file.path(temp_dir, "word", "document.xml")
+  if (file.exists(doc_xml_path)) {
+    xml_content <- readLines(doc_xml_path, warn = FALSE)
+    xml_content <- paste(xml_content, collapse = "\n")
+    xml_content <- fix_xml_content(xml_content)
+    writeLines(xml_content, doc_xml_path)
+  }
+
+  # Process embedded .docx files (for resdoc with tmp-content.docx, etc.)
+  embedded_docx <- list.files(file.path(temp_dir, "word"), pattern = "\\.docx$", full.names = TRUE)
+  for (embedded_file in embedded_docx) {
+    # Create temp dir for this embedded file
+    embedded_temp <- tempfile()
+    dir.create(embedded_temp)
+
+    # Extract embedded .docx
+    utils::unzip(embedded_file, exdir = embedded_temp)
+
+    # Process its document.xml
+    embedded_doc_xml <- file.path(embedded_temp, "word", "document.xml")
+    if (file.exists(embedded_doc_xml)) {
+      xml_content <- readLines(embedded_doc_xml, warn = FALSE)
+      xml_content <- paste(xml_content, collapse = "\n")
+      xml_content <- fix_xml_content(xml_content)
+      writeLines(xml_content, embedded_doc_xml)
+
+      # Re-zip the embedded .docx
+      curr_dir <- getwd()
+      setwd(embedded_temp)
+      unlink(embedded_file)
+      files_to_zip <- list.files(recursive = TRUE, all.files = TRUE, include.dirs = FALSE)
+      utils::zip(embedded_file, files_to_zip, flags = "-r9Xq")
+      setwd(curr_dir)
+    }
+
+    unlink(embedded_temp, recursive = TRUE)
+  }
+
+  # Re-zip the modified files back to .docx
+  curr_dir <- getwd()
+  setwd(temp_dir)
+
+  # Create new zip with all files in a temp location
+  temp_zip <- tempfile(fileext = ".zip")
+  files_to_zip <- list.files(recursive = TRUE, all.files = TRUE, include.dirs = FALSE)
+  utils::zip(temp_zip, files_to_zip, flags = "-r9Xq")
+
+  setwd(curr_dir)
+
+  # Replace original file with the fixed version
+  unlink(docx_file)
+  file.copy(temp_zip, docx_file, overwrite = TRUE)
+  unlink(temp_zip)
+
+  invisible(docx_file)
+}
+
 #' Creates an Microsoft Word CSAS-formatted document
 #'
-#' @description
-#' This is a function called in output in the YAML of the `index.Rmd` file
-#' to specify the creation of a Microsoft Word version of the Research
-#' Document or Science Response.
+#' @description This is a function called in output in the YAML of the
+#' `index.Rmd` file to specify the creation of a Microsoft Word version of the
+#' Research Document or Science Response.
 #'
 #' @param ... Other arguments to [officedown::rdocx_document()]
 #' @import bookdown
 #' @rdname csas_docx
-#' @return A Word Document in the `.docx` format based on the CSAS Res Doc template
+#' @return A Word Document in the `.docx` format based on the CSAS Res Doc
+#'   template
 #' @export
 
 resdoc_docx <- function(...) {
@@ -26,7 +122,7 @@ resdoc_docx <- function(...) {
     base_format = "bookdown::word_document2",
     number_sections = FALSE,
     tables = list(
-      style = "Compact", layout = "autofit", width = 1,
+      layout = "autofit",
       caption = list(
         style = "Table Caption",
         pre = "Table", sep = ". ",
@@ -64,10 +160,30 @@ resdoc_docx <- function(...) {
     )
   )
 
-  # Mostly copied from knitr::render_sweave
-  # does this do anything for .docx output??
-  base$knitr$opts_chunk$comment <- NA
   base$knitr$opts_chunk$fig.align <- "center"
+  base$knitr$opts_chunk$ft.align <- "center"
+  base$knitr$opts_chunk$collapse <- TRUE
+  base$knitr$opts_chunk$warning <- FALSE
+  base$knitr$opts_chunk$message <- FALSE
+  base$knitr$opts_chunk$echo <- FALSE
+  base$knitr$opts_chunk$comment <- "#>"
+  base$knitr$opts_chunk$dev <- "png"
+
+  # Add post-processor to fix table caption alignment
+  # This runs after pandoc creates the .docx file
+  base_post_processor <- base$post_processor
+  base$post_processor <- function(metadata, input_file, output_file, clean, verbose) {
+    # Call the original post-processor first
+    if (!is.null(base_post_processor)) {
+      output_file <- base_post_processor(metadata, input_file, output_file, clean, verbose)
+    }
+
+    # Fix table caption centering issue
+    fix_table_caption_alignment(output_file)
+
+    output_file
+  }
+
   base
 }
 
@@ -78,8 +194,8 @@ resdoc_docx <- function(...) {
 #' @keywords internal
 #' @param index_fn The name of the YAML file, typically 'index.Rmd' for bookdown
 #' @param yaml_fn The Bookdown YAML file name. '_bookdown.yml' by default
-#' @param keep_files If `TRUE`, keep the temporary files created by
-#'                   post processing (`tmp-*.md` and `tmp-*.docx`)
+#' @param keep_files If `TRUE`, keep the temporary files created by post
+#'   processing (`tmp-*.md` and `tmp-*.docx`)
 #'
 #' @return A merged .docx
 add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", verbose = FALSE, keep_files = FALSE) {
@@ -97,9 +213,9 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
   ## text replacement since it is not set-up to interpret markdown syntax.
 
   md <- c(
-    '::: {custom-style="Cover: Document title"}', x$title, ":::",
-    '::: {custom-style="Cover: Author"}', x$author, ":::",
-    '::: {custom-style="Cover: Address"}', x$address, ":::"
+    '::: {custom-style="Cover: Document title"}', x$english_title, ":::",
+    '::: {custom-style="Cover: Author"}', x$english_author, ":::",
+    '::: {custom-style="Cover: Address"}', x$english_address, ":::"
   )
   writeLines(md, "tmp-titlepage.md")
   rmarkdown::pandoc_convert("tmp-titlepage.md",
@@ -111,11 +227,11 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
   md <- c(
     "\n**Correct citation for this publication:**\n",
     '::: {custom-style="citation"}',
-    paste0(x$author_list, ". ", x$year, ". ", x$title, ". DFO Can. Sci. Advis. Sec. Res. Doc. ", x$year, "/", x$report_number, ". iv + xx p."),
+    paste0(x$english_author_list, ". ", x$year, ". ", x$title, ". DFO Can. Sci. Advis. Sec. Res. Doc. ", x$year, "/", x$report_number, ". iv + xx p."),
     ":::",
     "\n**Aussi disponible en fran\u00e7ais:**\n",
     '::: {custom-style="citation"}',
-    paste0(x$author_list, ". ", x$year, ". ", x$french_title, ". Secr. can. de consult. sci. du MPO. Doc. de rech. ", x$year, "/", x$report_number, ". iv + xx p."),
+    paste0(x$french_author_list, ". ", x$year, ". ", x$french_title, ". Secr. can. de consult. sci. du MPO. Doc. de rech. ", x$year, "/", x$report_number, ". iv + xx p."),
     ":::"
   )
   writeLines(md, "tmp-citation.md")
@@ -142,11 +258,14 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
     officer::body_remove()
   print(content, target = "tmp-content.docx")
 
+  # Fix table caption alignment in the extracted content
+  fix_table_caption_alignment("tmp-content.docx")
+
   frontmatter <- officer::read_docx(system.file("csas-docx", "resdoc-frontmatter.docx", package = "csasdown")) |>
-    officer::headers_replace_text_at_bkm("region", x$region) |>
+    officer::headers_replace_text_at_bkm("region", x$english_region) |>
     officer::headers_replace_text_at_bkm("year", as.character(x$year)) |>
     officer::headers_replace_text_at_bkm("report_number", as.character(x$report_number)) |>
-    officer::footers_replace_text_at_bkm("date", paste(x$month, x$year)) |>
+    officer::footers_replace_text_at_bkm("date", paste(x$english_month, x$year)) |>
     officer::cursor_begin() |>
     officer::body_add_docx("tmp-titlepage.docx", pos = "before") |>
     officer::cursor_reach(keyword = "TABLE OF CONTENTS") |>
@@ -165,6 +284,9 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
 
   # print(doc, target = "tmp-doc.docx")
   print(doc, target = book_filename)
+
+  # Fix table caption alignment in the final assembled document
+  fix_table_caption_alignment(book_filename)
 
   if (!keep_files) {
     unlink(c(

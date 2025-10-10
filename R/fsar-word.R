@@ -21,9 +21,9 @@ fsar_docx <- function(...) {
     base_format = "bookdown::word_document2",
     number_sections = FALSE,
     tables = list(
-      style = "Compact", layout = "autofit", width = 1,
+      layout = "autofit",
       caption = list(
-        style = "Table Caption",
+        style = "Caption - Table",
         pre = "Table", sep = ". ",
         fp_text = officer::fp_text_lite(bold = FALSE)
       ),
@@ -55,9 +55,29 @@ fsar_docx <- function(...) {
     )
   )
 
-  # Mostly copied from knitr::render_sweave
-  # does this do anything with docx??
-  base$knitr$opts_chunk$comment <- NA
   base$knitr$opts_chunk$fig.align <- "center"
+  base$knitr$opts_chunk$ft.align <- "center"
+  base$knitr$opts_chunk$collapse <- TRUE
+  base$knitr$opts_chunk$warning <- FALSE
+  base$knitr$opts_chunk$message <- FALSE
+  base$knitr$opts_chunk$echo <- FALSE
+  base$knitr$opts_chunk$comment <- "#>"
+  base$knitr$opts_chunk$dev <- "png"
+
+  # Add post-processor to fix table caption alignment
+  # This runs after pandoc creates the .docx file
+  base_post_processor <- base$post_processor
+  base$post_processor <- function(metadata, input_file, output_file, clean, verbose) {
+    # Call the original post-processor first
+    if (!is.null(base_post_processor)) {
+      output_file <- base_post_processor(metadata, input_file, output_file, clean, verbose)
+    }
+
+    # Fix table caption centering issue (uses function from resdoc-word.R)
+    fix_table_caption_alignment(output_file)
+
+    output_file
+  }
+
   base
 }

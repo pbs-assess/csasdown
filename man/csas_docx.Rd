@@ -15,13 +15,14 @@ resdoc_docx(...)
 \value{
 A Word Document in the \code{.docx} format based on the FSAR template.
 
-A Word Document in the \code{.docx} format based on the CSAS Res Doc template
+A Word Document in the \code{.docx} format based on the CSAS Res Doc
+template
 }
 \description{
 This is a function called in output in the YAML of the \code{index.Rmd} file
 to specify the creation of an FSAR word document.
 
-This is a function called in output in the YAML of the \code{index.Rmd} file
-to specify the creation of a Microsoft Word version of the Research
-Document or Science Response.
+This is a function called in output in the YAML of the
+\code{index.Rmd} file to specify the creation of a Microsoft Word version of the
+Research Document or Science Response.
 }
