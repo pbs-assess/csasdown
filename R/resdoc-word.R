@@ -1,224 +1,3 @@
-#' Fix table caption alignment in Word document
-#'
-#' @description Removes center justification override from table captions when
-#' ft.align="center" is used. This is a workaround for an officedown issue where
-#' ft.align applies to both the table and its caption.
-#'
-#' @param docx_file Path to the .docx file to fix
-#' @keywords internal
-fix_table_caption_alignment <- function(docx_file) {
-  # Create temporary directory for extraction
-  temp_dir <- tempfile()
-  dir.create(temp_dir)
-  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
-
-  # Extract the .docx (which is a zip file)
-  utils::unzip(docx_file, exdir = temp_dir)
-
-  # Function to process XML content
-  fix_xml_content <- function(xml_content) {
-    # Remove center justification from TableCaption styles (resdoc)
-    # Do this BEFORE renaming to Caption-Table
-    xml_content <- gsub(
-      '<w:pStyle w:val="TableCaption"/>\\s*<w:jc w:val="center"/>',
-      '<w:pStyle w:val="TableCaption"/>',
-      xml_content,
-      perl = TRUE
-    )
-
-    # Rename TableCaption references to Caption-Table (which inherits from TableCaption)
-    xml_content <- gsub(
-      '<w:pStyle w:val="TableCaption"/>',
-      '<w:pStyle w:val="Caption-Table"/>',
-      xml_content,
-      fixed = TRUE
-    )
-
-    xml_content
-  }
-
-  # Process main document.xml
-  doc_xml_path <- file.path(temp_dir, "word", "document.xml")
-  if (file.exists(doc_xml_path)) {
-    xml_content <- readLines(doc_xml_path, warn = FALSE)
-    xml_content <- paste(xml_content, collapse = "\n")
-    xml_content <- fix_xml_content(xml_content)
-    writeLines(xml_content, doc_xml_path)
-  }
-
-  # Copy "Caption - Table" style from reference template to styles.xml
-  styles_xml_path <- file.path(temp_dir, "word", "styles.xml")
-  if (file.exists(styles_xml_path)) {
-    # Extract reference template to get the Caption - Table style
-    ref_docx <- system.file("csas-docx", "resdoc-content.docx", package = "csasdown")
-    ref_temp <- tempfile()
-    dir.create(ref_temp)
-    utils::unzip(ref_docx, exdir = ref_temp)
-
-    ref_styles_path <- file.path(ref_temp, "word", "styles.xml")
-    if (file.exists(ref_styles_path)) {
-      ref_styles <- readLines(ref_styles_path, warn = FALSE)
-      ref_styles <- paste(ref_styles, collapse = "\n")
-
-      # Extract both TableCaption and Caption-Table style definitions
-      table_caption_style <- regmatches(ref_styles, regexpr(
-        '<w:style[^>]*w:styleId="TableCaption"[^>]*>.*?</w:style>',
-        ref_styles,
-        perl = TRUE
-      ))
-
-      caption_table_style <- regmatches(ref_styles, regexpr(
-        '<w:style[^>]*w:styleId="Caption-Table"[^>]*>.*?</w:style>',
-        ref_styles,
-        perl = TRUE
-      ))
-
-      if (length(table_caption_style) > 0 || length(caption_table_style) > 0) {
-        # Read current styles
-        styles_content <- readLines(styles_xml_path, warn = FALSE)
-        styles_content <- paste(styles_content, collapse = "\n")
-
-        # Remove existing TableCaption style if present (will be replaced with reference version)
-        styles_content <- gsub(
-          '<w:style[^>]*w:styleId="TableCaption"[^>]*>.*?</w:style>',
-          '',
-          styles_content,
-          perl = TRUE
-        )
-
-        # Insert both styles before </w:styles>
-        styles_to_add <- paste0(
-          if (length(table_caption_style) > 0) table_caption_style else "",
-          "\n",
-          if (length(caption_table_style) > 0) caption_table_style else "",
-          "\n</w:styles>"
-        )
-
-        styles_content <- sub(
-          '</w:styles>',
-          styles_to_add,
-          styles_content,
-          fixed = TRUE
-        )
-
-        writeLines(styles_content, styles_xml_path)
-      }
-    }
-
-    unlink(ref_temp, recursive = TRUE)
-  }
-
-  # Process embedded .docx files (for resdoc with tmp-content.docx, etc.)
-  embedded_docx <- list.files(file.path(temp_dir, "word"), pattern = "\\.docx$", full.names = TRUE)
-  for (embedded_file in embedded_docx) {
-    # Create temp dir for this embedded file
-    embedded_temp <- tempfile()
-    dir.create(embedded_temp)
-
-    # Extract embedded .docx
-    utils::unzip(embedded_file, exdir = embedded_temp)
-
-    # Process its document.xml
-    embedded_doc_xml <- file.path(embedded_temp, "word", "document.xml")
-    if (file.exists(embedded_doc_xml)) {
-      xml_content <- readLines(embedded_doc_xml, warn = FALSE)
-      xml_content <- paste(xml_content, collapse = "\n")
-      xml_content <- fix_xml_content(xml_content)
-      writeLines(xml_content, embedded_doc_xml)
-    }
-
-    # Copy "Caption - Table" style to embedded styles.xml
-    embedded_styles_path <- file.path(embedded_temp, "word", "styles.xml")
-    if (file.exists(embedded_styles_path)) {
-      # Extract reference template to get the Caption - Table style
-      ref_docx <- system.file("csas-docx", "resdoc-content.docx", package = "csasdown")
-      ref_temp <- tempfile()
-      dir.create(ref_temp)
-      utils::unzip(ref_docx, exdir = ref_temp)
-
-      ref_styles_path <- file.path(ref_temp, "word", "styles.xml")
-      if (file.exists(ref_styles_path)) {
-        ref_styles <- readLines(ref_styles_path, warn = FALSE)
-        ref_styles <- paste(ref_styles, collapse = "\n")
-
-        # Extract both TableCaption and Caption-Table style definitions
-        table_caption_style <- regmatches(ref_styles, regexpr(
-          '<w:style[^>]*w:styleId="TableCaption"[^>]*>.*?</w:style>',
-          ref_styles,
-          perl = TRUE
-        ))
-
-        caption_table_style <- regmatches(ref_styles, regexpr(
-          '<w:style[^>]*w:styleId="Caption-Table"[^>]*>.*?</w:style>',
-          ref_styles,
-          perl = TRUE
-        ))
-
-        if (length(table_caption_style) > 0 || length(caption_table_style) > 0) {
-          # Read current styles
-          styles_content <- readLines(embedded_styles_path, warn = FALSE)
-          styles_content <- paste(styles_content, collapse = "\n")
-
-          # Remove existing TableCaption style if present (will be replaced with reference version)
-          styles_content <- gsub(
-            '<w:style[^>]*w:styleId="TableCaption"[^>]*>.*?</w:style>',
-            '',
-            styles_content,
-            perl = TRUE
-          )
-
-          # Insert both styles before </w:styles>
-          styles_to_add <- paste0(
-            if (length(table_caption_style) > 0) table_caption_style else "",
-            "\n",
-            if (length(caption_table_style) > 0) caption_table_style else "",
-            "\n</w:styles>"
-          )
-
-          styles_content <- sub(
-            '</w:styles>',
-            styles_to_add,
-            styles_content,
-            fixed = TRUE
-          )
-
-          writeLines(styles_content, embedded_styles_path)
-        }
-      }
-
-      unlink(ref_temp, recursive = TRUE)
-    }
-
-    # Re-zip the embedded .docx
-    curr_dir <- getwd()
-    setwd(embedded_temp)
-    unlink(embedded_file)
-    files_to_zip <- list.files(recursive = TRUE, all.files = TRUE, include.dirs = FALSE)
-    utils::zip(embedded_file, files_to_zip, flags = "-r9Xq")
-    setwd(curr_dir)
-
-    unlink(embedded_temp, recursive = TRUE)
-  }
-
-  # Re-zip the modified files back to .docx
-  curr_dir <- getwd()
-  setwd(temp_dir)
-
-  # Create new zip with all files in a temp location
-  temp_zip <- tempfile(fileext = ".zip")
-  files_to_zip <- list.files(recursive = TRUE, all.files = TRUE, include.dirs = FALSE)
-  utils::zip(temp_zip, files_to_zip, flags = "-r9Xq")
-
-  setwd(curr_dir)
-
-  # Replace original file with the fixed version
-  unlink(docx_file)
-  file.copy(temp_zip, docx_file, overwrite = TRUE)
-  unlink(temp_zip)
-
-  invisible(docx_file)
-}
-
 #' Creates an Microsoft Word CSAS-formatted document
 #'
 #' @description This is a function called in output in the YAML of the
@@ -281,7 +60,7 @@ resdoc_docx <- function(...) {
     ),
     reference_docx = system.file("csas-docx",
       file,
-      package = "csasdown"
+      package = "csasdown2"
     )
   )
 
@@ -295,19 +74,7 @@ resdoc_docx <- function(...) {
   base$knitr$opts_chunk$dev <- "png"
 
   # Add post-processor to fix table caption alignment
-  # This runs after pandoc creates the .docx file
-  base_post_processor <- base$post_processor
-  base$post_processor <- function(metadata, input_file, output_file, clean, verbose) {
-    # Call the original post-processor first
-    if (!is.null(base_post_processor)) {
-      output_file <- base_post_processor(metadata, input_file, output_file, clean, verbose)
-    }
-
-    # Fix table caption centering issue
-    fix_table_caption_alignment(output_file)
-
-    output_file
-  }
+  base <- add_caption_fix_postprocessor(base, reference_docx = "resdoc-content.docx")
 
   base
 }
@@ -330,7 +97,7 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
 
   ## This reference docx only includes styles; headers and footers were removed since
   ## they are included in the frontmatter docx.
-  reference_fn <- system.file("csas-docx", "resdoc-blank-content.docx", package = "csasdown")
+  reference_fn <- system.file("csas-docx", "resdoc-blank-content.docx", package = "csasdown2")
 
   ## Extract yaml front matter and construct md files, then use pandoc_convert to
   ## export content to word. The officer package is latter used to add said content
@@ -384,9 +151,9 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
   print(content, target = "tmp-content.docx")
 
   # Fix table caption alignment in the extracted content
-  fix_table_caption_alignment("tmp-content.docx")
+  fix_table_caption_alignment("tmp-content.docx", reference_docx = "resdoc-content.docx")
 
-  frontmatter <- officer::read_docx(system.file("csas-docx", "resdoc-frontmatter.docx", package = "csasdown")) |>
+  frontmatter <- officer::read_docx(system.file("csas-docx", "resdoc-frontmatter.docx", package = "csasdown2")) |>
     officer::headers_replace_text_at_bkm("region", x$english_region) |>
     officer::headers_replace_text_at_bkm("year", as.character(x$year)) |>
     officer::headers_replace_text_at_bkm("report_number", as.character(x$report_number)) |>
@@ -411,7 +178,7 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
   print(doc, target = book_filename)
 
   # Fix table caption alignment in the final assembled document
-  fix_table_caption_alignment(book_filename)
+  fix_table_caption_alignment(book_filename, reference_docx = "resdoc-content.docx")
 
   if (!keep_files) {
     unlink(c(

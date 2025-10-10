@@ -51,7 +51,7 @@ fsar_docx <- function(...) {
     pandoc_args = "--no-highlight",
     reference_docx = system.file("csas-docx",
       file,
-      package = "csasdown"
+      package = "csasdown2"
     )
   )
 
@@ -65,19 +65,7 @@ fsar_docx <- function(...) {
   base$knitr$opts_chunk$dev <- "png"
 
   # Add post-processor to fix table caption alignment
-  # This runs after pandoc creates the .docx file
-  base_post_processor <- base$post_processor
-  base$post_processor <- function(metadata, input_file, output_file, clean, verbose) {
-    # Call the original post-processor first
-    if (!is.null(base_post_processor)) {
-      output_file <- base_post_processor(metadata, input_file, output_file, clean, verbose)
-    }
-
-    # Fix table caption centering issue (uses function from resdoc-word.R)
-    fix_table_caption_alignment(output_file)
-
-    output_file
-  }
+  base <- add_caption_fix_postprocessor(base, reference_docx = "fsar-template.docx")
 
   base
 }
