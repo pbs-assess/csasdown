@@ -18,6 +18,7 @@ fix_table_caption_alignment <- function(docx_file) {
   # Function to process XML content
   fix_xml_content <- function(xml_content) {
     # Remove center justification from TableCaption styles (resdoc)
+    # Do this BEFORE renaming to Caption-Table
     xml_content <- gsub(
       '<w:pStyle w:val="TableCaption"/>\\s*<w:jc w:val="center"/>',
       '<w:pStyle w:val="TableCaption"/>',
@@ -25,12 +26,12 @@ fix_table_caption_alignment <- function(docx_file) {
       perl = TRUE
     )
 
-    # Remove center justification from Caption - Table styles (fsar)
+    # Rename TableCaption references to Caption-Table (which inherits from TableCaption)
     xml_content <- gsub(
-      '<w:pStyle w:val="Caption - Table"/>\\s*<w:jc w:val="center"/>',
-      '<w:pStyle w:val="Caption - Table"/>',
+      '<w:pStyle w:val="TableCaption"/>',
+      '<w:pStyle w:val="Caption-Table"/>',
       xml_content,
-      perl = TRUE
+      fixed = TRUE
     )
 
     xml_content
@@ -43,6 +44,68 @@ fix_table_caption_alignment <- function(docx_file) {
     xml_content <- paste(xml_content, collapse = "\n")
     xml_content <- fix_xml_content(xml_content)
     writeLines(xml_content, doc_xml_path)
+  }
+
+  # Copy "Caption - Table" style from reference template to styles.xml
+  styles_xml_path <- file.path(temp_dir, "word", "styles.xml")
+  if (file.exists(styles_xml_path)) {
+    # Extract reference template to get the Caption - Table style
+    ref_docx <- system.file("csas-docx", "resdoc-content.docx", package = "csasdown")
+    ref_temp <- tempfile()
+    dir.create(ref_temp)
+    utils::unzip(ref_docx, exdir = ref_temp)
+
+    ref_styles_path <- file.path(ref_temp, "word", "styles.xml")
+    if (file.exists(ref_styles_path)) {
+      ref_styles <- readLines(ref_styles_path, warn = FALSE)
+      ref_styles <- paste(ref_styles, collapse = "\n")
+
+      # Extract both TableCaption and Caption-Table style definitions
+      table_caption_style <- regmatches(ref_styles, regexpr(
+        '<w:style[^>]*w:styleId="TableCaption"[^>]*>.*?</w:style>',
+        ref_styles,
+        perl = TRUE
+      ))
+
+      caption_table_style <- regmatches(ref_styles, regexpr(
+        '<w:style[^>]*w:styleId="Caption-Table"[^>]*>.*?</w:style>',
+        ref_styles,
+        perl = TRUE
+      ))
+
+      if (length(table_caption_style) > 0 || length(caption_table_style) > 0) {
+        # Read current styles
+        styles_content <- readLines(styles_xml_path, warn = FALSE)
+        styles_content <- paste(styles_content, collapse = "\n")
+
+        # Remove existing TableCaption style if present (will be replaced with reference version)
+        styles_content <- gsub(
+          '<w:style[^>]*w:styleId="TableCaption"[^>]*>.*?</w:style>',
+          '',
+          styles_content,
+          perl = TRUE
+        )
+
+        # Insert both styles before </w:styles>
+        styles_to_add <- paste0(
+          if (length(table_caption_style) > 0) table_caption_style else "",
+          "\n",
+          if (length(caption_table_style) > 0) caption_table_style else "",
+          "\n</w:styles>"
+        )
+
+        styles_content <- sub(
+          '</w:styles>',
+          styles_to_add,
+          styles_content,
+          fixed = TRUE
+        )
+
+        writeLines(styles_content, styles_xml_path)
+      }
+    }
+
+    unlink(ref_temp, recursive = TRUE)
   }
 
   # Process embedded .docx files (for resdoc with tmp-content.docx, etc.)
@@ -62,15 +125,77 @@ fix_table_caption_alignment <- function(docx_file) {
       xml_content <- paste(xml_content, collapse = "\n")
       xml_content <- fix_xml_content(xml_content)
       writeLines(xml_content, embedded_doc_xml)
-
-      # Re-zip the embedded .docx
-      curr_dir <- getwd()
-      setwd(embedded_temp)
-      unlink(embedded_file)
-      files_to_zip <- list.files(recursive = TRUE, all.files = TRUE, include.dirs = FALSE)
-      utils::zip(embedded_file, files_to_zip, flags = "-r9Xq")
-      setwd(curr_dir)
     }
+
+    # Copy "Caption - Table" style to embedded styles.xml
+    embedded_styles_path <- file.path(embedded_temp, "word", "styles.xml")
+    if (file.exists(embedded_styles_path)) {
+      # Extract reference template to get the Caption - Table style
+      ref_docx <- system.file("csas-docx", "resdoc-content.docx", package = "csasdown")
+      ref_temp <- tempfile()
+      dir.create(ref_temp)
+      utils::unzip(ref_docx, exdir = ref_temp)
+
+      ref_styles_path <- file.path(ref_temp, "word", "styles.xml")
+      if (file.exists(ref_styles_path)) {
+        ref_styles <- readLines(ref_styles_path, warn = FALSE)
+        ref_styles <- paste(ref_styles, collapse = "\n")
+
+        # Extract both TableCaption and Caption-Table style definitions
+        table_caption_style <- regmatches(ref_styles, regexpr(
+          '<w:style[^>]*w:styleId="TableCaption"[^>]*>.*?</w:style>',
+          ref_styles,
+          perl = TRUE
+        ))
+
+        caption_table_style <- regmatches(ref_styles, regexpr(
+          '<w:style[^>]*w:styleId="Caption-Table"[^>]*>.*?</w:style>',
+          ref_styles,
+          perl = TRUE
+        ))
+
+        if (length(table_caption_style) > 0 || length(caption_table_style) > 0) {
+          # Read current styles
+          styles_content <- readLines(embedded_styles_path, warn = FALSE)
+          styles_content <- paste(styles_content, collapse = "\n")
+
+          # Remove existing TableCaption style if present (will be replaced with reference version)
+          styles_content <- gsub(
+            '<w:style[^>]*w:styleId="TableCaption"[^>]*>.*?</w:style>',
+            '',
+            styles_content,
+            perl = TRUE
+          )
+
+          # Insert both styles before </w:styles>
+          styles_to_add <- paste0(
+            if (length(table_caption_style) > 0) table_caption_style else "",
+            "\n",
+            if (length(caption_table_style) > 0) caption_table_style else "",
+            "\n</w:styles>"
+          )
+
+          styles_content <- sub(
+            '</w:styles>',
+            styles_to_add,
+            styles_content,
+            fixed = TRUE
+          )
+
+          writeLines(styles_content, embedded_styles_path)
+        }
+      }
+
+      unlink(ref_temp, recursive = TRUE)
+    }
+
+    # Re-zip the embedded .docx
+    curr_dir <- getwd()
+    setwd(embedded_temp)
+    unlink(embedded_file)
+    files_to_zip <- list.files(recursive = TRUE, all.files = TRUE, include.dirs = FALSE)
+    utils::zip(embedded_file, files_to_zip, flags = "-r9Xq")
+    setwd(curr_dir)
 
     unlink(embedded_temp, recursive = TRUE)
   }
