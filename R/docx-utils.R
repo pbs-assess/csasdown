@@ -42,6 +42,149 @@ fix_table_caption_xml <- function(xml_content) {
     perl = TRUE
   )
 
+  # Fix appendix cross-references
+  xml_content <- fix_appendix_crossrefs_xml(xml_content)
+
+  xml_content
+}
+
+#' Fix appendix cross-references in Word XML
+#'
+#' @description Modifies REF fields that point to appendix figures/tables to display
+#' the correct appendix-prefixed numbers (e.g., "A.1" instead of just "1"). Bookdown
+#' generates cross-references using Word REF fields, but these only capture the
+#' sequential number, not the "Figure A." prefix. This function adds a format switch
+#' to include the prefix.
+#'
+#' @param xml_content Character string containing XML content
+#' @return Modified XML content as character string
+#' @keywords internal
+#' @noRd
+fix_appendix_crossrefs_xml <- function(xml_content) {
+  # Strategy:
+  # 1. Find all figure/table captions with appendix numbering (e.g., "Figure A.")
+  # 2. Build a mapping: bookmark name -> appendix prefix (e.g., "app-fig1" -> "A.")
+  # 3. Find REF fields pointing to those bookmarks
+  # 4. Add Word format switch \# "A.0" to display prefix + number
+
+  bookmark_prefixes <- list()
+
+  # Find figure captions with appendix prefixes
+  # Pattern: "Figure A." in a text run, followed by a bookmark
+  # More lenient pattern that doesn't require SEQ field (which might be far away)
+  fig_caption_pattern <- '<w:t[^>]*>Figure ([A-Z])\\.</w:t>[^<]*</w:r>\\s*<w:bookmarkStart[^>]+w:name="([^"]+)"'
+
+  fig_matches <- gregexpr(fig_caption_pattern, xml_content, perl = TRUE)
+  if (fig_matches[[1]][1] != -1) {
+    # Use regmatches with capture=TRUE to get captured groups
+    match_list <- regmatches(xml_content, fig_matches, invert = FALSE)
+    # Extract capture groups manually by re-matching each full match
+    for (full_match in match_list[[1]]) {
+      # Extract the letter (first capture group)
+      letter_match <- regexpr('>Figure ([A-Z])\\.', full_match, perl = TRUE)
+      letter_start <- attr(letter_match, "capture.start")[1]
+      letter_length <- attr(letter_match, "capture.length")[1]
+      appendix_letter <- substr(full_match, letter_start, letter_start + letter_length - 1)
+
+      # Extract the bookmark name (second capture group)
+      bookmark_match <- regexpr('w:name="([^"]+)"', full_match, perl = TRUE)
+      bookmark_start <- attr(bookmark_match, "capture.start")[1]
+      bookmark_length <- attr(bookmark_match, "capture.length")[1]
+      bookmark_name <- substr(full_match, bookmark_start, bookmark_start + bookmark_length - 1)
+
+      bookmark_prefixes[[bookmark_name]] <- paste0(appendix_letter, ".")
+    }
+  }
+
+  # Find table captions with appendix prefixes
+  tab_caption_pattern <- '<w:t[^>]*>Table ([A-Z])\\.</w:t>[^<]*</w:r>\\s*<w:bookmarkStart[^>]+w:name="([^"]+)"'
+
+  tab_matches <- gregexpr(tab_caption_pattern, xml_content, perl = TRUE)
+  if (tab_matches[[1]][1] != -1) {
+    match_list <- regmatches(xml_content, tab_matches, invert = FALSE)
+    for (full_match in match_list[[1]]) {
+      # Extract the letter
+      letter_match <- regexpr('>Table ([A-Z])\\.', full_match, perl = TRUE)
+      letter_start <- attr(letter_match, "capture.start")[1]
+      letter_length <- attr(letter_match, "capture.length")[1]
+      appendix_letter <- substr(full_match, letter_start, letter_start + letter_length - 1)
+
+      # Extract the bookmark name
+      bookmark_match <- regexpr('w:name="([^"]+)"', full_match, perl = TRUE)
+      bookmark_start <- attr(bookmark_match, "capture.start")[1]
+      bookmark_length <- attr(bookmark_match, "capture.length")[1]
+      bookmark_name <- substr(full_match, bookmark_start, bookmark_start + bookmark_length - 1)
+
+      bookmark_prefixes[[bookmark_name]] <- paste0(appendix_letter, ".")
+    }
+  }
+
+  # Build a mapping of bookmarks to their actual caption numbers
+  # Strategy: For each bookmark with an appendix prefix, find the SEQ field that follows it
+  # and determine what number it represents by counting preceding SEQ fields of the same type
+  bookmark_numbers <- list()
+
+  for (bookmark_name in names(bookmark_prefixes)) {
+    prefix <- bookmark_prefixes[[bookmark_name]]
+    letter <- sub('\\.$', '', prefix)  # e.g., "A." -> "A"
+
+    # Determine if this is a figure or table
+    seq_type <- if (grepl('^(fig-|app.*fig)', bookmark_name)) "fig" else "tab"
+
+    # Find the bookmark position
+    bookmark_pattern <- sprintf('<w:bookmarkStart[^>]+w:name="%s"', bookmark_name)
+    bookmark_match <- regexpr(bookmark_pattern, xml_content, perl = TRUE)
+
+    if (bookmark_match > 0) {
+      # Extract text from bookmark onward to find the following SEQ field
+      text_after_bookmark <- substr(xml_content, bookmark_match, nchar(xml_content))
+
+      # Find the first SEQ field for this type after the bookmark
+      # Pattern: SEQ fig:A or SEQ tab:A (the sequence type specific to this appendix)
+      seq_pattern_after <- sprintf('SEQ %s:%s', seq_type, letter)
+      seq_match_after <- regexpr(seq_pattern_after, text_after_bookmark, fixed = TRUE)
+
+      if (seq_match_after > 0) {
+        # Now count how many SEQ fields of this type appear in the document
+        # up to and including this one
+        seq_position_in_doc <- bookmark_match + seq_match_after - 1
+
+        # Count all SEQ fields of this specific type up to this position
+        text_up_to_seq <- substr(xml_content, 1, seq_position_in_doc + nchar(seq_pattern_after))
+        all_seq_matches <- gregexpr(seq_pattern_after, text_up_to_seq, fixed = TRUE)
+        seq_number <- length(regmatches(text_up_to_seq, all_seq_matches)[[1]])
+
+        if (seq_number > 0) {
+          bookmark_numbers[[bookmark_name]] <- paste0(prefix, seq_number)
+        }
+      }
+    }
+  }
+
+  # Fix REF fields by replacing them with the actual text
+  # Instead of modifying the field code, replace the entire hyperlink structure
+  # with plain text showing the correct number
+  for (bookmark in names(bookmark_numbers)) {
+    number_text <- bookmark_numbers[[bookmark]]
+
+    # Find and replace the entire hyperlink structure that contains the REF field
+    # Pattern: <w:hyperlink w:anchor="bookmark">...<w:instrText>REF bookmark \h</w:instrText>...</w:hyperlink>
+    # Replace with: <w:r><w:t>A.1</w:t></w:r>
+
+    # Use (?s) flag to enable DOTALL mode so . matches newlines
+    hyperlink_pattern <- sprintf(
+      '(?s)<w:hyperlink w:anchor="%s">.*?</w:hyperlink>',
+      bookmark
+    )
+
+    replacement <- sprintf(
+      '<w:r><w:t>%s</w:t></w:r>',
+      number_text
+    )
+
+    xml_content <- gsub(hyperlink_pattern, replacement, xml_content, perl = TRUE)
+  }
+
   xml_content
 }
 
