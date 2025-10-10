@@ -31,21 +31,23 @@ french_address: |
   ^2^Loin, très loin\
      Une autre galaxie
      
+english_region: "Pacific Region"
+french_region: "Région Pacifique"
+     
 english_month: "Month"
 french_month: "Mois"
 
-year: 2025
+year: "2025"
+report_number: "000"
 
-report_number: nnn
+english_preamble_pages: "iv"
+french_preamble_pages: "iv"
 
-english_region: "Pacific Region"
-french_region: "Région Pacifique"
-
-english_citation: "Last, F.M. and Smith, A.B. 2025. Title Here (*Latin Species Name*). DFO Can. Sci. Advis. Sec. Res. Doc. 2025/nnn. iv + xx p."
-french_citation: "Last, F.M. et Smith, A.B. 2025. Title Here (*Latin Species Name*). DFO Secr. can. des avis sci. du MPO. Doc. de rech 2025/nnn. iv + XX p."
+english_content_pages: "999"
+french_content_pages: "999"
 
 abstract: |
-  Here is the abstract text. Must not be more than 1/2 page (roughly 400 words).
+  Here is the abstract text. It must not be more than 1/2 page (roughly 400 words).
 
   Start new paragraphs after a blank line and with 2 spaces indent.
 
@@ -62,8 +64,9 @@ library(knitr)
 opts_chunk$set(
   #  cache = TRUE, # cache all chunks?
   #  autodep = TRUE, # try to guess which chunks depend on which in cache?
-  fig.width = 5, # 'internal' plotting figure width
-  fig.asp = 0.618, # golden ratio
+  fig.width = 6, # 'internal' plotting figure width (inches)
+  out.width = "80%", # output plotting width; adjust here or by chunk if desired
+  fig.asp = 1 / 1.618, # golden ratio; adjust here or by chunk if desired
   dpi = 200 # adjust to taste; larger = higher resolution but larger file size
 )
 ```

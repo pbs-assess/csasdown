@@ -1,6 +1,6 @@
 \newpage
 
-# APPENDIX `r new_appendix()`. BIOLOGICAL DATA
+# APPENDIX `r new_appendix()`. BIOLOGICAL DATA {#app:biology}
 
 This appendix demonstrates appendix-specific figure and table numbering (A.1, A.2, etc.).
 

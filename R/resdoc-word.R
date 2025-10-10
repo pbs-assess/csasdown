@@ -119,11 +119,11 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
   md <- c(
     "\n**Correct citation for this publication:**\n",
     '::: {custom-style="citation"}',
-    paste0(x$english_author_list, ". ", x$year, ". ", x$title, ". DFO Can. Sci. Advis. Sec. Res. Doc. ", x$year, "/", x$report_number, ". iv + xx p."),
+    paste0(trimws(x$english_author_list), " ", x$year, ". ", trimws(x$english_title), ". DFO Can. Sci. Advis. Sec. Res. Doc. ", x$year, "/", x$report_number, ". ", x$english_pre_amble_pages, " + ", x$english_content_pages, " p."),
     ":::",
     "\n**Aussi disponible en fran\u00e7ais:**\n",
     '::: {custom-style="citation"}',
-    paste0(x$french_author_list, ". ", x$year, ". ", x$french_title, ". Secr. can. de consult. sci. du MPO. Doc. de rech. ", x$year, "/", x$report_number, ". iv + xx p."),
+    paste0(trimws(x$french_author_list), " ", x$year, ". ", trimws(x$french_title), ". Secr. can. de consult. sci. du MPO. Doc. de rech. ", x$year, "/", x$report_number, ". ", x$french_preamble_pages, " + ", x$french_content_pages, "p."),
     ":::"
   )
   writeLines(md, "tmp-citation.md")
