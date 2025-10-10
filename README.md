@@ -1,6 +1,7 @@
 # csasdown2
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/seananderson/csasdown2/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/seananderson/csasdown2/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 csasdown2 is re-write of csasdown that focuses on .docx output.
