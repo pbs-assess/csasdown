@@ -27,7 +27,8 @@ Suggests:
     flextable,
     ggplot2,
     knitr,
-    testthat
+    testthat,
+    tidyr
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 Encoding: UTF-8
