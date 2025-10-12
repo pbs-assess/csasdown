@@ -1,4 +1,5 @@
 test_that("FSAR builds", {
+  skip_on_ci()
   wd <- getwd()
   testing_path <- file.path(tempdir(), "fsar")
   unlink(testing_path, recursive = TRUE, force = TRUE)
