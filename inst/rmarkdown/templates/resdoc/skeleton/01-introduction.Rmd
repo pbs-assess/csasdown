@@ -22,8 +22,6 @@ and bulleted lists:
 - Item 2
 :::
 
-although for now you'll have to use those begin/end code tags so the correct styles get applied by csasdown.
-
 This is a reference to a figure: Figure \@ref(fig:example-fig).
 
 This is a reference to a supplemental figure: Figure \@ref(fig:fig-biology-example).
