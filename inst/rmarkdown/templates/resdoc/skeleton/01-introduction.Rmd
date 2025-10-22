@@ -10,21 +10,17 @@ Research Documents explain technical information and data to support the advice.
 
 CSAS allows ordered lists:
 
-%begin-enumerate%
-
+::: {custom-style="List Number"}
 1. Item 1
 2. Item 2
-
-%end-enumerate%
+:::
 
 and bulleted lists:
 
-%begin-itemize%
-
+::: {custom-style="List Bullet"}
 - Item 1
 - Item 2
-
-%end-itemize%
+:::
 
 although for now you'll have to use those begin/end code tags so the correct styles get applied by csasdown.
 
