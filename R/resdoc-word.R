@@ -17,15 +17,13 @@ resdoc_docx <- function(...) {
   ## Created another reference docx with "Table Caption" as a style (default name)
   ## and it worked. Revert to standard reference docx if issue is resolved.
   ##
-  ## 2024-10-21: Copied ordered (ol style) and unordered list (ul style) styles made
-  ##             for the fsar-template.docx into resdoc-content.docx
-  ##
   # file <- if (fr()) "RES2021-fra-content.docx" else "RES2021-eng-content.docx"
   file <- "resdoc-content.docx"
   base <- officedown::rdocx_document(...,
     base_format = "bookdown::word_document2",
     number_sections = FALSE,
     tables = list(
+      style = "Body Text",
       layout = "autofit",
       caption = list(
         style = "Table Caption",
@@ -38,7 +36,7 @@ resdoc_docx <- function(...) {
       )
     ),
     plots = list(
-      style = "Figure",
+      style = "Caption - Figure",
       align = "center",
       caption = list(
         style = "Caption - Figure",

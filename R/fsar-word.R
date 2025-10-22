@@ -12,15 +12,14 @@
 fsar_docx <- function(...) {
   ## Several modifications were made to the fsar template
   ## 1) bookmarks were added to headers and footers for officer replacement below
-  ## 2) a border was added to the context style and the table was removed
-  ## 3) ordered (ol style) and unordered list (ul style) styles manually added to template
-  ## 4) created a Table Caption style since Caption - Table was not being applied. May be a bug (https://github.com/davidgohel/officedown/issues/112).
-  ## 5) Added First Paragraph style to avoid issues with Body Text not being applied to the first paragraph of each section.
+  ## 2) created a Table Caption style since Caption - Table was not being applied. May be a bug (https://github.com/davidgohel/officedown/issues/112).
+  ## 3) Added First Paragraph style to avoid issues with Body Text not being applied to the first paragraph of each section.
   file <- "fsar-template.docx"
   base <- officedown::rdocx_document(...,
     base_format = "bookdown::word_document2",
     number_sections = FALSE,
     tables = list(
+      style = "Body Text",
       layout = "autofit",
       caption = list(
         style = "Caption - Table",
@@ -33,7 +32,7 @@ fsar_docx <- function(...) {
       )
     ),
     plots = list(
-      style = "Normal",
+      style = "Caption - Figure",
       align = "center",
       caption = list(
         style = "Caption - Figure",
