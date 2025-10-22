@@ -46,10 +46,6 @@ resdoc_docx <- function(...) {
         fp_text = officer::fp_text_lite(bold = FALSE)
       )
     ),
-    lists = list(
-      ol.style = "ol style",
-      ul.style = "ul style"
-    ),
     mapstyles = list(
       "Body Text" = c("Normal", "First Paragraph")
       # "Heading 1 with numbers" = "heading 1",
