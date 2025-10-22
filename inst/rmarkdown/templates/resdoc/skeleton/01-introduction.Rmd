@@ -11,16 +11,25 @@ Research Documents explain technical information and data to support the advice.
 CSAS allows ordered lists:
 
 ::: {custom-style="List Number"}
+
 1. Item 1
-2. Item 2
+
+1. Item 2
+
 :::
 
 and bulleted lists:
 
 ::: {custom-style="List Bullet"}
+
 - Item 1
+
 - Item 2
+
 :::
+
+
+Note that you *must* have blank lines between the list elements for the proper CSAS styles to be applied. Sub-list items are not supported (you would have to manually apply the List Number 2 or List Bullet 2 style after).
 
 This is a reference to a figure: Figure \@ref(fig:example-fig).
 
