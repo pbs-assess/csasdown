@@ -55,6 +55,7 @@ output:
 knit: (function(input, ...) csasdown2::render()) # so the RStudio "Knit" button works
 link-citations: true
 bibliography: bib/refs.bib # adjust or list multiple if desired
+csl: csl/csas.csl
 ---
 
 ```{r setup, echo=FALSE, cache=FALSE, message=FALSE, results='hide', warning=FALSE}
