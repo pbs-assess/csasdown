@@ -145,6 +145,10 @@ render_sar <- function(config_file = "_bookdown.yml", ...) {
     officer::body_add_docx(src = system.file("graphics", "mobius_loop.docx", package = "csasdown"))
 
   print(doc, target = "_book/fsar.docx")
+
+  # Fix list styles based on markers
+  fix_list_styles_with_markers("_book/fsar.docx")
+
   cli_inform("Render completed")
 
   # Reset appendix counter for next render

@@ -10,17 +10,21 @@ Research Documents explain technical information and data to support the advice.
 
 CSAS allows ordered lists:
 
-::: {custom-style="List Number"}
+%begin-enumerate%
+
 1. Item 1
 2. Item 2
-:::
+
+%end-enumerate%
 
 and bulleted lists:
 
-::: {custom-style="List Bullet"}
+%begin-itemize%
+
 - Item 1
 - Item 2
-:::
+
+%end-itemize%
 
 This is a reference to a figure: Figure \@ref(fig:example-fig).
 

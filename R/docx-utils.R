@@ -608,6 +608,143 @@ fix_table_caption_alignment <- function(docx_file, reference_docx = NULL) {
   invisible(docx_file)
 }
 
+#' Fix list styles based on markers in Word XML
+#'
+#' @description Applies "List Number" or "List Bullet" styles to paragraphs
+#' between special markers (%begin-enumerate%, %end-enumerate%, %begin-itemize%,
+#' %end-itemize%) and removes the marker paragraphs.
+#'
+#' @param xml_content Character string containing XML content
+#' @return Modified XML content as character string
+#' @keywords internal
+#' @noRd
+fix_list_styles_xml <- function(xml_content) {
+  # Simple approach: Find patterns and use gsub with backreferences
+  # to apply styles between markers, then remove marker paragraphs
+
+  # Pattern: Between %begin-enumerate% and %end-enumerate%, find all <w:pPr>
+  # and ensure they have <w:pStyle w:val="List Number"/>
+
+  # Apply "ListNumber" style: Find all paragraphs between enumerate markers
+  # Use a while loop to replace ALL occurrences
+  while (grepl('(?s)%begin-enumerate%.*?<w:pPr>\\s*<w:pStyle w:val="(?!ListNumber)[^"]*"/>.*?%end-enumerate%', xml_content, perl = TRUE)) {
+    xml_content <- gsub(
+      '(?s)(%begin-enumerate%.*?)(<w:pPr>)\\s*<w:pStyle w:val="(?!ListNumber)[^"]*"/>(.*?%end-enumerate%)',
+      '\\1\\2<w:pStyle w:val="ListNumber"/>\\3',
+      xml_content,
+      perl = TRUE
+    )
+  }
+
+  # Apply "ListNumber" where pStyle is missing
+  while (grepl('(?s)%begin-enumerate%.*?<w:pPr>(?!\\s*<w:pStyle).*?%end-enumerate%', xml_content, perl = TRUE)) {
+    xml_content <- gsub(
+      '(?s)(%begin-enumerate%.*?)(<w:pPr>)((?!\\s*<w:pStyle)[^<]*<)(.*?%end-enumerate%)',
+      '\\1\\2<w:pStyle w:val="ListNumber"/>\\3\\4',
+      xml_content,
+      perl = TRUE
+    )
+  }
+
+  # Apply "ListBullet" style: Find all paragraphs between itemize markers
+  while (grepl('(?s)%begin-itemize%.*?<w:pPr>\\s*<w:pStyle w:val="(?!ListBullet)[^"]*"/>.*?%end-itemize%', xml_content, perl = TRUE)) {
+    xml_content <- gsub(
+      '(?s)(%begin-itemize%.*?)(<w:pPr>)\\s*<w:pStyle w:val="(?!ListBullet)[^"]*"/>(.*?%end-itemize%)',
+      '\\1\\2<w:pStyle w:val="ListBullet"/>\\3',
+      xml_content,
+      perl = TRUE
+    )
+  }
+
+  # Apply "ListBullet" where pStyle is missing
+  while (grepl('(?s)%begin-itemize%.*?<w:pPr>(?!\\s*<w:pStyle).*?%end-itemize%', xml_content, perl = TRUE)) {
+    xml_content <- gsub(
+      '(?s)(%begin-itemize%.*?)(<w:pPr>)((?!\\s*<w:pStyle)[^<]*<)(.*?%end-itemize%)',
+      '\\1\\2<w:pStyle w:val="ListBullet"/>\\3\\4',
+      xml_content,
+      perl = TRUE
+    )
+  }
+
+  # Now remove marker paragraphs
+  # Use (?s) for DOTALL mode and negative lookahead to avoid crossing paragraph boundaries
+  xml_content <- gsub(
+    '(?s)<w:p>(?:(?!</w:p>).)*%begin-enumerate%(?:(?!</w:p>).)*</w:p>',
+    '',
+    xml_content,
+    perl = TRUE
+  )
+
+  xml_content <- gsub(
+    '(?s)<w:p>(?:(?!</w:p>).)*%end-enumerate%(?:(?!</w:p>).)*</w:p>',
+    '',
+    xml_content,
+    perl = TRUE
+  )
+
+  xml_content <- gsub(
+    '(?s)<w:p>(?:(?!</w:p>).)*%begin-itemize%(?:(?!</w:p>).)*</w:p>',
+    '',
+    xml_content,
+    perl = TRUE
+  )
+
+  xml_content <- gsub(
+    '(?s)<w:p>(?:(?!</w:p>).)*%end-itemize%(?:(?!</w:p>).)*</w:p>',
+    '',
+    xml_content,
+    perl = TRUE
+  )
+
+  xml_content
+}
+
+#' Fix list styles in Word document using markers
+#'
+#' @description Post-processes a .docx file to apply correct list styles
+#' ("List Number" or "List Bullet") to paragraphs between special markers,
+#' then removes the markers.
+#'
+#' @param docx_file Path to the .docx file to fix
+#' @keywords internal
+#' @noRd
+fix_list_styles_with_markers <- function(docx_file) {
+  # Create temporary directory for extraction
+  temp_dir <- tempfile()
+  dir.create(temp_dir)
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+
+  # Extract the .docx (which is a zip file)
+  utils::unzip(docx_file, exdir = temp_dir)
+
+  # Process main document.xml
+  doc_xml_path <- file.path(temp_dir, "word", "document.xml")
+  if (file.exists(doc_xml_path)) {
+    xml_content <- readLines(doc_xml_path, warn = FALSE)
+    xml_content <- paste(xml_content, collapse = "\n")
+    xml_content <- fix_list_styles_xml(xml_content)
+    writeLines(xml_content, doc_xml_path)
+  }
+
+  # Re-zip the modified files back to .docx
+  curr_dir <- getwd()
+  setwd(temp_dir)
+
+  # Create new zip with all files in a temp location
+  temp_zip <- tempfile(fileext = ".zip")
+  files_to_zip <- list.files(recursive = TRUE, all.files = TRUE, include.dirs = FALSE)
+  utils::zip(temp_zip, files_to_zip, flags = "-r9Xq")
+
+  setwd(curr_dir)
+
+  # Replace original file with the fixed version
+  unlink(docx_file)
+  file.copy(temp_zip, docx_file, overwrite = TRUE)
+  unlink(temp_zip)
+
+  invisible(docx_file)
+}
+
 #' Add table caption fix post-processor to output format
 #'
 #' @description Wraps an officedown output format with a post-processor that

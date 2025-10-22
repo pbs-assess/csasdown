@@ -153,6 +153,9 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
   # Fix table caption alignment in the extracted content
   fix_table_caption_alignment("tmp-content.docx", reference_docx = "resdoc-content.docx")
 
+  # Fix list styles in the extracted content
+  fix_list_styles_with_markers("tmp-content.docx")
+
   frontmatter <- officer::read_docx(system.file("csas-docx", "resdoc-frontmatter.docx", package = "csasdown2")) |>
     officer::headers_replace_text_at_bkm("region", x$english_region) |>
     officer::headers_replace_text_at_bkm("year", as.character(x$year)) |>
@@ -179,6 +182,9 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
 
   # Fix table caption alignment in the final assembled document
   fix_table_caption_alignment(book_filename, reference_docx = "resdoc-content.docx")
+
+  # Fix list styles based on markers
+  fix_list_styles_with_markers(book_filename)
 
   if (!keep_files) {
     unlink(c(
