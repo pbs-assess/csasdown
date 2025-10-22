@@ -59,6 +59,47 @@ fix_table_caption_xml <- function(xml_content) {
   xml_content
 }
 
+#' Fix table cell paragraph styles
+#'
+#' @description Replaces Normal style with BodyText style in table cell content.
+#' The officedown mapstyles parameter should handle this, but it doesn't apply
+#' to table cell content, only to regular paragraphs.
+#'
+#' @param xml_content Character string containing XML content
+#' @return Modified XML content as character string
+#' @keywords internal
+#' @noRd
+fix_table_cell_styles_xml <- function(xml_content) {
+  # Inject BodyText style into table cell paragraphs and remove direct font size formatting
+
+  # Step 1: Remove duplicate BodyText styles (function may be called multiple times)
+  xml_content <- gsub(
+    '(<w:pPr>)(?:<w:pStyle w:val="BodyText"/>)+',
+    '\\1<w:pStyle w:val="BodyText"/>',
+    xml_content,
+    perl = TRUE
+  )
+
+  # Step 2: Inject BodyText style into table cell paragraphs that don't have it
+  # Pattern: Find <w:pPr> immediately following </w:tcPr><w:p> that doesn't have BodyText
+  xml_content <- gsub(
+    '(</w:tcPr><w:p><w:pPr>)(?!<w:pStyle w:val="BodyText"/>)',
+    '\\1<w:pStyle w:val="BodyText"/>',
+    xml_content,
+    perl = TRUE
+  )
+
+  # Step 3: Remove direct font size formatting (only 10pt = val="20")
+  # This allows the BodyText style's font size (11pt) to take effect
+  # We only remove size 20 (10pt) which is what flextable typically applies
+  # This is much safer than trying to match table cell boundaries
+
+  xml_content <- gsub('<w:sz w:val="20"/>', '', xml_content, fixed = TRUE)
+  xml_content <- gsub('<w:szCs w:val="20"/>', '', xml_content, fixed = TRUE)
+
+  xml_content
+}
+
 #' Fix appendix cross-references in Word XML
 #'
 #' @description Modifies REF fields that point to appendix figures/tables to display
@@ -451,7 +492,7 @@ inject_styles_into_styles_xml <- function(styles_xml_path, style_definitions, re
   invisible(NULL)
 }
 
-#' Process document.xml with table caption fixes
+#' Process document.xml with table fixes
 #'
 #' @param doc_xml_path Path to document.xml file
 #' @keywords internal
@@ -464,6 +505,7 @@ process_document_xml <- function(doc_xml_path) {
   xml_content <- readLines(doc_xml_path, warn = FALSE)
   xml_content <- paste(xml_content, collapse = "\n")
   xml_content <- fix_table_caption_xml(xml_content)
+  xml_content <- fix_table_cell_styles_xml(xml_content)
   writeLines(xml_content, doc_xml_path)
 
   invisible(NULL)
