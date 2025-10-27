@@ -70,32 +70,90 @@ fix_table_caption_xml <- function(xml_content) {
 #' @keywords internal
 #' @noRd
 fix_table_cell_styles_xml <- function(xml_content) {
-  # Inject BodyText style into table cell paragraphs and remove direct font size formatting
+  # Inject appropriate styles into table cell paragraphs:
+  # - First row (header): Caption-Table (font size removed to use style default)
+  # - Other rows (body): BodyText (keep 10pt font size)
 
-  # Step 1: Remove duplicate BodyText styles (function may be called multiple times)
+  # Step 1: Remove duplicate styles (function may be called multiple times)
   xml_content <- gsub(
-    '(<w:pPr>)(?:<w:pStyle w:val="BodyText"/>)+',
-    '\\1<w:pStyle w:val="BodyText"/>',
+    '(<w:pPr>)(?:<w:pStyle w:val="(?:BodyText|Caption-Table)"/>)+',
+    '\\1',
     xml_content,
     perl = TRUE
   )
 
-  # Step 2: Inject BodyText style into table cell paragraphs that don't have it
-  # Pattern: Find <w:pPr> immediately following </w:tcPr><w:p> that doesn't have BodyText
-  xml_content <- gsub(
-    '(</w:tcPr><w:p><w:pPr>)(?!<w:pStyle w:val="BodyText"/>)',
-    '\\1<w:pStyle w:val="BodyText"/>',
-    xml_content,
-    perl = TRUE
-  )
+  # Step 2: Process each table individually to track row positions
+  # Split content by tables
+  table_pattern <- '<w:tbl[^>]*>.*?</w:tbl>'
+  tables <- gregexpr(table_pattern, xml_content, perl = TRUE)
 
-  # Step 3: Remove direct font size formatting (only 10pt = val="20")
-  # This allows the BodyText style's font size (11pt) to take effect
-  # We only remove size 20 (10pt) which is what flextable typically applies
-  # This is much safer than trying to match table cell boundaries
+  if (tables[[1]][1] != -1) {
+    table_matches <- regmatches(xml_content, tables)[[1]]
 
-  xml_content <- gsub('<w:sz w:val="20"/>', '', xml_content, fixed = TRUE)
-  xml_content <- gsub('<w:szCs w:val="20"/>', '', xml_content, fixed = TRUE)
+    # Process each table
+    for (i in seq_along(table_matches)) {
+      original_table <- table_matches[i]
+      modified_table <- original_table
+
+      # Find all rows in this table
+      row_pattern <- '<w:tr[^>]*>.*?</w:tr>'
+      rows <- gregexpr(row_pattern, modified_table, perl = TRUE)
+
+      if (rows[[1]][1] != -1) {
+        row_matches <- regmatches(modified_table, rows)[[1]]
+
+        # Process each row
+        for (row_idx in seq_along(row_matches)) {
+          original_row <- row_matches[row_idx]
+          modified_row <- original_row
+
+          # Determine style based on row position
+          is_header <- row_idx == 1
+          style_name <- if (is_header) "Caption-Table" else "BodyText"
+
+          # Inject style into table cell paragraphs that don't have a style
+          # Pattern: Find <w:pPr> immediately following </w:tcPr><w:p>
+          modified_row <- gsub(
+            '(</w:tcPr><w:p><w:pPr>)(?!<w:pStyle)',
+            paste0('\\1<w:pStyle w:val="', style_name, '"/>'),
+            modified_row,
+            perl = TRUE
+          )
+
+          # Remove font size from header row only (let Caption-Table style control it)
+          if (is_header) {
+            modified_row <- gsub('<w:sz w:val="20"/>', '', modified_row, fixed = TRUE)
+            modified_row <- gsub('<w:szCs w:val="20"/>', '', modified_row, fixed = TRUE)
+          }
+
+          # Remove Helvetica font specifications from all table cells
+          # Let the Word styles (Caption-Table or BodyText) control the font
+          modified_row <- gsub(
+            '<w:rFonts w:ascii="Helvetica" w:hAnsi="Helvetica" w:eastAsia="Helvetica" w:cs="Helvetica"/>',
+            '<w:rFonts/>',
+            modified_row,
+            fixed = TRUE
+          )
+
+          # Replace the row in the table
+          modified_table <- sub(
+            fixed = TRUE,
+            pattern = original_row,
+            replacement = modified_row,
+            x = modified_table
+          )
+        }
+      }
+
+      # Replace the table in the content
+      xml_content <- sub(
+        fixed = TRUE,
+        pattern = original_table,
+        replacement = modified_table,
+        x = xml_content
+      )
+    }
+  }
 
   xml_content
 }
@@ -503,7 +561,7 @@ process_document_xml <- function(doc_xml_path) {
   }
 
   xml_content <- readLines(doc_xml_path, warn = FALSE)
-  xml_content <- paste(xml_content, collapse = "\n")
+  xml_content <- paste(xml_content, collapse = "")
   xml_content <- fix_table_caption_xml(xml_content)
   xml_content <- fix_table_cell_styles_xml(xml_content)
   writeLines(xml_content, doc_xml_path)
