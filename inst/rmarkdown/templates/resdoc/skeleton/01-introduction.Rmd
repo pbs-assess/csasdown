@@ -88,8 +88,14 @@ Here's a reference: [@francis2011]. This `francis2011` entry appears in a file c
 
 **Tips for Bibliographies**
 
+::: {custom-style="List Bullet"}
+
 - The cite key (a citation's label) needs to be unique from the other entries.
+
 - Bibliographies made using BibTeX (whether manually or using a manager) accept LaTeX markup, so you can italicize and add symbols as necessary.
+
 - To force capitalization in an article title or where all lowercase is generally used, bracket the capitalized word in curly braces. E.g. `{Pacific Cod}`.
+
+:::
 
 CSAS style requires the bibliography to be before the appendices and before tables and figures if you keep those together at the end of your document.
