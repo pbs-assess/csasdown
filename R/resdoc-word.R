@@ -117,7 +117,7 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
     ":::",
     "\n**Aussi disponible en fran\u00e7ais:**\n",
     '::: {custom-style="citation"}',
-    paste0(trimws(x$french_author_list), " ", x$year, ". ", trimws(x$french_title), ". Secr. can. de consult. sci. du MPO. Doc. de rech. ", x$year, "/", x$report_number, ". ", x$french_preamble_pages, " + ", x$french_content_pages, " p."),
+    paste0("*", trimws(x$french_author_list), " ", x$year, ". ", trimws(x$french_title), ". Secr. can. de consult. sci. du MPO. Doc. de rech. ", x$year, "/", x$report_number, ". ", x$french_preamble_pages, " + ", x$french_content_pages, " p.*"),
     ":::"
   )
   writeLines(md, "tmp-citation.md")
