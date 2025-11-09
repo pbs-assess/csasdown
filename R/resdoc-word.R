@@ -1,7 +1,7 @@
-#' Creates an Microsoft Word CSAS-formatted document
+#' Create .docx CSAS-formatted documents
 #'
-#' @description This is a function called in output in the YAML of the
-#' `index.Rmd` file to specify the creation of a Microsoft Word version of the
+#' @description This is a function called within the YAML of the
+#' `index.Rmd` file to specify the creation of a .docx version of a
 #' Research Document or Science Response.
 #'
 #' @param ... Other arguments to [officedown::rdocx_document()]
@@ -12,12 +12,9 @@
 #' @export
 
 resdoc_docx <- function(...) {
-  ## Table caption style (Caption - Table) was not being applied using the standard
-  ## reference docx. May be a bug (https://github.com/davidgohel/officedown/issues/112).
-  ## Created another reference docx with "Table Caption" as a style (default name)
-  ## and it worked. Revert to standard reference docx if issue is resolved.
-  ##
-  # file <- if (fr()) "RES2021-fra-content.docx" else "RES2021-eng-content.docx"
+  # dots <- list(...)
+  # french <- isTRUE(dots$french)
+
   file <- "resdoc-content.docx"
   base <- officedown::rdocx_document(...,
     base_format = "bookdown::word_document2",
@@ -88,21 +85,31 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
   if (verbose) cli_inform("Adding frontmatter to the Research Document using the officer package...")
 
   x <- rmarkdown::yaml_front_matter(index_fn)
+  french <- isTRUE(x$output[[1]]$french)
 
-  ## This reference docx only includes styles; headers and footers were removed since
-  ## they are included in the frontmatter docx.
+  # This reference docx only includes styles; headers and footers were removed since
+  # they are included in the frontmatter docx.
   reference_fn <- system.file("csas-docx", "resdoc-blank-content.docx", package = "csasdown2")
 
-  ## Extract yaml front matter and construct md files, then use pandoc_convert to
-  ## export content to word. The officer package is latter used to add said content
-  ## to one frontmatter document. Applying this approach rather than using officer
-  ## text replacement since it is not set-up to interpret markdown syntax.
+  # Extract yaml front matter and construct md files, then use pandoc_convert to
+  # export content to word. The officer package is later used to add said content
+  # to one frontmatter document. Applying this approach rather than using officer
+  # text replacement since it is not set-up to interpret markdown syntax.
 
-  md <- c(
-    '::: {custom-style="Cover: Document title"}', x$english_title, ":::",
-    '::: {custom-style="Cover: Author"}', x$english_author, ":::",
-    '::: {custom-style="Cover: Address"}', x$english_address, ":::"
-  )
+  if (!french) {
+    md <- c(
+      '::: {custom-style="Cover: Document title"}', x$english_title, ":::",
+      '::: {custom-style="Cover: Author"}', x$english_author, ":::",
+      '::: {custom-style="Cover: Address"}', x$english_address, ":::"
+    )
+  } else {
+    md <- c(
+      '::: {custom-style="Cover: Document title"}', x$french_title, ":::",
+      '::: {custom-style="Cover: Author"}', x$french_author, ":::",
+      '::: {custom-style="Cover: Address"}', x$french_address, ":::"
+    )
+  }
+
   writeLines(md, "tmp-titlepage.md")
   rmarkdown::pandoc_convert("tmp-titlepage.md",
     to = "docx",
@@ -110,16 +117,51 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
     options = paste0("--reference-doc=", reference_fn)
   )
 
-  md <- c(
-    "\n**Correct citation for this publication:**\n",
-    '::: {custom-style="citation"}',
-    paste0(trimws(x$english_author_list), " ", x$year, ". ", trimws(x$english_title), ". DFO Can. Sci. Advis. Sec. Res. Doc. ", x$year, "/", x$report_number, ". ", x$english_preamble_pages, " + ", x$english_content_pages, " p."),
-    ":::",
-    "\n**Aussi disponible en fran\u00e7ais:**\n",
-    '::: {custom-style="citation"}',
-    paste0("*", trimws(x$french_author_list), " ", x$year, ". ", trimws(x$french_title), ". Secr. can. de consult. sci. du MPO. Doc. de rech. ", x$year, "/", x$report_number, ". ", x$french_preamble_pages, " + ", x$french_content_pages, " p.*"),
-    ":::"
+  english_citation <- paste0(
+    trimws(x$english_author_list), " ",
+    x$year, ". ",
+    trimws(x$english_title),
+    ". DFO Can. Sci. Advis. Sec. Res. Doc. ",
+    x$year, "/",
+    x$report_number, ". ",
+    x$english_preamble_pages, " + ",
+    x$english_content_pages, " p."
   )
+
+  french_citation <- paste0(
+    trimws(x$english_author_list), " ",
+    x$year, ". ",
+    trimws(x$english_title),
+    ". DFO Can. Sci. Advis. Sec. Res. Doc. ",
+    x$year, "/",
+    x$report_number, ". ",
+    x$english_preamble_pages, " + ",
+    x$english_content_pages, " p."
+  )
+
+  if (!french) {
+    md <- c(
+      "\n**Correct citation for this publication:**\n",
+      '::: {custom-style="citation"}',
+      english_citation,
+      ":::",
+      "\n**Aussi disponible en fran\u00e7ais:**\n",
+      '::: {custom-style="citation"}',
+      french_citation,
+      ":::"
+    )
+  } else {
+    md <- c(
+      "\n**La présente publication doit être citée comme suit :**\n",
+      '::: {custom-style="citation"}',
+      french_citation,
+      ":::",
+      "\n**Also available in English :**\n",
+      '::: {custom-style="citation"}',
+      english_citation,
+      ":::"
+    )
+  }
   writeLines(md, "tmp-citation.md")
   rmarkdown::pandoc_convert("tmp-citation.md",
     to = "docx",
@@ -134,9 +176,8 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
     options = paste0("--reference-doc=", reference_fn)
   )
 
-  ## Drop returns left from empty title and abstract entries
+  # Drop returns left from empty title and abstract entries
   book_filename <- paste0("_book/", get_book_filename(yaml_fn), ".docx")
-  # book_filename <- "_book/resdoc.docx"
   content <- officer::read_docx(book_filename) |>
     officer::cursor_begin() |>
     officer::body_remove() |>
@@ -147,17 +188,23 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
   # Fix table caption alignment in the extracted content
   fix_table_caption_alignment("tmp-content.docx", reference_docx = "resdoc-content.docx")
 
-  frontmatter <- officer::read_docx(system.file("csas-docx", "resdoc-frontmatter.docx", package = "csasdown2")) |>
-    officer::headers_replace_text_at_bkm("region", x$english_region) |>
+  front_filename <- if (french) "resdoc-frontmatter-french.docx" else "resdoc-frontmatter-english.docx"
+  toc_keyword <- if (french) "TABLE DES MATIÈRES" else "TABLE OF CONTENTS"
+  abstract_keyword <- if (french) "RÉSUMÉ" else "ABSTRACT"
+  region <- if (french) x$french_region else x$english_region
+  month <- if (french) x$french_month else x$english_month
+
+  frontmatter <- officer::read_docx(system.file("csas-docx", front_filename, package = "csasdown2")) |>
+    officer::headers_replace_text_at_bkm("region", region) |>
     officer::headers_replace_text_at_bkm("year", as.character(x$year)) |>
     officer::headers_replace_text_at_bkm("report_number", as.character(x$report_number)) |>
-    officer::footers_replace_text_at_bkm("date", paste(x$english_month, x$year)) |>
+    officer::footers_replace_text_at_bkm("date", paste(month, x$year)) |>
     officer::cursor_begin() |>
     officer::body_add_docx("tmp-titlepage.docx", pos = "before") |>
-    officer::cursor_reach(keyword = "TABLE OF CONTENTS") |>
+    officer::cursor_reach(keyword = toc_keyword) |>
     officer::cursor_backward() |>
     officer::body_add_docx("tmp-citation.docx", pos = "before") |>
-    officer::cursor_reach(keyword = "ABSTRACT") |>
+    officer::cursor_reach(keyword = abstract_keyword) |>
     officer::body_add_docx("tmp-abstract.docx", pos = "after") |>
     officer::cursor_end() |>
     officer::body_remove()
@@ -165,10 +212,9 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
 
   doc <- officer::read_docx("tmp-frontmatter.docx") |>
     officer::body_add_docx("tmp-content.docx") |>
-    officer::cursor_reach(keyword = "TABLE OF CONTENTS") |>
+    officer::cursor_reach(keyword = toc_keyword) |>
     officer::body_add_toc()
 
-  # print(doc, target = "tmp-doc.docx")
   print(doc, target = book_filename)
 
   # Fix table caption alignment in the final assembled document

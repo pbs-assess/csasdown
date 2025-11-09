@@ -8,7 +8,7 @@ english_author: |
   First. M. Last^1^ and
   Alex B. Smith^2^
 french_author: |
-  First. M. Last^1^ and
+  First. M. Last^1^ et
   Alex B. Smith^2^
 
 english_author_list: |
@@ -51,7 +51,7 @@ abstract: |
 
 output:
  csasdown2::resdoc_docx:
-   french: false
+   french: false # toggle this to switch languages
 knit: (function(input, ...) csasdown2::render()) # so the RStudio "Knit" button works
 link-citations: true
 bibliography: bib/refs.bib # adjust or list multiple if desired
