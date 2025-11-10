@@ -70,6 +70,43 @@ resdoc_docx <- function(...) {
   base
 }
 
+#' Clean up duplicate footers after document merge
+#'
+#' @param docx_path Path to the .docx file to clean
+#' @keywords internal
+clean_duplicate_footers <- function(docx_path) {
+  temp_dir <- tempfile()
+  dir.create(temp_dir)
+
+  unzip(docx_path, exdir = temp_dir)
+
+  doc_xml_path <- file.path(temp_dir, "word", "document.xml")
+  doc <- xml2::read_xml(doc_xml_path)
+  ns <- xml2::xml_ns(doc)
+
+  footer_refs <- xml2::xml_find_all(doc, ".//w:footerReference", ns)
+
+  for (ref in footer_refs) {
+    attrs <- xml2::xml_attrs(ref)
+    if ("id" %in% names(attrs)) {
+      xml2::xml_set_attr(ref, "id", NULL)
+    }
+  }
+
+  xml2::write_xml(doc, doc_xml_path)
+
+  old_wd <- getwd()
+  on.exit(setwd(old_wd), add = TRUE)
+
+  setwd(temp_dir)
+  files <- list.files(recursive = TRUE, full.names = FALSE, include.dirs = FALSE)
+  zip(zipfile = file.path(old_wd, docx_path), files = files, flags = "-q")
+
+  unlink(temp_dir, recursive = TRUE)
+
+  invisible()
+}
+
 #' Add frontmatter to Res Doc word file
 #'
 #' Add title page and table of contents to a Res Doc Word document.
@@ -89,7 +126,7 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
 
   # This reference docx only includes styles; headers and footers were removed since
   # they are included in the frontmatter docx.
-  reference_fn <- system.file("csas-docx", "resdoc-blank-content.docx", package = "csasdown2")
+  reference_fn <- system.file("csas-docx", "resdoc-content.docx", package = "csasdown2")
 
   # Extract yaml front matter and construct md files, then use pandoc_convert to
   # export content to word. The officer package is later used to add said content
@@ -216,6 +253,9 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
     officer::body_add_toc()
 
   print(doc, target = book_filename)
+
+  # Clean up duplicate footers from the merge
+  clean_duplicate_footers(book_filename)
 
   # Fix table caption alignment in the final assembled document
   fix_table_caption_alignment(book_filename, reference_docx = "resdoc-content.docx")
