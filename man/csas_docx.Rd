@@ -22,7 +22,7 @@ template
 This is a function called in output in the YAML of the \code{index.Rmd} file
 to specify the creation of an FSAR word document.
 
-This is a function called in output in the YAML of the
-\code{index.Rmd} file to specify the creation of a Microsoft Word version of the
+This is a function called within the YAML of the
+\code{index.Rmd} file to specify the creation of a .docx version of a
 Research Document or Science Response.
 }

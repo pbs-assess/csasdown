@@ -74,6 +74,7 @@ resdoc_docx <- function(...) {
 #'
 #' @param docx_path Path to the .docx file to fix
 #' @keywords internal
+#' @noRd
 fix_missing_namespaces <- function(docx_path) {
   temp_dir <- tempfile()
   dir.create(temp_dir)
@@ -110,6 +111,7 @@ fix_missing_namespaces <- function(docx_path) {
 #'
 #' @param docx_path Path to the .docx file to fix
 #' @keywords internal
+#' @noRd
 disable_even_odd_headers <- function(docx_path) {
   temp_dir <- tempfile()
   dir.create(temp_dir)
@@ -221,7 +223,7 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
     )
   } else {
     md <- c(
-      "\n**La présente publication doit être citée comme suit :**\n",
+      "\n**La pr\u00e9sente publication doit \u00eatre cit\u00e9e comme suit :**\n",
       '::: {custom-style="citation"}',
       french_citation,
       ":::",
@@ -263,8 +265,8 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
   fix_table_caption_alignment("tmp-content.docx", reference_docx = "resdoc-content.docx")
 
   front_filename <- if (french) "resdoc-frontmatter-french.docx" else "resdoc-frontmatter-english.docx"
-  toc_keyword <- if (french) "TABLE DES MATIÈRES" else "TABLE OF CONTENTS"
-  abstract_keyword <- if (french) "RÉSUMÉ" else "ABSTRACT"
+  toc_keyword <- if (french) "TABLE DES MATI\u00c8RES" else "TABLE OF CONTENTS"
+  abstract_keyword <- if (french) "R\u00c9SUM\u00c9" else "ABSTRACT"
   region <- if (french) x$french_region else x$english_region
   month <- if (french) x$french_month else x$english_month
 
