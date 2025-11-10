@@ -107,40 +107,6 @@ fix_missing_namespaces <- function(docx_path) {
   invisible()
 }
 
-#' Disable even/odd page headers and footers
-#'
-#' @param docx_path Path to the .docx file to fix
-#' @keywords internal
-#' @noRd
-disable_even_odd_headers <- function(docx_path) {
-  temp_dir <- tempfile()
-  dir.create(temp_dir)
-
-  utils::unzip(docx_path, exdir = temp_dir)
-
-  settings_path <- file.path(temp_dir, "word", "settings.xml")
-  if (file.exists(settings_path)) {
-    doc <- xml2::read_xml(settings_path)
-    ns <- xml2::xml_ns(doc)
-    nodes <- xml2::xml_find_all(doc, ".//w:evenAndOddHeaders", ns = ns)
-    if (length(nodes) > 0L) {
-      xml2::xml_remove(nodes)
-      xml2::write_xml(doc, settings_path)
-    }
-  }
-
-  old_wd <- getwd()
-  on.exit(setwd(old_wd), add = TRUE)
-
-  setwd(temp_dir)
-  files <- list.files(recursive = TRUE, full.names = FALSE, include.dirs = FALSE)
-  utils::zip(zipfile = file.path(old_wd, docx_path), files = files, flags = "-q")
-
-  unlink(temp_dir, recursive = TRUE)
-
-  invisible()
-}
-
 #' Add frontmatter to Res Doc word file
 #'
 #' Add title page and table of contents to a Res Doc Word document.
@@ -293,15 +259,13 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
 
   doc2 <- officer::read_docx("tmp-frontmatter-with-toc.docx") |>
     officer::cursor_end() |>
-    officer::body_import_docx("tmp-content.docx")
+    officer::body_import_docx("tmp-content.docx") |>
+    officer::docx_set_settings(even_and_odd_headers = FALSE)
 
   print(doc2, target = book_filename)
 
   # Fix missing namespaces from the merge
   fix_missing_namespaces(book_filename)
-
-  # Disable even/odd page headers and footers
-  disable_even_odd_headers(book_filename)
 
   # Fix table caption alignment in the final assembled document
   fix_table_caption_alignment(book_filename, reference_docx = "resdoc-content.docx")

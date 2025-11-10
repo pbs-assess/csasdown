@@ -21,7 +21,6 @@ Imports:
     officedown,
     officer,
     rmarkdown,
-    xml2,
     yaml
 Suggests:
     dplyr,
