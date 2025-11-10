@@ -70,30 +70,62 @@ resdoc_docx <- function(...) {
   base
 }
 
-#' Clean up duplicate footers after document merge
+#' Fix missing namespaces in merged document
 #'
-#' @param docx_path Path to the .docx file to clean
+#' @param docx_path Path to the .docx file to fix
 #' @keywords internal
-clean_duplicate_footers <- function(docx_path) {
+fix_missing_namespaces <- function(docx_path) {
   temp_dir <- tempfile()
   dir.create(temp_dir)
 
   unzip(docx_path, exdir = temp_dir)
 
   doc_xml_path <- file.path(temp_dir, "word", "document.xml")
-  doc <- xml2::read_xml(doc_xml_path)
-  ns <- xml2::xml_ns(doc)
+  doc_content <- readLines(doc_xml_path, warn = FALSE)
 
-  footer_refs <- xml2::xml_find_all(doc, ".//w:footerReference", ns)
-
-  for (ref in footer_refs) {
-    attrs <- xml2::xml_attrs(ref)
-    if ("id" %in% names(attrs)) {
-      xml2::xml_set_attr(ref, "id", NULL)
-    }
+  # Add missing namespace declarations to the root element if not present
+  if (!any(grepl('xmlns:a=', doc_content[1:5]))) {
+    doc_content[2] <- gsub(
+      '<w:document ',
+      '<w:document xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture" ',
+      doc_content[2]
+    )
   }
 
-  xml2::write_xml(doc, doc_xml_path)
+  writeLines(doc_content, doc_xml_path)
+
+  old_wd <- getwd()
+  on.exit(setwd(old_wd), add = TRUE)
+
+  setwd(temp_dir)
+  files <- list.files(recursive = TRUE, full.names = FALSE, include.dirs = FALSE)
+  zip(zipfile = file.path(old_wd, docx_path), files = files, flags = "-q")
+
+  unlink(temp_dir, recursive = TRUE)
+
+  invisible()
+}
+
+#' Disable even/odd page headers and footers
+#'
+#' @param docx_path Path to the .docx file to fix
+#' @keywords internal
+disable_even_odd_headers <- function(docx_path) {
+  temp_dir <- tempfile()
+  dir.create(temp_dir)
+
+  unzip(docx_path, exdir = temp_dir)
+
+  settings_path <- file.path(temp_dir, "word", "settings.xml")
+  if (file.exists(settings_path)) {
+    doc <- xml2::read_xml(settings_path)
+    ns <- xml2::xml_ns(doc)
+    nodes <- xml2::xml_find_all(doc, ".//w:evenAndOddHeaders", ns = ns)
+    if (length(nodes) > 0L) {
+      xml2::xml_remove(nodes)
+      xml2::write_xml(doc, settings_path)
+    }
+  }
 
   old_wd <- getwd()
   on.exit(setwd(old_wd), add = TRUE)
@@ -206,7 +238,12 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
     options = paste0("--reference-doc=", reference_fn)
   )
 
-  writeLines(x$abstract, "tmp-abstract.md")
+  abstract_md <- c(
+    '::: {custom-style="Body Text"}',
+    x$abstract,
+    ":::"
+  )
+  writeLines(abstract_md, "tmp-abstract.md")
   rmarkdown::pandoc_convert("tmp-abstract.md",
     to = "docx",
     output = "tmp-abstract.docx",
@@ -248,14 +285,21 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
   print(frontmatter, target = "tmp-frontmatter.docx")
 
   doc <- officer::read_docx("tmp-frontmatter.docx") |>
-    officer::body_add_docx("tmp-content.docx") |>
     officer::cursor_reach(keyword = toc_keyword) |>
     officer::body_add_toc()
+  print(doc, target = "tmp-frontmatter-with-toc.docx")
 
-  print(doc, target = book_filename)
+  doc2 <- officer::read_docx("tmp-frontmatter-with-toc.docx") |>
+    officer::cursor_end() |>
+    officer::body_import_docx("tmp-content.docx")
 
-  # Clean up duplicate footers from the merge
-  clean_duplicate_footers(book_filename)
+  print(doc2, target = book_filename)
+
+  # Fix missing namespaces from the merge
+  fix_missing_namespaces(book_filename)
+
+  # Disable even/odd page headers and footers
+  disable_even_odd_headers(book_filename)
 
   # Fix table caption alignment in the final assembled document
   fix_table_caption_alignment(book_filename, reference_docx = "resdoc-content.docx")
@@ -265,7 +309,7 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
       "tmp-titlepage.md", "tmp-titlepage.docx",
       "tmp-citation.md", "tmp-citation.docx",
       "tmp-abstract.md", "tmp-abstract.docx",
-      "tmp-frontmatter.docx", "tmp-content.docx"
+      "tmp-frontmatter.docx", "tmp-frontmatter-with-toc.docx", "tmp-content.docx"
     ))
   }
 
