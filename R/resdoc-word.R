@@ -78,7 +78,7 @@ fix_missing_namespaces <- function(docx_path) {
   temp_dir <- tempfile()
   dir.create(temp_dir)
 
-  unzip(docx_path, exdir = temp_dir)
+  utils::unzip(docx_path, exdir = temp_dir)
 
   doc_xml_path <- file.path(temp_dir, "word", "document.xml")
   doc_content <- readLines(doc_xml_path, warn = FALSE)
@@ -99,7 +99,7 @@ fix_missing_namespaces <- function(docx_path) {
 
   setwd(temp_dir)
   files <- list.files(recursive = TRUE, full.names = FALSE, include.dirs = FALSE)
-  zip(zipfile = file.path(old_wd, docx_path), files = files, flags = "-q")
+  utils::zip(zipfile = file.path(old_wd, docx_path), files = files, flags = "-q")
 
   unlink(temp_dir, recursive = TRUE)
 
@@ -114,7 +114,7 @@ disable_even_odd_headers <- function(docx_path) {
   temp_dir <- tempfile()
   dir.create(temp_dir)
 
-  unzip(docx_path, exdir = temp_dir)
+  utils::unzip(docx_path, exdir = temp_dir)
 
   settings_path <- file.path(temp_dir, "word", "settings.xml")
   if (file.exists(settings_path)) {
@@ -132,7 +132,7 @@ disable_even_odd_headers <- function(docx_path) {
 
   setwd(temp_dir)
   files <- list.files(recursive = TRUE, full.names = FALSE, include.dirs = FALSE)
-  zip(zipfile = file.path(old_wd, docx_path), files = files, flags = "-q")
+  utils::zip(zipfile = file.path(old_wd, docx_path), files = files, flags = "-q")
 
   unlink(temp_dir, recursive = TRUE)
 
