@@ -78,10 +78,6 @@ You can include most valid LaTeX math:
   (\#eq:example-eq)
 \end{equation}
 
-## FOOTNOTES
-
-You might want to footnote something.^[Footnote text.]
-
 ## BIBLIOGRAPHIES
 
 Here's a reference: [@francis2011]. This `francis2011` entry appears in a file called `refs.bib` in the `bib` folder. This bibliography database file was created by a program called BibTeX. You can call this file something else if you like (look at the YAML header in the main .Rmd file). Another example: @edwards2013 shows that. And another example: [e.g., @francis2011; @edwards2013; @swainbenoit2015].
