@@ -41,11 +41,10 @@ draft <- function(
 
   # rmarkdown::draft() does not copy files that begin with a dot (on Windows)
   # so we just rename the git ignore file
-  # if (file.exists("_gitignore")) {
-  #   file.rename("_gitignore", ".gitignore")
-  # }
-  # if (file.exists("_here")) {
-  #   file.rename("_here", ".here")
-  # }
-  # if (create_rstudio_file) create_rstudio_project_file()
+  if (file.exists("_gitignore")) {
+    file.rename("_gitignore", ".gitignore")
+  }
+  if (file.exists("_here")) {
+    file.rename("_here", ".here")
+  }
 }
