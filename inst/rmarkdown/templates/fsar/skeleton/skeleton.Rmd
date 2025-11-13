@@ -78,6 +78,6 @@ flextable::set_flextable_defaults(
   padding.top = 1,
   padding.bottom = 1,
   na_str = "-",
-  theme_fun = "theme_box"
+  theme_fun = "theme_booktabs"
 )
 ```
