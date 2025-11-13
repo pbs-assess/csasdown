@@ -12,12 +12,12 @@ csasdown2 is a rewrite of [csasdown](https://github.com/pbs-assess/csasdown) tha
 
 ## ✨ Features
 
-- 📄 **Two document types**: Research Documents and Science Advisory Reports (FSAR/SAR)
+- 📄 **Two document types**: Research Documents and Fisheries Science Advisory Reports (FSARs)
+- 🔄 **Reproducible workflow**: Integrate R code and writing to go from data to document in one pipeline
 - 🎨 **CSAS-compliant formatting**: Pre-configured Word templates with official styles
-- 🔄 **Reproducible workflow**: Integrate R code, analysis, and narrative in one place
-- 📚 **Multi-file support**: Organize large documents across multiple R Markdown files
 - 🌍 **Bilingual support**: English and French language configurations
 - ♿ **Accessibility**: Built with accessibility standards in mind
+- 📚 **Multi-file support**: Organize large documents across multiple R Markdown files
 - 📊 **Automatic numbering**: Figures, tables, and cross-references handled automatically
 - 📖 **Bibliography management**: Integrated citation and reference formatting
 
@@ -71,12 +71,12 @@ Your compiled .docx file will appear in the `_book/` directory.
 
 ## 📁 Project Structure
 
-After running `draft()`, your project will contain:
+After running `csasdown2::draft()`, your project will contain:
 
 ### Core Files
 
 - **`index.Rmd`** 📝
-  Main file containing YAML metadata (title, authors, dates, report numbers) and the first content section. This is where you configure document-wide settings.
+  Main file containing YAML metadata (title, authors, dates, report numbers) and the abstract. This is where you configure document-wide settings.
 
 - **`_bookdown.yml`** ⚙️
   Configuration file specifying the order of R Markdown files to merge, output filename, and other bookdown settings.
@@ -112,7 +112,7 @@ After running `draft()`, your project will contain:
 - Fisheries Science Advisory Reports in English and French
 - Science Responses and Technical Reports to come
 
-## 🛠️ Customization
+## 🛠 Writing a Report
 
 ### Modify YAML metadata
 
@@ -216,9 +216,9 @@ Reference with `Appendix \@ref(app:additional)`
 
 csasdown2 uses a multi-stage rendering pipeline:
 
-1. **bookdown** merges multiple R Markdown files
-2. **officedown** converts to Word with CSAS styles
-3. **officer** post-processes the document (injects frontmatter, replaces bookmarks, assembles final document)
+1. [**bookdown**](https://bookdown.org/) merges multiple R Markdown files
+2. [**officedown**](https://davidgohel.github.io/officedown/) converts to Word with CSAS styles
+3. [**officer**](https://davidgohel.github.io/officer/) post-processes the document (injects frontmatter, replaces bookmarks, assembles final document)
 
 ## 🤝 Contributing
 
