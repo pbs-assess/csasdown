@@ -4,7 +4,7 @@
 \alias{draft}
 \title{Create a new CSAS document based on a template}
 \usage{
-draft(type = c("resdoc", "fsar"), directory = getwd(), edit = FALSE, ...)
+draft(type = c("resdoc", "fsar"), directory = ".", edit = FALSE, ...)
 }
 \arguments{
 \item{type}{The type of document to draft. Must be one of \code{resdoc} or

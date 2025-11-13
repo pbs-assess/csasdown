@@ -20,7 +20,8 @@
 #' @export
 draft <- function(
     type = c("resdoc", "fsar"),
-    directory = getwd(), edit = FALSE,
+    directory = ".",
+    edit = FALSE,
     ...) {
   if (!dir.exists(directory)) {
     cli_abort("The directory {directory} does not exist")
@@ -30,8 +31,6 @@ draft <- function(
   setwd(directory)
 
   cli_inform("Drafting a new {type} project ...")
-
-  ## TODO: check for any files and abort if there are any
 
   rmarkdown::draft("index.Rmd",
     template = type,
