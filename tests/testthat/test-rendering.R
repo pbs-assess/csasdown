@@ -7,6 +7,9 @@ test_that("FSAR builds", {
   setwd(testing_path)
   suppressMessages(draft("fsar", create_dir = FALSE, edit = FALSE))
   suppressWarnings(render_sar())
+  if (FALSE) {
+    system("open _book/fsar.docx")
+  }
   expect_true(file.exists("_book/fsar.docx"))
   setwd(wd)
 })

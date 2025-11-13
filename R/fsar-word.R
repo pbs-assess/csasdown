@@ -22,7 +22,7 @@ fsar_docx <- function(...) {
       style = "Body Text",
       layout = "autofit",
       caption = list(
-        style = "Caption - Table",
+        style = "Table Caption",
         pre = "Table", sep = ". ",
         fp_text = officer::fp_text_lite(bold = FALSE)
       ),

@@ -13,8 +13,8 @@ csasdown2 is a rewrite of [csasdown](https://github.com/pbs-assess/csasdown) tha
 ## ✨ Features
 
 - 📄 **Two document types**: Research Documents and Fisheries Science Advisory Reports (FSARs)
-- 🔄 **Reproducible workflow**: Integrate R code and writing to go from data to document in one pipeline
-- 🎨 **CSAS-compliant formatting**: Pre-configured Word templates with official styles
+- 🔄 **Reproducible workflow**: Use R Markdown to go from data to document in a reproducible pipeline
+- 🎨 **CSAS-compliant formatting**: Produce Word .docx files that use the official styles
 - 🌍 **Bilingual support**: English and French language configurations
 - ♿ **Accessibility**: Built with accessibility standards in mind
 - 📚 **Multi-file support**: Organize large documents across multiple R Markdown files
@@ -49,7 +49,7 @@ Or specify an existing custom directory:
 csasdown2::draft("resdoc", directory = "my-research-doc")
 ```
 
-### Create a Science Advisory Report
+### Create a Fisheries Science Advisory Report (FSAR)
 
 ``` r
 csasdown2::draft("fsar")
@@ -63,7 +63,7 @@ Open `index.Rmd` and click the "Knit" button in RStudio, or run:
 # For Research Documents
 csasdown2::render()
 
-# For Science Advisory Reports
+# For FSARs
 csasdown2::render_sar()
 ```
 
@@ -75,16 +75,16 @@ After running `csasdown2::draft()`, your project will contain:
 
 ### Core Files
 
-- **`index.Rmd`** 📝
+- **`index.Rmd`**
   Main file containing YAML metadata (title, authors, dates, report numbers) and the abstract. This is where you configure document-wide settings.
 
-- **`_bookdown.yml`** ⚙️
+- **`_bookdown.yml`**
   Configuration file specifying the order of R Markdown files to merge, output filename, and other bookdown settings.
 
-- **`01-introduction.Rmd`, `02-methods.Rmd`, etc.** 📄
+- **`01-introduction.Rmd`, `02-methods.Rmd`, etc.**
   Chapter files for your document. Add, remove, or rename these as needed, updating `_bookdown.yml` to match.
 
-- **`99-references.Rmd`** 📚
+- **`99-references.Rmd`**
   Placeholder for the bibliography section (automatically populated from your .bib file).
 
 ### Supporting Directories

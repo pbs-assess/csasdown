@@ -147,7 +147,7 @@ fsar_plot_base(in.df, "English")
 
 [Mandatory. Maximum section length one page. Must be first section in Assessment section. If needed, this section can be duplicated for each stock or subunit, although it may be preferable to maintain one section in which all stocks and subunits are described.]
 
-[Provide information on stock status and all the key indicators for the stock(s) relevant to decision-making, over timescales relevant to the stock. Tables can be used if helpful for decision-making, for example:.] 
+[Provide information on stock status and all the key indicators for the stock(s) relevant to decision-making, over timescales relevant to the stock. Tables can be used if helpful for decision-making, for example:] 
 
 ```{r trends-tab, tab.cap = "SSB, recruitment, and fishing mortality estimates over the last five years. Lower and upper 95% confidence intervals indicated in parentheses."}
 
