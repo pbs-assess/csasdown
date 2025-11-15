@@ -127,6 +127,7 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
   # This reference docx only includes styles; headers and footers were removed since
   # they are included in the frontmatter docx.
   reference_fn <- system.file("csas-docx", "resdoc-content.docx", package = "csasdown2")
+  reference_fn_no_footer <- system.file("csas-docx", "resdoc-content-no-footers.docx", package = "csasdown2")
 
   # Extract yaml front matter and construct md files, then use pandoc_convert to
   # export content to word. The officer package is later used to add said content
@@ -151,7 +152,7 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
   rmarkdown::pandoc_convert("tmp-titlepage.md",
     to = "docx",
     output = "tmp-titlepage.docx",
-    options = paste0("--reference-doc=", reference_fn)
+    options = paste0("--reference-doc=", reference_fn_no_footer)
   )
 
   english_citation <- paste0(
