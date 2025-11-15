@@ -21,7 +21,7 @@ test_that("resdoc builds", {
   dir.create(testing_path, showWarnings = FALSE)
   setwd(testing_path)
   suppressMessages(draft("resdoc", create_dir = FALSE, edit = FALSE))
-  suppressWarnings(render())
+  suppressWarnings(csasdown2::render())
   if (FALSE) {
     system("open _book/resdoc.docx")
   }
