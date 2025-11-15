@@ -107,51 +107,6 @@ fix_missing_namespaces <- function(docx_path) {
   invisible()
 }
 
-#' Fix media files not copied by body_import_docx
-#'
-#' Workaround for officer body_import_docx() bug where image references are
-#' copied but the actual media files are not. This manually copies media files
-#' from the source document to the destination.
-#'
-#' @param dest_docx Path to destination .docx file
-#' @param source_docx Path to source .docx file that was imported
-#' @keywords internal
-#' @noRd
-fix_media_import <- function(dest_docx, source_docx) {
-  dest_dir <- tempfile()
-  source_dir <- tempfile()
-  dir.create(dest_dir)
-  dir.create(source_dir)
-
-  utils::unzip(dest_docx, exdir = dest_dir)
-  utils::unzip(source_docx, exdir = source_dir)
-
-  source_media <- file.path(source_dir, "word", "media")
-  dest_media <- file.path(dest_dir, "word", "media")
-
-  if (dir.exists(source_media)) {
-    if (!dir.exists(dest_media)) {
-      dir.create(dest_media, recursive = TRUE)
-    }
-
-    source_files <- list.files(source_media, full.names = TRUE)
-    for (f in source_files) {
-      file.copy(f, dest_media, overwrite = FALSE)
-    }
-  }
-
-  old_wd <- getwd()
-  on.exit(setwd(old_wd), add = TRUE)
-
-  setwd(dest_dir)
-  files <- list.files(recursive = TRUE, full.names = FALSE, include.dirs = FALSE)
-  utils::zip(zipfile = file.path(old_wd, dest_docx), files = files, flags = "-q")
-
-  unlink(c(dest_dir, source_dir), recursive = TRUE)
-
-  invisible(dest_docx)
-}
-
 #' Add frontmatter to Res Doc word file
 #'
 #' Add title page and table of contents to a Res Doc Word document.
@@ -303,18 +258,15 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
     officer::body_add_toc()
   print(doc, target = "tmp-frontmatter-with-toc.docx")
 
+  # Fix missing namespaces
+  fix_missing_namespaces("tmp-frontmatter-with-toc.docx")
+
   doc2 <- officer::read_docx("tmp-frontmatter-with-toc.docx") |>
     officer::cursor_end() |>
     officer::body_import_docx("tmp-content.docx") |>
     officer::docx_set_settings(even_and_odd_headers = FALSE)
 
   print(doc2, target = book_filename)
-
-  # Fix missing namespaces from the merge
-  fix_missing_namespaces(book_filename)
-
-  # Fix media files not copied by body_import_docx (workaround for officer bug)
-  fix_media_import(book_filename, "tmp-content.docx")
 
   # Fix table caption alignment in the final assembled document
   fix_table_caption_alignment(book_filename, reference_docx = "resdoc-content.docx")
