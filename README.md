@@ -12,7 +12,7 @@ csasdown2 is a rewrite of [csasdown](https://github.com/pbs-assess/csasdown) tha
 
 ## ✨ Features
 
-- 📄 **Two document types**: Research Documents and Fisheries Science Advisory Reports (FSARs)
+- 📄 **Three document types**: Research Documents, Fisheries Science Advisory Reports (FSARs), and Technical Reports
 - 🔄 **Reproducible workflow**: Use R Markdown to go from data to document in a reproducible pipeline
 - 🎨 **CSAS-compliant formatting**: Produce Word .docx files that use the official styles
 - 🌍 **Bilingual support**: English and French language configurations
@@ -55,16 +55,18 @@ csasdown2::draft("resdoc", directory = "my-research-doc")
 csasdown2::draft("fsar")
 ```
 
+### Create a Technical Report
+
+``` r
+csasdown2::draft("techreport")
+```
+
 ### Render your document
 
 Open `index.Rmd` and click the "Knit" button in RStudio, or run:
 
 ``` r
-# For Research Documents
 csasdown2::render()
-
-# For FSARs
-csasdown2::render_sar()
 ```
 
 Your compiled .docx file will appear in the `_book/` directory.
@@ -108,9 +110,10 @@ After running `csasdown2::draft()`, your project will contain:
 
 ## 📝 Document Types
 
-- Research documents in English and French
+- Research Documents in English and French
 - Fisheries Science Advisory Reports in English and French
-- Science Responses and Technical Reports to come
+- Technical Reports in English and French
+- Science Responses to come
 
 ## 🛠 Writing a Report
 

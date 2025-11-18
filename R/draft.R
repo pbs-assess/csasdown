@@ -2,8 +2,8 @@
 #'
 #' Create a draft of an R Markdown CSAS document
 #'
-#' @param type The type of document to draft. Must be one of `resdoc` or
-#' `fsar`.
+#' @param type The type of document to draft. Must be one of `resdoc`, `fsar`,
+#' or `techreport`.
 #' @param directory The directory to place the draft document files.
 #' Current directory by default
 #' @param edit `TRUE` to edit the template immediately.
@@ -16,10 +16,11 @@
 #' \dontrun{
 #' csasdown::draft("resdoc")
 #' csasdown::draft("fsar")
+#' csasdown::draft("techreport")
 #' }
 #' @export
 draft <- function(
-    type = c("resdoc", "fsar"),
+    type = c("resdoc", "fsar", "techreport"),
     directory = ".",
     edit = FALSE,
     ...) {

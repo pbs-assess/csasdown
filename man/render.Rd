@@ -2,14 +2,9 @@
 % Please edit documentation in R/render.R
 \name{render}
 \alias{render}
-\title{Render a resdoc}
+\title{Render a CSAS document}
 \usage{
-render(
-  config_file = "_bookdown.yml",
-  verbose = FALSE,
-  type = c("resdoc", "techreport"),
-  ...
-)
+render(config_file = "_bookdown.yml", verbose = FALSE, ...)
 }
 \arguments{
 \item{config_file}{YAML configuration file.}
@@ -19,5 +14,5 @@ render(
 \item{...}{Arguments to pass to \code{\link[bookdown:render_book]{bookdown::render_book()}}.}
 }
 \description{
-Render a resdoc
+Automatically detects document type from YAML and renders appropriately.
 }

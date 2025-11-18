@@ -1,4 +1,6 @@
-#' Render a resdoc
+#' Render a CSAS document
+#'
+#' Automatically detects document type from YAML and renders appropriately.
 #'
 #' @param config_file YAML configuration file.
 #' @param verbose Verbose?
@@ -8,10 +10,14 @@
 render <- function(
     config_file = "_bookdown.yml",
     verbose = FALSE,
-    type = c("resdoc", "techreport"),
     ...) {
 
-  type <- match.arg(type)
+  type <- detect_doc_type("index.Rmd")
+
+  if (type == "fsar") {
+    return(render_sar(config_file = config_file, ...))
+  }
+
   output_options <- list(pandoc_args = c("--metadata=title:", "--metadata=abstract:"))
 
   bookdown::render_book("index.Rmd",
@@ -30,7 +36,7 @@ render <- function(
   } else if (type == "techreport") {
     add_techreport_word_frontmatter("index.Rmd", yaml_fn = config_file, verbose = verbose, keep_files = FALSE)
   } else {
-    cli_abort("Declared `type` ({type}) is not a valid option.")
+    cli_abort("Detected type ({type}) is not supported.")
   }
 
   # Reset appendix counter for next render
@@ -44,8 +50,8 @@ render <- function(
 #' @param config_file YAML configuration file.
 #' @param ... Arguments to pass to [bookdown::render_book()].
 #'
-#' @export
-#' @aliases render_fsar
+#' @keywords internal
+#' @noRd
 render_sar <- function(config_file = "_bookdown.yml", ...) {
   cat("\n")
 
@@ -163,6 +169,34 @@ render_sar <- function(config_file = "_bookdown.yml", ...) {
 }
 
 render_fsar <- render_sar
+
+detect_doc_type <- function(index_fn = "index.Rmd") {
+  if (!file.exists(index_fn)) {
+    cli_abort("The file {.var index_fn} does not exist.")
+  }
+
+  x <- rmarkdown::yaml_front_matter(index_fn)
+
+  if (is.null(x$output)) {
+    cli_abort("No output field found in YAML front matter of {index_fn}")
+  }
+
+  output_names <- names(x$output)
+
+  if (is.null(output_names)) {
+    output_names <- as.character(x$output)
+  }
+
+  if (any(grepl("resdoc_docx", output_names))) {
+    return("resdoc")
+  } else if (any(grepl("fsar_docx", output_names))) {
+    return("fsar")
+  } else if (any(grepl("techreport_docx", output_names))) {
+    return("techreport")
+  } else {
+    cli_abort("Could not detect document type from YAML output field. Expected one of: resdoc_docx, fsar_docx, or techreport_docx")
+  }
+}
 
 get_book_filename <- function(fn = "_bookdown.yml") {
   if (!file.exists(fn)) {

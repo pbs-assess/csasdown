@@ -6,7 +6,7 @@ test_that("FSAR builds", {
   dir.create(testing_path, showWarnings = FALSE)
   setwd(testing_path)
   suppressMessages(draft("fsar", create_dir = FALSE, edit = FALSE))
-  suppressWarnings(render_sar())
+  suppressWarnings(render())
   if (FALSE) {
     system("open _book/fsar.docx")
   }
@@ -36,7 +36,7 @@ test_that("techreport builds", {
   dir.create(testing_path, showWarnings = FALSE)
   setwd(testing_path)
   suppressMessages(draft("techreport", create_dir = FALSE, edit = FALSE))
-  suppressWarnings(csasdown2::render(type = "techreport"))
+  suppressWarnings(csasdown2::render())
   if (FALSE) {
     system("open _book/techreport.docx")
   }

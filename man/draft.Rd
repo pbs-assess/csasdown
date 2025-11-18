@@ -4,11 +4,16 @@
 \alias{draft}
 \title{Create a new CSAS document based on a template}
 \usage{
-draft(type = c("resdoc", "fsar"), directory = ".", edit = FALSE, ...)
+draft(
+  type = c("resdoc", "fsar", "techreport"),
+  directory = ".",
+  edit = FALSE,
+  ...
+)
 }
 \arguments{
-\item{type}{The type of document to draft. Must be one of \code{resdoc} or
-\code{fsar}.}
+\item{type}{The type of document to draft. Must be one of \code{resdoc}, \code{fsar},
+or \code{techreport}.}
 
 \item{directory}{The directory to place the draft document files.
 Current directory by default}
@@ -28,5 +33,6 @@ function for further details.
 \dontrun{
 csasdown::draft("resdoc")
 csasdown::draft("fsar")
+csasdown::draft("techreport")
 }
 }
