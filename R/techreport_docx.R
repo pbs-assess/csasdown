@@ -82,11 +82,23 @@ add_techreport_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml",
     officer::body_remove()
   print(content, target = "tmp-content.docx")
 
+  # Conditional field selection based on language
+  title <- if (french) x$french_title else x$english_title
+  author <- if (french) x$french_author else x$english_author
+  address <- if (french) x$french_address else x$english_address
+  author_list <- if (french) x$french_author_list else x$english_author_list
+  preamble_pages <- if (french) x$french_preamble_pages else x$english_preamble_pages
+  content_pages <- if (french) x$french_content_pages else x$english_content_pages
+  doi <- if (french) x$french_doi else x$english_doi
+  isbn <- if (french) x$french_isbn else x$english_isbn
+  cat_no <- if (french) x$french_cat_no else x$english_cat_no
+
   # Read the tech report cover template and replace bookmarks
-  frontmatter <- officer::read_docx(system.file("tech-report-docx", "01-tech-report-cover-english.docx", package = "csasdown2")) |>
-    replace_bookmark_with_markdown("title", x$english_title) |>
-    replace_bookmark_with_markdown("authors", x$english_author) |>
-    replace_bookmark_with_markdown("address", x$english_address) |>
+  cover_file <- if (french) "01-tech-report-cover-french.docx" else "01-tech-report-cover-english.docx"
+  frontmatter <- officer::read_docx(system.file("tech-report-docx", cover_file, package = "csasdown2")) |>
+    replace_bookmark_with_markdown("title", title) |>
+    replace_bookmark_with_markdown("authors", author) |>
+    replace_bookmark_with_markdown("address", address) |>
     officer::body_replace_text_at_bkm("year", as.character(x$year)) |>
     officer::body_replace_text_at_bkm("number", x$report_number)
 
@@ -95,12 +107,13 @@ add_techreport_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml",
 
   # Read and process the titlepage template
   # For multi-line fields, preserve backslash line breaks but collapse other newlines
-  title_clean <- trimws(gsub("\n(?!\\s*$)", " ", x$english_title, perl = TRUE))
-  authors_clean <- trimws(gsub("\n(?!\\s*$)", " ", x$english_author, perl = TRUE))
+  title_clean <- trimws(gsub("\n(?!\\s*$)", " ", title, perl = TRUE))
+  authors_clean <- trimws(gsub("\n(?!\\s*$)", " ", author, perl = TRUE))
   # For address, keep the backslash line breaks
-  address_clean <- x$english_address
+  address_clean <- address
 
-  titlepage <- officer::read_docx(system.file("tech-report-docx", "03-tech-report-titlepage-english.docx", package = "csasdown2")) |>
+  titlepage_file <- if (french) "03-tech-report-titlepage-french.docx" else "03-tech-report-titlepage-english.docx"
+  titlepage <- officer::read_docx(system.file("tech-report-docx", titlepage_file, package = "csasdown2")) |>
     replace_bookmark_with_markdown("title", title_clean) |>
     replace_bookmark_with_markdown("authors", authors_clean) |>
     replace_bookmark_with_markdown("address", address_clean) |>
@@ -109,25 +122,33 @@ add_techreport_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml",
   print(titlepage, target = "tmp-titlepage.docx")
 
   # Read and process the colophon template
-  total_pages <- as.numeric(x$english_preamble_pages) + as.numeric(x$english_content_pages)
+  total_pages <- as.numeric(preamble_pages) + as.numeric(content_pages)
 
   # Build citation - ensure all components are single line, trimmed strings
+  citation_prefix <- if (french) "Rapp. tech. can. sci. halieut. aquat. " else "Can. Tech. Rep. Fish. Aquat. Sci. "
   citation <- paste0(
-    trimws(gsub("\n", " ", x$english_author_list)), " ",
+    trimws(gsub("\n", " ", author_list)), " ",
     x$year, ". ",
-    trimws(gsub("\n", " ", x$english_title)), ". ",
-    "Can. Tech. Rep. Fish. Aquat. Sci. ", x$report_number, ": ",
-    x$english_preamble_pages, " + ", x$english_content_pages, " p. ",
-    "https://doi.org/", trimws(x$english_doi)
+    trimws(gsub("\n", " ", title)), ". ",
+    citation_prefix, x$report_number, ": ",
+    preamble_pages, " + ", content_pages, " p. ",
+    "https://doi.org/", trimws(doi)
   )
 
-  colophon <- officer::read_docx(system.file("tech-report-docx", "04-tech-report-colophon-english.docx", package = "csasdown2")) |>
+  # Conditional bookmark names for colophon
+  cat_no_bkm <- if (french) "cat_no_french" else "cat_no_english"
+  isbn_bkm <- if (french) "isbn_french" else "isbn_english"
+  doi_bkm <- if (french) "doi_french" else "doi_english"
+  citation_bkm <- if (french) "citation_french" else "citation_english"
+
+  colophon_file <- if (french) "04-tech-report-colophon-french.docx" else "04-tech-report-colophon-english.docx"
+  colophon <- officer::read_docx(system.file("tech-report-docx", colophon_file, package = "csasdown2")) |>
     officer::body_replace_text_at_bkm("year", as.character(x$year)) |>
-    officer::body_replace_text_at_bkm("cat_no_english", x$english_cat_no) |>
-    officer::body_replace_text_at_bkm("isbn_english", x$english_isbn) |>
-    officer::body_replace_text_at_bkm("doi", x$english_doi) |>
-    officer::body_replace_text_at_bkm("doi_english", x$english_doi) |>
-    replace_bookmark_with_markdown("citation_english", citation)
+    officer::body_replace_text_at_bkm(cat_no_bkm, cat_no) |>
+    officer::body_replace_text_at_bkm(isbn_bkm, isbn) |>
+    officer::body_replace_text_at_bkm("doi", doi) |>
+    officer::body_replace_text_at_bkm(doi_bkm, doi) |>
+    replace_bookmark_with_markdown(citation_bkm, citation)
   print(colophon, target = "tmp-colophon.docx")
 
   # Merge frontmatter and content with page breaks between sections
