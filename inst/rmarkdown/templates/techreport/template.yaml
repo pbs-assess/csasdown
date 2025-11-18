@@ -1,0 +1,4 @@
+name:  DFO-TechReport
+description: >
+  Template for creating a DFO Technical Report using R Markdown using the R
+  bookdown package.
