@@ -8,7 +8,10 @@
 render <- function(
     config_file = "_bookdown.yml",
     verbose = FALSE,
+    type = c("resdoc", "techreport"),
     ...) {
+
+  type <- match.arg(type)
   output_options <- list(pandoc_args = c("--metadata=title:", "--metadata=abstract:"))
 
   bookdown::render_book("index.Rmd",
@@ -22,7 +25,13 @@ render <- function(
   book_filename <- paste0(get_book_filename(config_file), ".docx")
   file.rename(book_filename, file.path("_book", book_filename))
 
-  add_resdoc_word_frontmatter("index.Rmd", yaml_fn = config_file, verbose = verbose, keep_files = FALSE)
+  if (type == "resdoc") {
+    add_resdoc_word_frontmatter("index.Rmd", yaml_fn = config_file, verbose = verbose, keep_files = FALSE)
+  } else if (type == "techreport") {
+    add_techreport_word_frontmatter("index.Rmd", yaml_fn = config_file, verbose = verbose, keep_files = FALSE)
+  } else {
+    cli_abort("Declared `type` ({type}) is not a valid option.")
+  }
 
   # Reset appendix counter for next render
   options(csasdown2_current_appendix = NULL)

@@ -28,3 +28,18 @@ test_that("resdoc builds", {
   expect_true(file.exists("_book/resdoc.docx"))
   setwd(wd)
 })
+
+test_that("techreport builds", {
+  wd <- getwd()
+  testing_path <- file.path(tempdir(), "techreport")
+  unlink(testing_path, recursive = TRUE, force = TRUE)
+  dir.create(testing_path, showWarnings = FALSE)
+  setwd(testing_path)
+  suppressMessages(draft("techreport", create_dir = FALSE, edit = FALSE))
+  suppressWarnings(csasdown2::render(type = "techreport"))
+  if (FALSE) {
+    system("open _book/techreport.docx")
+  }
+  expect_true(file.exists("_book/techreport.docx"))
+  setwd(wd)
+})

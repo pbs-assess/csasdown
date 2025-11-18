@@ -4,7 +4,12 @@
 \alias{render}
 \title{Render a resdoc}
 \usage{
-render(config_file = "_bookdown.yml", verbose = FALSE, ...)
+render(
+  config_file = "_bookdown.yml",
+  verbose = FALSE,
+  type = c("resdoc", "techreport"),
+  ...
+)
 }
 \arguments{
 \item{config_file}{YAML configuration file.}

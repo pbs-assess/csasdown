@@ -107,6 +107,7 @@ fix_missing_namespaces <- function(docx_path) {
   invisible()
 }
 
+
 #' Add frontmatter to Res Doc word file
 #'
 #' Add title page and table of contents to a Res Doc Word document.
