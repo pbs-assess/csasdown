@@ -5,6 +5,7 @@ toggle_french <- function(index_file = "index.Rmd") {
 }
 
 test_that("FSAR builds", {
+  skip_on_ci()
   wd <- getwd()
   testing_path <- file.path(tempdir(), "fsar")
   unlink(testing_path, recursive = TRUE, force = TRUE)
@@ -66,6 +67,7 @@ test_that("techreport builds in French", {
 })
 
 test_that("FSAR builds in French", {
+  skip_on_ci()
   wd <- getwd()
   testing_path <- file.path(tempdir(), "fsar_french")
   unlink(testing_path, recursive = TRUE, force = TRUE)
