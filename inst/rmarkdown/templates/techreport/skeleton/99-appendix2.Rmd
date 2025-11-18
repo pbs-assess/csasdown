@@ -1,0 +1,27 @@
+\newpage
+
+# APPENDIX `r new_appendix()`. ADDITIONAL ANALYSES {#app:additional}
+
+This appendix demonstrates that figure and table numbering restarts for each appendix.
+
+## Model Results
+
+```{r fig-model-diagnostic, fig.cap="Model diagnostic plot."}
+set.seed(456)
+residuals <- rnorm(50, 0, 1)
+fitted <- seq(1, 50)
+plot(fitted, residuals,
+  xlab = "Fitted values", ylab = "Residuals",
+  pch = 16, col = rgb(1, 0, 0, 0.5)
+)
+abline(h = 0, lty = 2)
+```
+
+```{r tab-model-parameters, tab.cap="Model parameter estimates."}
+model_params <- data.frame(
+  Parameter = c("Intercept", "Slope", "R²"),
+  Estimate = c(1.23, 0.45, 0.78),
+  SE = c(0.12, 0.05, NA)
+)
+flextable::flextable(model_params)
+```

@@ -1,0 +1,7 @@
+book_filename: "techreport"
+rmd_files: ["index.Rmd",
+            "01-introduction.Rmd",
+            "98-references.Rmd",
+            "99-appendix.Rmd",
+            "99-appendix2.Rmd"]
+delete_merged_file: true
