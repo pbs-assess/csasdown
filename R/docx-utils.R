@@ -1,3 +1,24 @@
+#' Fix list indentation in numbering XML
+#'
+#' @description Removes indentation from list level definitions in numbering.xml.
+#' This removes the <w:ind> tags from within <w:lvl> elements that cause unwanted
+#' list indentation in the rendered document.
+#'
+#' @param xml_content Character string containing numbering XML content
+#' @return Modified XML content as character string
+#' @keywords internal
+#' @noRd
+fix_list_indentation_xml <- function(xml_content) {
+  xml_content <- gsub(
+    '<w:ind w:left="[0-9]+" w:hanging="[0-9]+"/>',
+    '<w:ind w:left="360" w:hanging="360"/>',
+    xml_content,
+    perl = TRUE
+  )
+
+  xml_content
+}
+
 #' Fix table caption XML content
 #'
 #' @description Removes center justification from TableCaption styles and
@@ -55,6 +76,43 @@ fix_table_caption_xml <- function(xml_content) {
 
   # Fix appendix cross-references
   xml_content <- fix_appendix_crossrefs_xml(xml_content)
+
+  # Remove empty paragraphs (moves page breaks into following paragraph)
+  # xml_content <- remove_empty_paragraphs_xml(xml_content)
+
+  xml_content
+}
+
+#' Remove empty paragraphs from Word XML
+#'
+#' @description Removes paragraph elements that contain no meaningful text content.
+#' An empty paragraph is defined as one that has no <w:t> tags with actual text,
+#' though it may contain bookmarks, formatting, and other non-text elements.
+#'
+#' @param xml_content Character string containing XML content
+#' @return Modified XML content as character string
+#' @keywords internal
+#' @noRd
+remove_empty_paragraphs_xml <- function(xml_content) {
+  # Move page breaks from standalone paragraphs into the following paragraph
+  # This removes the extra line while preserving the page break
+  # Pattern: <w:p><w:r><w:br w:type="page"/></w:r></w:p> followed by anything then <w:p>
+  # The "anything" can include bookmarks, section breaks, etc.
+  # Replace with: <w:p><w:r><w:br w:type="page"/></w:r> (merge into next paragraph)
+
+  xml_content <- gsub(
+    '(<w:p>)\\s*<w:r>\\s*<w:br w:type="page"/>\\s*</w:r>\\s*</w:p>((?:(?!<w:p>).)*?)(<w:p>)',
+    '\\2\\3<w:r><w:br w:type="page"/></w:r>',
+    xml_content,
+    perl = TRUE
+  )
+
+  # Also remove truly empty paragraphs (just in case)
+  # Pattern 1: <w:p><w:pPr/></w:p> (self-closing pPr)
+  xml_content <- gsub('<w:p><w:pPr/></w:p>', '', xml_content, fixed = TRUE)
+
+  # Pattern 2: <w:p><w:pPr></w:pPr></w:p> (empty pPr)
+  xml_content <- gsub('<w:p><w:pPr></w:pPr></w:p>', '', xml_content, fixed = TRUE)
 
   xml_content
 }
@@ -470,6 +528,58 @@ fix_appendix_section_refs_xml <- function(xml_content) {
   xml_content
 }
 
+#' Apply Abstract Heading style to ABSTRACT section in XML
+#'
+#' @description Replaces Heading1 style with Abstract Heading style for
+#' paragraphs containing "ABSTRACT" or "RÉSUMÉ" text.
+#'
+#' @param xml_content Character string containing XML content
+#' @return Modified XML content as character string
+#' @keywords internal
+#' @noRd
+apply_abstract_heading_style_xml <- function(xml_content) {
+  # More flexible pattern that handles various XML structures
+  # Matches: <w:pPr>...<w:pStyle w:val="Heading1"/>...</w:pPr><w:r...>...<w:t>ABSTRACT</w:t>
+  pattern <- paste0(
+    '(<w:pPr[^>]*>(?:(?!</w:pPr>).)*)',
+    '<w:pStyle w:val="Heading1"/>',
+    '((?:(?!</w:pPr>).)*</w:pPr>\\s*<w:r[^>]*>(?:(?!</w:r>).)*<w:t[^>]*>)',
+    'ABSTRACT',
+    '(</w:t>)'
+  )
+
+  replacement <- paste0(
+    '\\1',
+    '<w:pStyle w:val="Abstract Heading"/>',
+    '\\2',
+    'ABSTRACT',
+    '\\3'
+  )
+
+  xml_content <- gsub(pattern, replacement, xml_content, perl = TRUE)
+
+  # French version
+  pattern_fr <- paste0(
+    '(<w:pPr[^>]*>(?:(?!</w:pPr>).)*)',
+    '<w:pStyle w:val="Heading1"/>',
+    '((?:(?!</w:pPr>).)*</w:pPr>\\s*<w:r[^>]*>(?:(?!</w:r>).)*<w:t[^>]*>)',
+    'R\u00c9SUM\u00c9',
+    '(</w:t>)'
+  )
+
+  replacement_fr <- paste0(
+    '\\1',
+    '<w:pStyle w:val="Abstract Heading"/>',
+    '\\2',
+    'R\u00c9SUM\u00c9',
+    '\\3'
+  )
+
+  xml_content <- gsub(pattern_fr, replacement_fr, xml_content, perl = TRUE)
+
+  xml_content
+}
+
 #' Extract style definitions from reference template
 #'
 #' @param ref_docx_path Path to reference .docx file
@@ -626,6 +736,15 @@ process_embedded_docx_files <- function(parent_temp_dir, ref_docx_path) {
     # Copy styles to embedded document
     copy_styles_to_docx(embedded_temp, ref_docx_path)
 
+    # Process numbering.xml in embedded document
+    embedded_numbering_xml <- file.path(embedded_temp, "word", "numbering.xml")
+    if (file.exists(embedded_numbering_xml)) {
+      numbering_content <- readLines(embedded_numbering_xml, warn = FALSE)
+      numbering_content <- paste(numbering_content, collapse = "")
+      numbering_content <- fix_list_indentation_xml(numbering_content)
+      writeLines(numbering_content, embedded_numbering_xml)
+    }
+
     # Re-zip the embedded .docx
     curr_dir <- getwd()
     setwd(embedded_temp)
@@ -685,6 +804,15 @@ fix_table_caption_alignment <- function(docx_file, reference_docx = NULL) {
 
   # Copy styles from reference template to main document
   copy_styles_to_docx(temp_dir, reference_docx)
+
+  # Process numbering.xml to remove list indentation
+  numbering_xml_path <- file.path(temp_dir, "word", "numbering.xml")
+  if (file.exists(numbering_xml_path)) {
+    numbering_content <- readLines(numbering_xml_path, warn = FALSE)
+    numbering_content <- paste(numbering_content, collapse = "")
+    numbering_content <- fix_list_indentation_xml(numbering_content)
+    writeLines(numbering_content, numbering_xml_path)
+  }
 
   # Process embedded .docx files (for resdoc with tmp-content.docx, etc.)
   process_embedded_docx_files(temp_dir, reference_docx)

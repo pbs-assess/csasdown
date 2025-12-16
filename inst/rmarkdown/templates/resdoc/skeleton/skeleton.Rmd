@@ -28,26 +28,11 @@ french_address: |
      Nanaimo, Colombie-Britannique, V9T 6N7, Canada\
   ^2^Loin, très loin\
      Une autre galaxie
-     
+
 english_region: "Pacific Region"
 french_region: "Région Pacifique"
-     
-english_month: "Month"
-french_month: "Mois"
 
-year: "2025"
-report_number: "000"
-
-english_preamble_pages: "iv"
-french_preamble_pages: "iv"
-
-english_content_pages: "999"
-french_content_pages: "999"
-
-abstract: |
-  Here is the abstract text. It must not be more than 1/2 page (roughly 400 words).
-
-  Start new paragraphs after a blank line and with 2 spaces indent.
+year: "2026"
 
 output:
  csasdown2::resdoc_docx:

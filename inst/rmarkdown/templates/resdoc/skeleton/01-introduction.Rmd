@@ -1,3 +1,11 @@
+# ABSTRACT
+
+The Abstract is mandatory. This section will be posted in HTML format on the CSAS website followed by the link to the full PDF version of the publication.
+
+The Abstract must not be more than half a page (roughly 400 words).
+
+\newpage
+
 # INTRODUCTION
 
 Introduction is not mandatory, but when available, it begins on page 1.

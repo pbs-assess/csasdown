@@ -15,7 +15,7 @@ resdoc_docx <- function(...) {
   # dots <- list(...)
   # french <- isTRUE(dots$french)
 
-  file <- "resdoc-content.docx"
+  file <- "resdoc-content-2026.docx"
   base <- officedown::rdocx_document(...,
     base_format = "bookdown::word_document2",
     number_sections = FALSE,
@@ -65,7 +65,7 @@ resdoc_docx <- function(...) {
   base$knitr$opts_chunk$dev <- "png"
 
   # Add post-processor to fix table caption alignment
-  base <- add_caption_fix_postprocessor(base, reference_docx = "resdoc-content.docx")
+  base <- add_caption_fix_postprocessor(base, reference_docx = "resdoc-content-2026.docx")
 
   base
 }
@@ -103,6 +103,106 @@ fix_missing_namespaces <- function(docx_path) {
   utils::zip(zipfile = file.path(old_wd, docx_path), files = files, flags = "-q")
 
   unlink(temp_dir, recursive = TRUE)
+
+  invisible()
+}
+
+add_resdoc_word_frontmatter2 <- function(index_fn, yaml_fn = "_bookdown.yml", verbose = FALSE, keep_files = FALSE) {
+  if (verbose) cli_inform("Adding frontmatter to the Research Document using the officer package...")
+
+  x <- rmarkdown::yaml_front_matter(index_fn)
+  french <- isTRUE(x$output[[1]]$french)
+
+  front_filename <- if (french) "resdoc-frontmatter-french2.docx" else "resdoc-frontmatter-english2.docx"
+  ref_front_file <- system.file("csas-docx", front_filename, package = "csasdown2")
+  toc_keyword <- if (french) "TABLE DES MATI\u00c8RES" else "TABLE OF CONTENTS"
+  abstract_keyword <- if (french) "R\u00c9SUM\u00c9" else "ABSTRACT"
+  book_filename <- paste0("_book/", get_book_filename(yaml_fn), ".docx")
+
+  # first page
+  title <- if (french) x$french_title else x$english_title
+  region <- if (french) x$french_region else x$english_region
+  authors <- if (french) x$french_author else x$english_author
+  address <- if (french) x$french_address else x$english_address
+  frontmatter <- officer::read_docx(ref_front_file) |>
+    replace_bookmark_with_markdown("region", region) |>
+    replace_bookmark_with_markdown("title", title) |>
+    replace_bookmark_with_markdown("authors", authors) |>
+    replace_bookmark_with_markdown("address", address) |>
+    officer::body_replace_text_at_bkm("year", as.character(x$year))
+
+  # citation page (works for both languages because bookmarks are different)
+  frontmatter <- frontmatter |>
+    replace_bookmark_with_markdown("english_authors_list", x$english_author_list) |>
+    replace_bookmark_with_markdown("year_english_reference1", x$year) |>
+    replace_bookmark_with_markdown("year_english_reference", x$year) |>
+    replace_bookmark_with_markdown("english_title", x$english_title)
+  frontmatter <- frontmatter |>
+    replace_bookmark_with_markdown("french_authors_list", x$french_author_list) |>
+    replace_bookmark_with_markdown("year_french_reference1", x$year) |>
+    replace_bookmark_with_markdown("year_french_reference", x$year) |>
+    replace_bookmark_with_markdown("french_title", x$french_title)
+
+  # add table of contents
+  frontmatter <- frontmatter |>
+    officer::cursor_reach(keyword = toc_keyword) |>
+    officer::body_add_toc() |>
+    officer::body_add_break(pos = "after")
+
+  print(frontmatter, target = "tmp-frontmatter-with-toc.docx")
+
+  # fix missing namespaces
+  fix_missing_namespaces("tmp-frontmatter-with-toc.docx")
+
+  content <- officer::read_docx(book_filename) |>
+    officer::cursor_begin() |>
+    officer::body_remove() |>
+    officer::body_remove() |>
+    officer::body_remove() |>
+    officer::docx_set_settings(even_and_odd_headers = FALSE)
+
+  print(content, target = "tmp-content.docx")
+
+  # join them together into full doc
+  full_doc <- officer::read_docx("tmp-frontmatter-with-toc.docx") |>
+    officer::cursor_end() |>
+    officer::body_import_docx("tmp-content.docx") |>
+    officer::docx_set_settings(even_and_odd_headers = FALSE)
+
+
+  # apply Abstract Heading style by removing and re-adding with correct style
+  # Handle case where template might have wrong language (e.g., ABSTRACT in template but rendering French)
+  # Try to find the correct language keyword first, then fall back to the other language
+  search_keyword <- tryCatch({
+    content_tmp <- officer::cursor_reach(content, keyword = abstract_keyword)
+    abstract_keyword  # Found the correct one
+  }, error = function(e) {
+    # Correct keyword not found, try the other language
+    if (french) "ABSTRACT" else "RÉSUMÉ"
+  })
+  # Style name is also language-specific
+  abstract_style <- if (french) "Résumé" else "Abstract Heading"
+  # abstract_style <- "Abstract Heading"
+
+  # Always replace with the correct language version (abstract_keyword)
+  full_doc <- full_doc |>
+    officer::cursor_reach(keyword = search_keyword) |>
+    officer::body_remove() |>
+    officer::body_add_par(value = abstract_keyword, style = abstract_style, pos = "before")
+
+
+
+
+  print(full_doc, target = book_filename)
+
+  # fix table caption alignment in the final assembled document
+  fix_table_caption_alignment(book_filename, reference_docx = "resdoc-content-2026.docx")
+
+  if (!keep_files) {
+    unlink(c(
+      "tmp-content.docx", "tmp-frontmatter-with-toc.docx"
+    ))
+  }
 
   invisible()
 }
@@ -180,7 +280,7 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
 
   if (!french) {
     md <- c(
-      "\n**Correct citation for this publication:**\n",
+      "**Correct citation for this publication:**\n",
       '::: {custom-style="citation"}',
       english_citation,
       ":::",
@@ -191,7 +291,7 @@ add_resdoc_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", ver
     )
   } else {
     md <- c(
-      "\n**La pr\u00e9sente publication doit \u00eatre cit\u00e9e comme suit :**\n",
+      "**La pr\u00e9sente publication doit \u00eatre cit\u00e9e comme suit :**\n",
       '::: {custom-style="citation"}',
       french_citation,
       ":::",

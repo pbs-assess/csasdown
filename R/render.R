@@ -32,7 +32,7 @@ render <- function(
   file.rename(book_filename, file.path("_book", book_filename))
 
   if (type == "resdoc") {
-    add_resdoc_word_frontmatter("index.Rmd", yaml_fn = config_file, verbose = verbose, keep_files = FALSE)
+    add_resdoc_word_frontmatter2("index.Rmd", yaml_fn = config_file, verbose = verbose, keep_files = FALSE)
   } else if (type == "techreport") {
     add_techreport_word_frontmatter("index.Rmd", yaml_fn = config_file, verbose = verbose, keep_files = FALSE)
   } else {
