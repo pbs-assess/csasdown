@@ -864,3 +864,176 @@ add_caption_fix_postprocessor <- function(base_format, reference_docx) {
 
   base_format
 }
+
+#' Set page numbering format and start value for a document section
+#'
+#' @param docx_path Path to .docx file
+#' @param format Page numbering format: "lowerRoman", "decimal", etc. NULL to use default
+#' @param start Starting page number (integer)
+#' @param section_index Which section to modify (-1 = last section, 1 = first)
+#' @keywords internal
+#' @noRd
+set_section_page_numbering <- function(docx_path, format = NULL, start = 1, section_index = -1) {
+  temp_dir <- tempfile()
+  dir.create(temp_dir)
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+
+  utils::unzip(docx_path, exdir = temp_dir)
+
+  doc_xml_path <- file.path(temp_dir, "word", "document.xml")
+  doc_lines <- readLines(doc_xml_path, warn = FALSE)
+  doc_content <- paste(doc_lines, collapse = "\n")
+
+  # (?s) enables DOTALL mode so . matches newlines
+  sectpr_pattern <- '(?s)<w:sectPr[^>]*>.*?</w:sectPr>'
+  sections <- gregexpr(sectpr_pattern, doc_content, perl = TRUE)
+
+  if (sections[[1]][1] == -1) {
+    warning("No section properties found in document")
+    return(invisible(docx_path))
+  }
+
+  num_sections <- length(sections[[1]])
+  target_index <- if (section_index == -1) num_sections else section_index
+
+  if (target_index < 1 || target_index > num_sections) {
+    warning(sprintf("Section index %d out of range (1-%d)", target_index, num_sections))
+    return(invisible(docx_path))
+  }
+
+  match_starts <- sections[[1]]
+  match_lengths <- attr(sections[[1]], "match.length")
+  target_start <- match_starts[target_index]
+  target_length <- match_lengths[target_index]
+  target_section <- substr(doc_content, target_start, target_start + target_length - 1)
+
+  target_section_modified <- gsub('<w:pgNumType[^>]*/?>', '', target_section, perl = TRUE)
+
+  if (!is.null(format)) {
+    pgnum_tag <- sprintf('<w:pgNumType w:fmt="%s" w:start="%d"/>', format, start)
+  } else {
+    pgnum_tag <- sprintf('<w:pgNumType w:start="%d"/>', start)
+  }
+
+  target_section_modified <- sub(
+    '(<w:sectPr[^>]*>)',
+    paste0('\\1\n      ', pgnum_tag),
+    target_section_modified,
+    perl = TRUE
+  )
+
+  escaped_pattern <- gsub("([\\[\\](){}^$.|*+?\\\\])", "\\\\\\1", target_section, perl = TRUE)
+  doc_content <- gsub(escaped_pattern, target_section_modified, doc_content, perl = TRUE)
+
+  writeLines(doc_content, doc_xml_path)
+
+  old_wd <- getwd()
+  on.exit(setwd(old_wd), add = TRUE)
+
+  setwd(temp_dir)
+  files <- list.files(recursive = TRUE, full.names = FALSE, include.dirs = FALSE)
+  utils::zip(zipfile = file.path(old_wd, docx_path), files = files, flags = "-q")
+
+  invisible(docx_path)
+}
+
+#' Insert a section break after the abstract section
+#'
+#' @param docx_path Path to .docx file
+#' @param french Logical, is this a French document?
+#' @keywords internal
+#' @noRd
+insert_section_break_after_abstract <- function(docx_path, french = FALSE) {
+  temp_dir <- tempfile()
+  dir.create(temp_dir)
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+
+  utils::unzip(docx_path, exdir = temp_dir)
+
+  doc_xml_path <- file.path(temp_dir, "word", "document.xml")
+  doc_lines <- readLines(doc_xml_path, warn = FALSE)
+  doc_content <- paste(doc_lines, collapse = "\n")
+
+  # First, find the abstract heading
+  abstract_keyword <- if (french) "RÉSUMÉ" else "ABSTRACT"
+  abstract_pattern <- paste0('(?s)<w:p>.*?<w:t[^>]*>', abstract_keyword, '</w:t>.*?</w:p>')
+  abstract_match <- regexpr(abstract_pattern, doc_content, perl = TRUE)
+
+  if (abstract_match[1] == -1) {
+    warning("Could not find abstract heading")
+    return(invisible(docx_path))
+  }
+
+  # Now find the first Heading1 AFTER the abstract
+  # Search only in the content after the abstract
+  content_after_abstract <- substr(doc_content, abstract_match[1] + attr(abstract_match, "match.length"), nchar(doc_content))
+  intro_pattern <- '(?s)<w:p>.*?<w:pStyle w:val="Heading1.*?</w:p>'
+  intro_match_relative <- regexpr(intro_pattern, content_after_abstract, perl = TRUE)
+
+  if (intro_match_relative[1] == -1) {
+    warning("Could not find first heading after abstract")
+    return(invisible(docx_path))
+  }
+
+  # Calculate absolute position in the original document
+  intro_match_absolute <- abstract_match[1] + attr(abstract_match, "match.length") + intro_match_relative[1] - 1
+
+  # Insert a section break with roman numbering and footer reference before the first heading
+  section_break <- paste0(
+    '<w:p>\n',
+    '  <w:pPr>\n',
+    '    <w:sectPr>\n',
+    '      <w:footerReference w:type="default" r:id="rId23"/>\n',
+    '      <w:pgNumType w:fmt="lowerRoman" w:start="3"/>\n',
+    '      <w:pgSz w:w="12240" w:h="15840"/>\n',
+    '      <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720"/>\n',
+    '    </w:sectPr>\n',
+    '  </w:pPr>\n',
+    '</w:p>\n'
+  )
+
+  # Insert the section break before the first heading
+  doc_content <- paste0(
+    substr(doc_content, 1, intro_match_absolute - 1),
+    section_break,
+    substr(doc_content, intro_match_absolute, nchar(doc_content))
+  )
+
+  # Now update the last section (which will become section 4) to have arabic numbering
+  # Find the last section
+  sectpr_pattern <- '(?s)<w:sectPr[^>]*>.*?</w:sectPr>'
+  sections <- gregexpr(sectpr_pattern, doc_content, perl = TRUE)
+
+  if (sections[[1]][1] != -1) {
+    num_sections <- length(sections[[1]])
+    match_starts <- sections[[1]]
+    match_lengths <- attr(sections[[1]], "match.length")
+    last_start <- match_starts[num_sections]
+    last_length <- match_lengths[num_sections]
+    last_section <- substr(doc_content, last_start, last_start + last_length - 1)
+
+    # Remove any existing pgNumType and add arabic numbering
+    last_section_modified <- gsub('<w:pgNumType[^>]*/?>', '', last_section, perl = TRUE)
+    last_section_modified <- sub(
+      '(<w:sectPr[^>]*>)',
+      '\\1\n      <w:pgNumType w:fmt="decimal" w:start="1"/>',
+      last_section_modified,
+      perl = TRUE
+    )
+
+    # Replace the last section in the document
+    escaped_pattern <- gsub("([\\[\\](){}^$.|*+?\\\\])", "\\\\\\1", last_section, perl = TRUE)
+    doc_content <- gsub(escaped_pattern, last_section_modified, doc_content, perl = TRUE)
+  }
+
+  writeLines(doc_content, doc_xml_path)
+
+  old_wd <- getwd()
+  on.exit(setwd(old_wd), add = TRUE)
+
+  setwd(temp_dir)
+  files <- list.files(recursive = TRUE, full.names = FALSE, include.dirs = FALSE)
+  utils::zip(zipfile = file.path(old_wd, docx_path), files = files, flags = "-q")
+
+  invisible(docx_path)
+}

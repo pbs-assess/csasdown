@@ -151,6 +151,14 @@ add_resdoc_word_frontmatter2 <- function(index_fn, yaml_fn = "_bookdown.yml", ve
 
   print(frontmatter, target = "tmp-frontmatter-with-toc.docx")
 
+  # Set roman numbering for TOC/abstract section (section 3 of frontmatter)
+  set_section_page_numbering(
+    "tmp-frontmatter-with-toc.docx",
+    format = "lowerRoman",
+    start = 3,
+    section_index = -1
+  )
+
   # fix missing namespaces
   fix_missing_namespaces("tmp-frontmatter-with-toc.docx")
 
@@ -163,12 +171,19 @@ add_resdoc_word_frontmatter2 <- function(index_fn, yaml_fn = "_bookdown.yml", ve
 
   print(content, target = "tmp-content.docx")
 
+  # Set arabic numbering for main content section, starting at 1
+  set_section_page_numbering(
+    "tmp-content.docx",
+    format = NULL,  # Use default (decimal)
+    start = 1,
+    section_index = 1
+  )
+
   # join them together into full doc
   full_doc <- officer::read_docx("tmp-frontmatter-with-toc.docx") |>
     officer::cursor_end() |>
     officer::body_import_docx("tmp-content.docx") |>
     officer::docx_set_settings(even_and_odd_headers = FALSE)
-
 
   # apply Abstract Heading style by removing and re-adding with correct style
   # Handle case where template might have wrong language (e.g., ABSTRACT in template but rendering French)
@@ -194,6 +209,9 @@ add_resdoc_word_frontmatter2 <- function(index_fn, yaml_fn = "_bookdown.yml", ve
 
 
   print(full_doc, target = book_filename)
+
+  # Insert section break between abstract and main content
+  insert_section_break_after_abstract(book_filename, french = french)
 
   # fix table caption alignment in the final assembled document
   fix_table_caption_alignment(book_filename, reference_docx = "resdoc-content-2026.docx")
