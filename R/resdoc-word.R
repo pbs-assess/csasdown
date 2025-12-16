@@ -193,10 +193,10 @@ add_resdoc_word_frontmatter2 <- function(index_fn, yaml_fn = "_bookdown.yml", ve
     abstract_keyword  # Found the correct one
   }, error = function(e) {
     # Correct keyword not found, try the other language
-    if (french) "ABSTRACT" else "RÉSUMÉ"
+    if (french) "ABSTRACT" else "R\u00c9SUM\u00c9"
   })
   # Style name is also language-specific
-  abstract_style <- if (french) "Résumé" else "Abstract Heading"
+  abstract_style <- if (french) "R\u00e9sum\u00e9" else "Abstract Heading"
   # abstract_style <- "Abstract Heading"
 
   # Always replace with the correct language version (abstract_keyword)

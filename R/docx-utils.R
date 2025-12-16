@@ -531,7 +531,7 @@ fix_appendix_section_refs_xml <- function(xml_content) {
 #' Apply Abstract Heading style to ABSTRACT section in XML
 #'
 #' @description Replaces Heading1 style with Abstract Heading style for
-#' paragraphs containing "ABSTRACT" or "RÉSUMÉ" text.
+#' paragraphs containing "ABSTRACT" or "R\u00c9SUM\u00c9" text.
 #'
 #' @param xml_content Character string containing XML content
 #' @return Modified XML content as character string
@@ -955,7 +955,7 @@ insert_section_break_after_abstract <- function(docx_path, french = FALSE) {
   doc_content <- paste(doc_lines, collapse = "\n")
 
   # First, find the abstract heading
-  abstract_keyword <- if (french) "RÉSUMÉ" else "ABSTRACT"
+  abstract_keyword <- if (french) "R\u00c9SUM\u00c9" else "ABSTRACT"
   abstract_pattern <- paste0('(?s)<w:p>.*?<w:t[^>]*>', abstract_keyword, '</w:t>.*?</w:p>')
   abstract_match <- regexpr(abstract_pattern, doc_content, perl = TRUE)
 

@@ -1,6 +1,6 @@
 Package: csasdown2
 Title: Reproducible CSAS Reports
-Version: 0.0.0.9003
+Version: 0.0.0.9004
 Authors@R: c(
     person(c("Sean", "C."), "Anderson", , "sean@seananderson.ca", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9563-1937")),
@@ -8,7 +8,6 @@ Authors@R: c(
            comment = c(ORCID = "0000-0003-0318-2615")),
     person(c("Daniel"), "Ricard", role = "aut",
            comment = c(ORCID = "0000-0002-5605-3940")),
-    person(c("More", "People"), "To Be Added Soon", role = "aut"),
     person("His Majesty the King in Right of Canada, as represented by the Minister of the Department of Fisheries and Oceans", role = "cph")
   )
 Description: Generates CSAS (Canadian Science Advisory Secretariat)

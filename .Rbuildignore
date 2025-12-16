@@ -4,3 +4,5 @@
 ^\.claude$
 ^CLAUDE\.md$
 ^\.github$
+^scratch/
+^data-raw/
