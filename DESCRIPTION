@@ -6,6 +6,8 @@ Authors@R: c(
            comment = c(ORCID = "0000-0001-9563-1937")),
     person(c("Paul", "M."), "Regular", role = "aut",
            comment = c(ORCID = "0000-0003-0318-2615")),
+    person(c("Daniel"), "Ricard", role = "aut",
+           comment = c(ORCID = "0000-0002-5605-3940")),
     person(c("More", "People"), "To Be Added Soon", role = "aut"),
     person("His Majesty the King in Right of Canada, as represented by the Minister of the Department of Fisheries and Oceans", role = "cph")
   )
