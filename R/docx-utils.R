@@ -965,25 +965,59 @@ insert_section_break_after_abstract <- function(docx_path, french = FALSE) {
   }
 
   # Now find the first Heading1 AFTER the abstract
-  # Search only in the content after the abstract
-  content_after_abstract <- substr(doc_content, abstract_match[1] + attr(abstract_match, "match.length"), nchar(doc_content))
-  intro_pattern <- '(?s)<w:p>.*?<w:pStyle w:val="Heading1.*?</w:p>'
-  intro_match_relative <- regexpr(intro_pattern, content_after_abstract, perl = TRUE)
+  # Find ALL Heading1 paragraphs in the document
+  # Use negative lookahead to prevent matching across paragraph boundaries
+  heading1_pattern <- '(?s)<w:p[^>]*>(?:(?!</w:p>).)*?<w:pPr>(?:(?!</w:p>).)*?<w:pStyle w:val="Heading1[^"]*"(?:(?!</w:p>).)*?</w:pPr>(?:(?!</w:p>).)*?</w:p>'
+  all_h1_matches <- gregexpr(heading1_pattern, doc_content, perl = TRUE)
 
-  if (intro_match_relative[1] == -1) {
-    warning("Could not find first heading after abstract")
+  if (all_h1_matches[[1]][1] == -1) {
+    warning("Could not find any Heading1 paragraphs")
     return(invisible(docx_path))
   }
 
-  # Calculate absolute position in the original document
-  intro_match_absolute <- abstract_match[1] + attr(abstract_match, "match.length") + intro_match_relative[1] - 1
+  # Find the first Heading1 that comes AFTER the abstract
+  abstract_end_pos <- abstract_match[1] + attr(abstract_match, "match.length")
+  h1_positions <- all_h1_matches[[1]]
+
+  intro_match_absolute <- NA
+  for (h1_pos in h1_positions) {
+    if (h1_pos > abstract_end_pos) {
+      intro_match_absolute <- h1_pos
+      break
+    }
+  }
+
+  if (is.na(intro_match_absolute)) {
+    warning("Could not find Heading1 after abstract")
+    return(invisible(docx_path))
+  }
+
+  # Find the last section's footer reference to reuse
+  sectpr_pattern <- '(?s)<w:sectPr[^>]*>.*?</w:sectPr>'
+  sections <- gregexpr(sectpr_pattern, doc_content, perl = TRUE)
+
+  footer_ref <- ""
+  if (sections[[1]][1] != -1) {
+    num_sections <- length(sections[[1]])
+    match_starts <- sections[[1]]
+    match_lengths <- attr(sections[[1]], "match.length")
+    last_start <- match_starts[num_sections]
+    last_length <- match_lengths[num_sections]
+    last_section <- substr(doc_content, last_start, last_start + last_length - 1)
+
+    # Extract footer reference from last section
+    footer_match <- regexpr('<w:footerReference w:type="default"[^>]*/>', last_section, perl = TRUE)
+    if (footer_match[1] != -1) {
+      footer_ref <- paste0('\n      ', substr(last_section, footer_match[1], footer_match[1] + attr(footer_match, "match.length") - 1))
+    }
+  }
 
   # Insert a section break with roman numbering and footer reference before the first heading
   section_break <- paste0(
     '<w:p>\n',
     '  <w:pPr>\n',
-    '    <w:sectPr>\n',
-    '      <w:footerReference w:type="default" r:id="rId23"/>\n',
+    '    <w:sectPr>',
+    footer_ref, '\n',
     '      <w:pgNumType w:fmt="lowerRoman" w:start="3"/>\n',
     '      <w:pgSz w:w="12240" w:h="15840"/>\n',
     '      <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720"/>\n',
