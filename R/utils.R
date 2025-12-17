@@ -5,14 +5,17 @@
 #' @keywords internal
 #' @noRd
 get_pandoc_highlight_arg <- function() {
-  pandoc_ver <- rmarkdown::pandoc_version()
-  if (is.null(pandoc_ver)) {
-    return("--highlight-style=none")
-  }
 
-  if (pandoc_ver >= "3.8") {
-    "--syntax-highlighting=none"
-  } else {
-    "--highlight-style=none"
-  }
+  return("--highlight-style=none")
+
+  # pandoc_ver <- rmarkdown::pandoc_version()
+  # if (is.null(pandoc_ver)) {
+  #   return("--highlight-style=none")
+  # }
+  #
+  # if (pandoc_ver >= "3.8") {
+  #   "--syntax-highlighting=none"
+  # } else {
+  #   "--highlight-style=none"
+  # }
 }
