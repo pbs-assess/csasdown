@@ -6,4 +6,4 @@
 * Added vertical space between author addresses.
 
 * Fixed pandoc compatibility by detecting version and using `--syntax-highlighting=none`
-  for pandoc >= 3.8 or `--highlight-style=none` for older versions.
+  for pandoc >= 3.8 or `--no-highlight` for older versions.
