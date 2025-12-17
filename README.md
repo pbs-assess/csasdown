@@ -6,11 +6,9 @@
 [![R-CMD-check](https://github.com/seananderson/csasdown2/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/seananderson/csasdown2/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-> ⚠️ **Experimental Package**: This package is under active development.
-
 csasdown2 is a rewrite of [csasdown](https://github.com/pbs-assess/csasdown) that focuses on generating .docx output compliant with [CSAS](https://www.dfo-mpo.gc.ca/csas-sccs/index-eng.htm) (Canadian Science Advisory Secretariat) formatting requirements, bilingual-language support, and accessibility standards.
 
-## ✨ Features
+## Features
 
 - 📄 **Three document types**: Research Documents, Fisheries Science Advisory Reports (FSARs), and Technical Reports
 - 🔄 **Reproducible workflow**: Use R Markdown to go from data to document in a reproducible pipeline
@@ -91,31 +89,31 @@ After running `csasdown2::draft()`, your project will contain:
 
 ### Supporting Directories
 
-- **`figs/`** 🖼️
+- **`figs/`**
   Store external figures and images here. Reference them in your .Rmd files with relative paths.
 
-- **`data/`** 💾
+- **`data/`**
   Store data files (.csv, .rds, etc.) used in your analysis.
 
-- **`csl/`** 🎓
+- **`csl/`**
   Citation Style Language files for formatting your bibliography.
 
-- **`bib/`** 📖
+- **`bib/`**
   BibTeX files containing your references (e.g., `refs.bib`).
 
 ### Output
 
-- **`_book/`** 📦
+- **`_book/`**
   Generated directory containing your compiled .docx file and intermediate files.
 
-## 📝 Document Types
+## Document Types
 
 - Research Documents in English and French
 - Fisheries Science Advisory Reports in English and French
 - Technical Reports in English and French
 - Science Responses to come
 
-## 🛠 Writing a Report
+## Writing a Report
 
 ### Modify YAML metadata
 
@@ -215,7 +213,7 @@ Start an appendix:
 
 Reference with `Appendix \@ref(app:additional)`
 
-## 🔧 Under the Hood
+## Under the Hood
 
 csasdown2 uses a multi-stage rendering pipeline:
 
@@ -223,11 +221,11 @@ csasdown2 uses a multi-stage rendering pipeline:
 2. [**officedown**](https://davidgohel.github.io/officedown/) converts to Word with CSAS styles
 3. [**officer**](https://davidgohel.github.io/officer/) post-processes the document (injects frontmatter, replaces bookmarks, assembles final document)
 
-## 🤝 Contributing
+## Contributing
 
 Bug reports and feature requests are welcome on the [GitHub issue tracker](https://github.com/pbs-assess/csasdown2/issues).
 
-## 📄 License
+## License
 
 This package is licensed under the MIT License.
 
