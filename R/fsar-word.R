@@ -10,14 +10,26 @@
 #' @importFrom cli cli_inform cli_abort cli_warn
 #' @export
 fsar_docx <- function(...) {
+  dots <- list(...)
+
+  # Extract and merge pandoc_args
+  default_pandoc_args <- c("--syntax-highlighting=none", "--metadata", "link-citations=false", "--csl", "csl/csas.csl")
+  user_pandoc_args <- dots$pandoc_args
+  pandoc_args <- c(default_pandoc_args, user_pandoc_args)
+  dots$pandoc_args <- NULL
+
   ## Several modifications were made to the fsar template
   ## 1) bookmarks were added to headers and footers for officer replacement below
   ## 2) created a Table Caption style since Caption - Table was not being applied. May be a bug (https://github.com/davidgohel/officedown/issues/112).
   ## 3) Added First Paragraph style to avoid issues with Body Text not being applied to the first paragraph of each section.
   file <- "fsar-template.docx"
-  base <- officedown::rdocx_document(...,
-    base_format = "bookdown::word_document2",
-    number_sections = FALSE,
+
+  args <- c(
+    dots,
+    list(
+      base_format = "bookdown::word_document2",
+      number_sections = FALSE,
+      pandoc_args = pandoc_args,
     tables = list(
       style = "Body Text",
       layout = "autofit",
@@ -43,12 +55,13 @@ fsar_docx <- function(...) {
     mapstyles = list(
       "Body Text" = c("Normal", "First Paragraph")
     ),
-    pandoc_args = "--no-highlight",
     reference_docx = system.file("csas-docx",
       file,
       package = "csasdown2"
-    )
+    ))
   )
+
+  base <- do.call(officedown::rdocx_document, args)
 
   base$knitr$opts_chunk$fig.align <- "center"
   base$knitr$opts_chunk$ft.align <- "center"

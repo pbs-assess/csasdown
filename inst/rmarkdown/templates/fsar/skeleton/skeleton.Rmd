@@ -18,9 +18,7 @@ context: |
   [See Guidance Document for examples of additional information to provide in the Context section.]
 output:
   csasdown2::fsar_docx
-link-citations: false
 bibliography: bib/refs.bib
-csl: csl/csas.csl
 # End of options to set
 title: ""
 knit: (function(input, ...) {

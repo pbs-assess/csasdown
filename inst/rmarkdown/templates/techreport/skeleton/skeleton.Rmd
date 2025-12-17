@@ -4,36 +4,28 @@ english_title: |
 french_title: |
   Titre ici (*Nom latin de l'espèce*)
 
-english_author: |
-  First M. Last^1^ 
-  Alex B. Smith^2^ 
-  Suzanne A. Tremblay^3^ and
+author: |
+  First M. Last^1^,
+  Alex B. Smith^2^,
+  Suzanne A. Tremblay^3^, and
   Jean C. Deschoses^4^
-  
-french_author: |
-  First M. Last^1^ 
-  Alex B. Smith^2^ 
-  Suzanne A. Tremblay^3^ et
-  Jean C. Deschoses^4^
-
-english_author_list: |
-  Last, F.M., Smith, A.B., Tremblay, S.A. and Deschoses, J.C.
-french_author_list: |
-  Last, F.M., Smith, A.B., Tremblay, S.A. et Deschoses, J.C.
 
 english_address: |
   ^1^Pacific Biological Station\
      Fisheries and Oceans Canada\
      3190 Hammond Bay Road\
      Nanaimo, British Columbia, V9T 6N7, Canada\
+  \
   ^2^Gulf Fisheries Centre\
      Fisheries and Oceans Canada\
      343 Université Avenue\
      Moncton, New Brunswick, E1C 9B6, Canada\
+  \
   ^3^Northwest Atlantic Fisheries Centre\
      Fisheries and Oceans Canada\
      80 E. White Hills Rd., P.O. Box 5667\
-     St. John's, Newfoundland and Labrador, A1C 5X1
+     St. John's, Newfoundland and Labrador, A1C 5X1\
+  \
   ^4^Far, far away\
      Another Galaxy
 french_address: |
@@ -41,14 +33,17 @@ french_address: |
      Pêches et Océans Canada\
      3190 Hammond Bay Road\
      Nanaimo, Colombie-Britannique, V9T 6N7, Canada\
+  \
   ^2^Centre des Pêches du Golfe\
      Pêches et Océans Canada\
      343 avenue Université\
      Moncton, Nouveau Brunswick, E1C 9B6, Canada\
+  \
   ^3^Centre des pêches de l'Atlantique nord-ouest\
      Pêches et Océans Canada\
      80 rue E. White Hills, Case postale 5667\
-     St. John's, Terre-Neuve et Labrador, A1C 5X1
+     St. John's, Terre-Neuve et Labrador, A1C 5X1\
+  \
   ^4^Loin, très loin\
      Une autre galaxie
      
@@ -82,9 +77,7 @@ output:
  csasdown2::techreport_docx:
    french: false # toggle this to switch languages
 knit: (function(input, ...) csasdown2::render()) # so the RStudio "Knit" button works
-link-citations: true
 bibliography: bib/refs.bib # adjust or list multiple if desired
-csl: csl/csas.csl
 ---
 
 ```{r setup, echo=FALSE, cache=FALSE, message=FALSE, results='hide', warning=FALSE}

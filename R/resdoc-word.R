@@ -12,13 +12,22 @@
 #' @export
 
 resdoc_docx <- function(...) {
-  # dots <- list(...)
-  # french <- isTRUE(dots$french)
+  dots <- list(...)
+
+  # Extract and merge pandoc_args
+  default_pandoc_args <- c("--syntax-highlighting=none", "--metadata", "link-citations=true", "--csl", "csl/csas.csl")
+  user_pandoc_args <- dots$pandoc_args
+  pandoc_args <- c(default_pandoc_args, user_pandoc_args)
+  dots$pandoc_args <- NULL
 
   file <- "resdoc-content-2026.docx"
-  base <- officedown::rdocx_document(...,
-    base_format = "bookdown::word_document2",
-    number_sections = FALSE,
+
+  args <- c(
+    dots,
+    list(
+      base_format = "bookdown::word_document2",
+      number_sections = FALSE,
+      pandoc_args = pandoc_args,
     tables = list(
       style = "Body Text",
       layout = "autofit",
@@ -52,8 +61,10 @@ resdoc_docx <- function(...) {
     reference_docx = system.file("csas-docx",
       file,
       package = "csasdown2"
-    )
+    ))
   )
+
+  base <- do.call(officedown::rdocx_document, args)
 
   base$knitr$opts_chunk$fig.align <- "center"
   base$knitr$opts_chunk$ft.align <- "center"
@@ -111,6 +122,14 @@ add_resdoc_word_frontmatter2 <- function(index_fn, yaml_fn = "_bookdown.yml", ve
   if (verbose) cli_inform("Adding frontmatter to the Research Document using the officer package...")
 
   x <- rmarkdown::yaml_front_matter(index_fn)
+
+  # Parse single author field into language-specific fields
+  parsed <- parse_author_field(x$author)
+  x$english_author <- parsed$english_author
+  x$french_author <- parsed$french_author
+  x$english_author_list <- parsed$english_author_list
+  x$french_author_list <- parsed$french_author_list
+
   french <- isTRUE(x$output[[1]]$french)
 
   front_filename <- if (french) "resdoc-frontmatter-french2.docx" else "resdoc-frontmatter-english2.docx"

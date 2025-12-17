@@ -12,6 +12,13 @@
 #' @export
 
 techreport_docx <- function(...) {
+  dots <- list(...)
+
+  # Extract and merge pandoc_args
+  default_pandoc_args <- c("--metadata", "link-citations=true", "--csl", "csl/csas.csl")
+  user_pandoc_args <- dots$pandoc_args
+  pandoc_args <- c(default_pandoc_args, user_pandoc_args)
+  dots$pandoc_args <- NULL
 
   file <- "tech-report-content.docx"
   ref_docx <- system.file("tech-report-docx",
@@ -19,9 +26,12 @@ techreport_docx <- function(...) {
     package = "csasdown2"
   )
 
-  base <- officedown::rdocx_document(...,
-    base_format = "bookdown::word_document2",
-    number_sections = FALSE,
+  args <- c(
+    dots,
+    list(
+      base_format = "bookdown::word_document2",
+      number_sections = FALSE,
+      pandoc_args = pandoc_args,
     tables = list(
       style = "Body Text",
       layout = "autofit",
@@ -47,8 +57,10 @@ techreport_docx <- function(...) {
     mapstyles = list(
       "Body Text" = c("Normal", "First Paragraph")
     ),
-    reference_docx = ref_docx
+    reference_docx = ref_docx)
   )
+
+  base <- do.call(officedown::rdocx_document, args)
 
   base$knitr$opts_chunk$fig.align <- "center"
   base$knitr$opts_chunk$ft.align <- "center"
@@ -69,6 +81,14 @@ add_techreport_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml",
   if (verbose) cli_inform("Adding frontmatter to the Technical Report using the officer package...")
 
   x <- rmarkdown::yaml_front_matter(index_fn)
+
+  # Parse single author field into language-specific fields
+  parsed <- parse_author_field(x$author)
+  x$english_author <- parsed$english_author
+  x$french_author <- parsed$french_author
+  x$english_author_list <- parsed$english_author_list
+  x$french_author_list <- parsed$french_author_list
+
   french <- isTRUE(x$output[[1]]$french)
 
   # Get book filename from bookdown config
