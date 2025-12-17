@@ -4,7 +4,7 @@
 
 This appendix demonstrates that figure and table numbering restarts for each appendix.
 
-## Model Results
+## MODEL RESULTS
 
 ```{r fig-model-diagnostic, fig.cap="Model diagnostic plot."}
 set.seed(456)

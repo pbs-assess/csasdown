@@ -1,3 +1,24 @@
+#' Fix list indentation in numbering XML
+#'
+#' @description Removes indentation from list level definitions in numbering.xml.
+#' This removes the <w:ind> tags from within <w:lvl> elements that cause unwanted
+#' list indentation in the rendered document.
+#'
+#' @param xml_content Character string containing numbering XML content
+#' @return Modified XML content as character string
+#' @keywords internal
+#' @noRd
+fix_list_indentation_xml <- function(xml_content) {
+  xml_content <- gsub(
+    '<w:ind w:left="[0-9]+" w:hanging="[0-9]+"/>',
+    '<w:ind w:left="360" w:hanging="360"/>',
+    xml_content,
+    perl = TRUE
+  )
+
+  xml_content
+}
+
 #' Fix table caption XML content
 #'
 #' @description Removes center justification from TableCaption styles and
@@ -55,6 +76,43 @@ fix_table_caption_xml <- function(xml_content) {
 
   # Fix appendix cross-references
   xml_content <- fix_appendix_crossrefs_xml(xml_content)
+
+  # Remove empty paragraphs (moves page breaks into following paragraph)
+  # xml_content <- remove_empty_paragraphs_xml(xml_content)
+
+  xml_content
+}
+
+#' Remove empty paragraphs from Word XML
+#'
+#' @description Removes paragraph elements that contain no meaningful text content.
+#' An empty paragraph is defined as one that has no <w:t> tags with actual text,
+#' though it may contain bookmarks, formatting, and other non-text elements.
+#'
+#' @param xml_content Character string containing XML content
+#' @return Modified XML content as character string
+#' @keywords internal
+#' @noRd
+remove_empty_paragraphs_xml <- function(xml_content) {
+  # Move page breaks from standalone paragraphs into the following paragraph
+  # This removes the extra line while preserving the page break
+  # Pattern: <w:p><w:r><w:br w:type="page"/></w:r></w:p> followed by anything then <w:p>
+  # The "anything" can include bookmarks, section breaks, etc.
+  # Replace with: <w:p><w:r><w:br w:type="page"/></w:r> (merge into next paragraph)
+
+  xml_content <- gsub(
+    '(<w:p>)\\s*<w:r>\\s*<w:br w:type="page"/>\\s*</w:r>\\s*</w:p>((?:(?!<w:p>).)*?)(<w:p>)',
+    '\\2\\3<w:r><w:br w:type="page"/></w:r>',
+    xml_content,
+    perl = TRUE
+  )
+
+  # Also remove truly empty paragraphs (just in case)
+  # Pattern 1: <w:p><w:pPr/></w:p> (self-closing pPr)
+  xml_content <- gsub('<w:p><w:pPr/></w:p>', '', xml_content, fixed = TRUE)
+
+  # Pattern 2: <w:p><w:pPr></w:pPr></w:p> (empty pPr)
+  xml_content <- gsub('<w:p><w:pPr></w:pPr></w:p>', '', xml_content, fixed = TRUE)
 
   xml_content
 }
@@ -470,6 +528,58 @@ fix_appendix_section_refs_xml <- function(xml_content) {
   xml_content
 }
 
+#' Apply Abstract Heading style to ABSTRACT section in XML
+#'
+#' @description Replaces Heading1 style with Abstract Heading style for
+#' paragraphs containing "ABSTRACT" or "R\u00c9SUM\u00c9" text.
+#'
+#' @param xml_content Character string containing XML content
+#' @return Modified XML content as character string
+#' @keywords internal
+#' @noRd
+apply_abstract_heading_style_xml <- function(xml_content) {
+  # More flexible pattern that handles various XML structures
+  # Matches: <w:pPr>...<w:pStyle w:val="Heading1"/>...</w:pPr><w:r...>...<w:t>ABSTRACT</w:t>
+  pattern <- paste0(
+    '(<w:pPr[^>]*>(?:(?!</w:pPr>).)*)',
+    '<w:pStyle w:val="Heading1"/>',
+    '((?:(?!</w:pPr>).)*</w:pPr>\\s*<w:r[^>]*>(?:(?!</w:r>).)*<w:t[^>]*>)',
+    'ABSTRACT',
+    '(</w:t>)'
+  )
+
+  replacement <- paste0(
+    '\\1',
+    '<w:pStyle w:val="Abstract Heading"/>',
+    '\\2',
+    'ABSTRACT',
+    '\\3'
+  )
+
+  xml_content <- gsub(pattern, replacement, xml_content, perl = TRUE)
+
+  # French version
+  pattern_fr <- paste0(
+    '(<w:pPr[^>]*>(?:(?!</w:pPr>).)*)',
+    '<w:pStyle w:val="Heading1"/>',
+    '((?:(?!</w:pPr>).)*</w:pPr>\\s*<w:r[^>]*>(?:(?!</w:r>).)*<w:t[^>]*>)',
+    'R\u00c9SUM\u00c9',
+    '(</w:t>)'
+  )
+
+  replacement_fr <- paste0(
+    '\\1',
+    '<w:pStyle w:val="Abstract Heading"/>',
+    '\\2',
+    'R\u00c9SUM\u00c9',
+    '\\3'
+  )
+
+  xml_content <- gsub(pattern_fr, replacement_fr, xml_content, perl = TRUE)
+
+  xml_content
+}
+
 #' Extract style definitions from reference template
 #'
 #' @param ref_docx_path Path to reference .docx file
@@ -626,6 +736,15 @@ process_embedded_docx_files <- function(parent_temp_dir, ref_docx_path) {
     # Copy styles to embedded document
     copy_styles_to_docx(embedded_temp, ref_docx_path)
 
+    # Process numbering.xml in embedded document
+    embedded_numbering_xml <- file.path(embedded_temp, "word", "numbering.xml")
+    if (file.exists(embedded_numbering_xml)) {
+      numbering_content <- readLines(embedded_numbering_xml, warn = FALSE)
+      numbering_content <- paste(numbering_content, collapse = "")
+      numbering_content <- fix_list_indentation_xml(numbering_content)
+      writeLines(numbering_content, embedded_numbering_xml)
+    }
+
     # Re-zip the embedded .docx
     curr_dir <- getwd()
     setwd(embedded_temp)
@@ -686,6 +805,15 @@ fix_table_caption_alignment <- function(docx_file, reference_docx = NULL) {
   # Copy styles from reference template to main document
   copy_styles_to_docx(temp_dir, reference_docx)
 
+  # Process numbering.xml to remove list indentation
+  numbering_xml_path <- file.path(temp_dir, "word", "numbering.xml")
+  if (file.exists(numbering_xml_path)) {
+    numbering_content <- readLines(numbering_xml_path, warn = FALSE)
+    numbering_content <- paste(numbering_content, collapse = "")
+    numbering_content <- fix_list_indentation_xml(numbering_content)
+    writeLines(numbering_content, numbering_xml_path)
+  }
+
   # Process embedded .docx files (for resdoc with tmp-content.docx, etc.)
   process_embedded_docx_files(temp_dir, reference_docx)
 
@@ -735,4 +863,211 @@ add_caption_fix_postprocessor <- function(base_format, reference_docx) {
   }
 
   base_format
+}
+
+#' Set page numbering format and start value for a document section
+#'
+#' @param docx_path Path to .docx file
+#' @param format Page numbering format: "lowerRoman", "decimal", etc. NULL to use default
+#' @param start Starting page number (integer)
+#' @param section_index Which section to modify (-1 = last section, 1 = first)
+#' @keywords internal
+#' @noRd
+set_section_page_numbering <- function(docx_path, format = NULL, start = 1, section_index = -1) {
+  temp_dir <- tempfile()
+  dir.create(temp_dir)
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+
+  utils::unzip(docx_path, exdir = temp_dir)
+
+  doc_xml_path <- file.path(temp_dir, "word", "document.xml")
+  doc_lines <- readLines(doc_xml_path, warn = FALSE)
+  doc_content <- paste(doc_lines, collapse = "\n")
+
+  # (?s) enables DOTALL mode so . matches newlines
+  sectpr_pattern <- '(?s)<w:sectPr[^>]*>.*?</w:sectPr>'
+  sections <- gregexpr(sectpr_pattern, doc_content, perl = TRUE)
+
+  if (sections[[1]][1] == -1) {
+    warning("No section properties found in document")
+    return(invisible(docx_path))
+  }
+
+  num_sections <- length(sections[[1]])
+  target_index <- if (section_index == -1) num_sections else section_index
+
+  if (target_index < 1 || target_index > num_sections) {
+    warning(sprintf("Section index %d out of range (1-%d)", target_index, num_sections))
+    return(invisible(docx_path))
+  }
+
+  match_starts <- sections[[1]]
+  match_lengths <- attr(sections[[1]], "match.length")
+  target_start <- match_starts[target_index]
+  target_length <- match_lengths[target_index]
+  target_section <- substr(doc_content, target_start, target_start + target_length - 1)
+
+  target_section_modified <- gsub('<w:pgNumType[^>]*/?>', '', target_section, perl = TRUE)
+
+  if (!is.null(format)) {
+    pgnum_tag <- sprintf('<w:pgNumType w:fmt="%s" w:start="%d"/>', format, start)
+  } else {
+    pgnum_tag <- sprintf('<w:pgNumType w:start="%d"/>', start)
+  }
+
+  target_section_modified <- sub(
+    '(<w:sectPr[^>]*>)',
+    paste0('\\1\n      ', pgnum_tag),
+    target_section_modified,
+    perl = TRUE
+  )
+
+  escaped_pattern <- gsub("([\\[\\](){}^$.|*+?\\\\])", "\\\\\\1", target_section, perl = TRUE)
+  doc_content <- gsub(escaped_pattern, target_section_modified, doc_content, perl = TRUE)
+
+  writeLines(doc_content, doc_xml_path)
+
+  old_wd <- getwd()
+  on.exit(setwd(old_wd), add = TRUE)
+
+  setwd(temp_dir)
+  files <- list.files(recursive = TRUE, full.names = FALSE, include.dirs = FALSE)
+  utils::zip(zipfile = file.path(old_wd, docx_path), files = files, flags = "-q")
+
+  invisible(docx_path)
+}
+
+#' Insert a section break after the abstract section
+#'
+#' @param docx_path Path to .docx file
+#' @param french Logical, is this a French document?
+#' @keywords internal
+#' @noRd
+insert_section_break_after_abstract <- function(docx_path, french = FALSE) {
+  temp_dir <- tempfile()
+  dir.create(temp_dir)
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+
+  utils::unzip(docx_path, exdir = temp_dir)
+
+  doc_xml_path <- file.path(temp_dir, "word", "document.xml")
+  doc_lines <- readLines(doc_xml_path, warn = FALSE)
+  doc_content <- paste(doc_lines, collapse = "\n")
+
+  # First, find the abstract heading
+  abstract_keyword <- if (french) "R\u00c9SUM\u00c9" else "ABSTRACT"
+  abstract_pattern <- paste0('(?s)<w:p>.*?<w:t[^>]*>', abstract_keyword, '</w:t>.*?</w:p>')
+  abstract_match <- regexpr(abstract_pattern, doc_content, perl = TRUE)
+
+  if (abstract_match[1] == -1) {
+    warning("Could not find abstract heading")
+    return(invisible(docx_path))
+  }
+
+  # Now find the first Heading1 AFTER the abstract
+  # Find ALL Heading1 paragraphs in the document
+  # Use negative lookahead to prevent matching across paragraph boundaries
+  heading1_pattern <- '(?s)<w:p[^>]*>(?:(?!</w:p>).)*?<w:pPr>(?:(?!</w:p>).)*?<w:pStyle w:val="Heading1[^"]*"(?:(?!</w:p>).)*?</w:pPr>(?:(?!</w:p>).)*?</w:p>'
+  all_h1_matches <- gregexpr(heading1_pattern, doc_content, perl = TRUE)
+
+  if (all_h1_matches[[1]][1] == -1) {
+    warning("Could not find any Heading1 paragraphs")
+    return(invisible(docx_path))
+  }
+
+  # Find the first Heading1 that comes AFTER the abstract
+  abstract_end_pos <- abstract_match[1] + attr(abstract_match, "match.length")
+  h1_positions <- all_h1_matches[[1]]
+
+  intro_match_absolute <- NA
+  for (h1_pos in h1_positions) {
+    if (h1_pos > abstract_end_pos) {
+      intro_match_absolute <- h1_pos
+      break
+    }
+  }
+
+  if (is.na(intro_match_absolute)) {
+    warning("Could not find Heading1 after abstract")
+    return(invisible(docx_path))
+  }
+
+  # Find the last section's footer reference to reuse
+  sectpr_pattern <- '(?s)<w:sectPr[^>]*>.*?</w:sectPr>'
+  sections <- gregexpr(sectpr_pattern, doc_content, perl = TRUE)
+
+  footer_ref <- ""
+  if (sections[[1]][1] != -1) {
+    num_sections <- length(sections[[1]])
+    match_starts <- sections[[1]]
+    match_lengths <- attr(sections[[1]], "match.length")
+    last_start <- match_starts[num_sections]
+    last_length <- match_lengths[num_sections]
+    last_section <- substr(doc_content, last_start, last_start + last_length - 1)
+
+    # Extract footer reference from last section
+    footer_match <- regexpr('<w:footerReference w:type="default"[^>]*/>', last_section, perl = TRUE)
+    if (footer_match[1] != -1) {
+      footer_ref <- paste0('\n      ', substr(last_section, footer_match[1], footer_match[1] + attr(footer_match, "match.length") - 1))
+    }
+  }
+
+  # Insert a section break with roman numbering and footer reference before the first heading
+  section_break <- paste0(
+    '<w:p>\n',
+    '  <w:pPr>\n',
+    '    <w:sectPr>',
+    footer_ref, '\n',
+    '      <w:pgNumType w:fmt="lowerRoman" w:start="3"/>\n',
+    '      <w:pgSz w:w="12240" w:h="15840"/>\n',
+    '      <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720"/>\n',
+    '    </w:sectPr>\n',
+    '  </w:pPr>\n',
+    '</w:p>\n'
+  )
+
+  # Insert the section break before the first heading
+  doc_content <- paste0(
+    substr(doc_content, 1, intro_match_absolute - 1),
+    section_break,
+    substr(doc_content, intro_match_absolute, nchar(doc_content))
+  )
+
+  # Now update the last section (which will become section 4) to have arabic numbering
+  # Find the last section
+  sectpr_pattern <- '(?s)<w:sectPr[^>]*>.*?</w:sectPr>'
+  sections <- gregexpr(sectpr_pattern, doc_content, perl = TRUE)
+
+  if (sections[[1]][1] != -1) {
+    num_sections <- length(sections[[1]])
+    match_starts <- sections[[1]]
+    match_lengths <- attr(sections[[1]], "match.length")
+    last_start <- match_starts[num_sections]
+    last_length <- match_lengths[num_sections]
+    last_section <- substr(doc_content, last_start, last_start + last_length - 1)
+
+    # Remove any existing pgNumType and add arabic numbering
+    last_section_modified <- gsub('<w:pgNumType[^>]*/?>', '', last_section, perl = TRUE)
+    last_section_modified <- sub(
+      '(<w:sectPr[^>]*>)',
+      '\\1\n      <w:pgNumType w:fmt="decimal" w:start="1"/>',
+      last_section_modified,
+      perl = TRUE
+    )
+
+    # Replace the last section in the document
+    escaped_pattern <- gsub("([\\[\\](){}^$.|*+?\\\\])", "\\\\\\1", last_section, perl = TRUE)
+    doc_content <- gsub(escaped_pattern, last_section_modified, doc_content, perl = TRUE)
+  }
+
+  writeLines(doc_content, doc_xml_path)
+
+  old_wd <- getwd()
+  on.exit(setwd(old_wd), add = TRUE)
+
+  setwd(temp_dir)
+  files <- list.files(recursive = TRUE, full.names = FALSE, include.dirs = FALSE)
+  utils::zip(zipfile = file.path(old_wd, docx_path), files = files, flags = "-q")
+
+  invisible(docx_path)
 }

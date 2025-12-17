@@ -4,7 +4,7 @@
 
 This appendix demonstrates appendix-specific figure and table numbering (A.1, A.2, etc.).
 
-## Sample Biological Data
+## SAMPLE BIOLOGICAL DATA
 
 ```{r fig-biology-example, fig.cap="Example plot."}
 set.seed(123)
@@ -33,7 +33,7 @@ summary_table <- data.frame(
 flextable::flextable(summary_table)
 ```
 
-## Subsection Example
+## SUBSECTION EXAMPLE
 
 You can have subsections within appendices as usual. The figure numbering continues within the same appendix (A.1, A.2, A.3...).
 
