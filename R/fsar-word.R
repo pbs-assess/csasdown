@@ -13,7 +13,7 @@ fsar_docx <- function(...) {
   dots <- list(...)
 
   # Extract and merge pandoc_args
-  default_pandoc_args <- c("--syntax-highlighting=none", "--metadata", "link-citations=false", "--csl", "csl/csas.csl")
+  default_pandoc_args <- c(get_pandoc_highlight_arg(), "--metadata", "link-citations=false", "--csl", "csl/csas.csl")
   user_pandoc_args <- dots$pandoc_args
   pandoc_args <- c(default_pandoc_args, user_pandoc_args)
   dots$pandoc_args <- NULL

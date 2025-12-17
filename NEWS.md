@@ -5,5 +5,5 @@
   
 * Added vertical space between author addresses.
 
-* Fixed `Deprecated: --highlight-style. Use --syntax-highlighting instead.`
-  warning.
+* Fixed pandoc compatibility by detecting version and using `--syntax-highlighting=none`
+  for pandoc >= 3.8 or `--highlight-style=none` for older versions.
