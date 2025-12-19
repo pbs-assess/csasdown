@@ -8,6 +8,7 @@ draft(
   type = c("resdoc", "fsar", "sr", "techreport"),
   directory = ".",
   edit = FALSE,
+  create_rstudio_project = TRUE,
   ...
 )
 }
@@ -19,6 +20,8 @@ draft(
 Current directory by default}
 
 \item{edit}{\code{TRUE} to edit the template immediately.}
+
+\item{create_rstudio_project}{\code{TRUE} to create an RStudio project file.}
 
 \item{...}{Other arguments to pass to \code{\link[rmarkdown:draft]{rmarkdown::draft()}}.}
 }

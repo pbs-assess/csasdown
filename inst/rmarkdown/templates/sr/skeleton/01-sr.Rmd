@@ -22,6 +22,45 @@ Mandatory, title may vary.
 
 This section is the core of the report.
 
+CSAS allows ordered lists:
+
+::: {custom-style="List Number"}
+
+1. Item 1
+
+1. Item 2
+
+:::
+
+and bulleted lists:
+
+::: {custom-style="List Bullet"}
+
+- Item 1
+
+- Item 2
+
+:::
+
+Note that you *must* have blank lines between the list elements for the proper CSAS styles to be applied. Sub-list items are not supported (you would have to manually apply the List Number 2 or List Bullet 2 style after).
+
+This is a reference to a figure: Figure \@ref(fig:example-fig).
+
+This is a reference to a table: Table \@ref(tab:example-table).
+
+```{r example-table, tab.cap = "Table showing random numbers."}
+set.seed(1)
+df1 <- data.frame(Year = 1:10, Index = round(rlnorm(10), 2))
+flextable(df1) |> 
+  set_table_properties(layout = "autofit") |>
+  set_caption(caption = "My caption.")
+```
+
+```{r example-fig, fig.cap = "Figure showing random numbers."}
+df2 <- data.frame(x = rnorm(10), y = rnorm(10))
+ggplot(df2, aes(x, y)) + geom_point() + theme_light()
+```
+
 ### Indicators of the Stock Status
 
 Mandatory for stock status updates, title may vary.

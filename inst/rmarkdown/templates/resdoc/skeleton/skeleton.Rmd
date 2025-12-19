@@ -54,9 +54,9 @@ year: "2026"
 
 output:
  csasdown2::resdoc_docx:
-   french: false # toggle this to switch languages
-knit: (function(input, ...) csasdown2::render()) # so the RStudio "Knit" button works
-bibliography: bib/refs.bib # adjust or list multiple separate by commas if desired
+   french: false
+knit: (function(input, ...) csasdown2::render())
+bibliography: bib/refs.bib
 ---
 
 ```{r setup, echo=FALSE, cache=FALSE, message=FALSE, results='hide', warning=FALSE}

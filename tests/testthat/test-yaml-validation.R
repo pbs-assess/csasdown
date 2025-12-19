@@ -112,7 +112,7 @@ test_that("check_yaml handles FSAR correctly", {
   temp_file <- file.path(temp_dir, "index.Rmd")
 
   yaml_content <- '---
-report_title: "Test Report"
+english_title: "Test Report"
 output:
   csasdown2::fsar_docx
 ---
@@ -136,18 +136,21 @@ test_that("check_yaml passes for complete FSAR YAML", {
   temp_file <- file.path(temp_dir, "index.Rmd")
 
   yaml_content <- '---
-report_title: "Test Report"
-report_title_short: "Short Title"
-report_year: "2025"
+english_title: "Test Report"
+french_title: "Titre français"
+english_title_short: "Short Title"
+french_title_short: "Short Title"
+english_region: "Test Region"
+french_region: "Région de test"
+year: "2025"
 release_month: "May"
-report_number: "001"
 meeting_date: "May 1, 2025"
-region: "Test Region"
+report_number: "001"
 email: "test@example.com"
-csa_address: "Test Address"
-report_title_french: "Titre français"
-inuktitut_citation: "Inuktitut text"
+english_csa_address: "Test Address"
+french_csa_address: "Adresse de test"
 context: "This is the context."
+inuktitut_citation: "Inuktitut text"
 output:
   csasdown2::fsar_docx
 ---

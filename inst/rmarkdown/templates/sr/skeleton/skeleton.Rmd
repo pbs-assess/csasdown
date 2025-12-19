@@ -5,13 +5,13 @@ french_title: "Title"
 english_title_short: "Short Publication Title"
 french_title_short: "Short Publication Title"
 
+english_region: "Region Name"
+french_region: "Region Name"
+
 year: "2026"
 
 english_month: "XX"
 french_month: "XX"
-
-english_region: "Region Name"
-french_region: "Region Name"
 
 email: "email@csa-email.com"
 
@@ -20,12 +20,9 @@ french_csa_address: "CSA address goes here"
 
 output:
   csasdown2::sr_docx:
-    french: false # toggle this to switch languages
-
-bibliography: bib/refs.bib
-
-# End of options to set
+    french: false
 knit: (function(input, ...) {csasdown2::render()})
+bibliography: bib/refs.bib
 ---
 
 ```{r setup, echo=FALSE, cache=FALSE, message=FALSE, results='hide', warning=FALSE}
