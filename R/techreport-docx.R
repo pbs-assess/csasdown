@@ -1,80 +1,14 @@
-#' Create .docx Tech Reports
-#'
-#' @description This is a function called within the YAML of the
-#' `index.Rmd` file to specify the creation of a .docx version of a
-#' Tech Report
-#'
-#' @param ... Other arguments to [officedown::rdocx_document()]
-#' @import bookdown
-#' @rdname techreport_docx
-#' @return A Word Document in the `.docx` format based on the Tech Report
-#'   template
+#' @rdname csas_docx
 #' @export
 
 techreport_docx <- function(...) {
-  dots <- list(...)
-
-  # Extract and merge pandoc_args
-  default_pandoc_args <- c("--metadata", "link-citations=true", "--csl", "csl/csas.csl")
-  user_pandoc_args <- dots$pandoc_args
-  pandoc_args <- c(default_pandoc_args, user_pandoc_args)
-  dots$pandoc_args <- NULL
-
-  file <- "tech-report-content.docx"
-  ref_docx <- system.file("tech-report-docx",
-    file,
-    package = "csasdown2"
+  .csasdown_docx_base(
+    reference_docx = "tech-report-content.docx",
+    link_citations = TRUE,
+    template_dir = "tech-report-docx",
+    use_pandoc_highlight = FALSE,
+    ...
   )
-
-  args <- c(
-    dots,
-    list(
-      base_format = "bookdown::word_document2",
-      number_sections = FALSE,
-      pandoc_args = pandoc_args,
-    tables = list(
-      style = "Body Text",
-      layout = "autofit",
-      caption = list(
-        style = "Table Caption",
-        pre = "Table", sep = ". ",
-        fp_text = officer::fp_text_lite(bold = FALSE)
-      ),
-      conditional = list(
-        first_row = TRUE, first_column = FALSE, last_row = FALSE,
-        last_column = FALSE, no_hband = FALSE, no_vband = TRUE
-      )
-    ),
-    plots = list(
-      style = "Caption - Figure",
-      align = "center",
-      caption = list(
-        style = "Caption - Figure",
-        pre = "Figure ", sep = ". ",
-        fp_text = officer::fp_text_lite(bold = FALSE)
-      )
-    ),
-    mapstyles = list(
-      "Body Text" = c("Normal", "First Paragraph")
-    ),
-    reference_docx = ref_docx)
-  )
-
-  base <- do.call(officedown::rdocx_document, args)
-
-  base$knitr$opts_chunk$fig.align <- "center"
-  base$knitr$opts_chunk$ft.align <- "center"
-  base$knitr$opts_chunk$collapse <- TRUE
-  base$knitr$opts_chunk$warning <- FALSE
-  base$knitr$opts_chunk$message <- FALSE
-  base$knitr$opts_chunk$echo <- FALSE
-  base$knitr$opts_chunk$comment <- "#>"
-  base$knitr$opts_chunk$dev <- "png"
-
-  # Add post-processor to fix table caption alignment
-  base <- add_caption_fix_postprocessor(base, reference_docx = ref_docx)
-
-  base
 }
 
 add_techreport_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", verbose = FALSE, keep_files = FALSE) {

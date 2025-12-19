@@ -2,80 +2,23 @@
 #'
 #' @description This is a function called within the YAML of the
 #' `index.Rmd` file to specify the creation of a .docx version of a
-#' Research Document or Science Response.
+#' CSAS report.
 #'
 #' @param ... Other arguments to [officedown::rdocx_document()]
-#' @import bookdown
 #' @rdname csas_docx
-#' @return A Word Document in the `.docx` format based on the CSAS Res Doc
-#'   template
 #' @export
 #' @importFrom officer headers_replace_text_at_bkm body_replace_text_at_bkm
 #'   footers_replace_text_at_bkm docx_set_settings body_add_docx
+#' @return A `.docx` file
 
 sr_docx <- function(...) {
-  dots <- list(...)
-
-  # Extract and merge pandoc_args
-  default_pandoc_args <- c(get_pandoc_highlight_arg(), "--metadata", "link-citations=true", "--csl", "csl/csas.csl")
-  user_pandoc_args <- dots$pandoc_args
-  pandoc_args <- c(default_pandoc_args, user_pandoc_args)
-  dots$pandoc_args <- NULL
-
-  file <- "SRR-RS2026-eng-main.docx"
-
-  args <- c(
-    dots,
-    list(
-      base_format = "bookdown::word_document2",
-      number_sections = FALSE,
-      pandoc_args = pandoc_args,
-    tables = list(
-      style = "Body Text",
-      layout = "autofit",
-      caption = list(
-        style = "Table Caption",
-        pre = "Table", sep = ". ",
-        fp_text = officer::fp_text_lite(bold = FALSE)
-      ),
-      conditional = list(
-        first_row = TRUE, first_column = FALSE, last_row = FALSE,
-        last_column = FALSE, no_hband = FALSE, no_vband = TRUE
-      )
-    ),
-    plots = list(
-      style = "Caption - Figure",
-      align = "center",
-      caption = list(
-        style = "Caption - Figure",
-        pre = "Figure ", sep = ". ",
-        fp_text = officer::fp_text_lite(bold = FALSE)
-      )
-    ),
-    mapstyles = list(
-      "Body Text" = c("Normal", "First Paragraph")
-    ),
-    reference_docx = system.file("csas-docx",
-      file,
-      package = "csasdown2"
-    ))
+  .csasdown_docx_base(
+    reference_docx = "SRR-RS2026-eng-main.docx",
+    link_citations = TRUE,
+    template_dir = "csas-docx",
+    use_pandoc_highlight = TRUE,
+    ...
   )
-
-  base <- do.call(officedown::rdocx_document, args)
-
-  base$knitr$opts_chunk$fig.align <- "center"
-  base$knitr$opts_chunk$ft.align <- "center"
-  base$knitr$opts_chunk$collapse <- TRUE
-  base$knitr$opts_chunk$warning <- FALSE
-  base$knitr$opts_chunk$message <- FALSE
-  base$knitr$opts_chunk$echo <- FALSE
-  base$knitr$opts_chunk$comment <- "#>"
-  base$knitr$opts_chunk$dev <- "png"
-
-  # Add post-processor to fix table caption alignment
-  base <- add_caption_fix_postprocessor(base, reference_docx = "resdoc-content-2026.docx")
-
-  base
 }
 
 add_sr_end_matter <- function(index_fn, yaml_fn = "_bookdown.yml", verbose = FALSE, keep_files = FALSE) {
