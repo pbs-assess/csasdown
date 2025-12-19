@@ -109,9 +109,9 @@ After running `csasdown2::draft()`, your project will contain:
 ## Document Types
 
 - Research Documents in English and French
-- Fisheries Science Advisory Reports in English and French
 - Technical Reports in English and French
-- Science Responses to come
+- Fisheries Science Advisory Reports in English and French
+- Science Responses in English
 
 ## Writing a Report
 
