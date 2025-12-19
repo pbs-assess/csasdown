@@ -1,4 +1,6 @@
-# csasdown2 0.0.0.9005
+# csasdown2 0.0.0.9006
+
+* Add Science Response template. English only at first.
 
 * Simplified to only need an `authors` YAML field. Translation and the author
   list parsing are done internally.
