@@ -35,6 +35,8 @@ render <- function(
     add_resdoc_word_frontmatter2("index.Rmd", yaml_fn = config_file, verbose = verbose, keep_files = FALSE)
   } else if (type == "techreport") {
     add_techreport_word_frontmatter("index.Rmd", yaml_fn = config_file, verbose = verbose, keep_files = FALSE)
+  } else if (type == "sr") {
+    add_sr_end_matter("index.Rmd", yaml_fn = config_file, verbose = verbose, keep_files = FALSE)
   } else {
     cli_abort("Detected type ({type}) is not supported.")
   }
@@ -191,6 +193,8 @@ detect_doc_type <- function(index_fn = "index.Rmd") {
     return("resdoc")
   } else if (any(grepl("fsar_docx", output_names))) {
     return("fsar")
+  } else if (any(grepl("sr_docx", output_names))) {
+    return("sr")
   } else if (any(grepl("techreport_docx", output_names))) {
     return("techreport")
   } else {

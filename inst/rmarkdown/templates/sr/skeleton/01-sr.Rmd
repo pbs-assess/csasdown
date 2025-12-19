@@ -1,0 +1,53 @@
+# Title
+
+The readers must easily recognize the stock/species/unit/area and also the specific issue of concern (e.g., use of a different gear, potential extension of the fishing season, update on the current removals, Stock Assessment Updates).
+
+## CONTEXT
+
+Mandatory. The meeting date and title **must be exactly** as they appear for the meeting on the Science Advisory Schedule
+
+This Science Response Report results from the scope: regional, multi-regional, national peer review date on meeting title. Additional publications from this meeting will be posted on the [Fisheries and Oceans Canada (DFO) Science Advisory Schedule](http://www.isdm-gdsi.gc.ca/csas-sccs/applications/events-evenements/index-eng.asp) as they become available.
+
+## BACKGROUND
+
+Optional. This section can be used to help readers understand the nature of the issue to address (e.g., key information on the species, population, or area, or more details on the rationale for providing an answer to the request,). Science Response Reports are intended to be short.
+
+### Description of the Fishery
+
+Optional section for stock status updates, title may vary.
+
+## ANALYSIS AND RESPONSE
+
+Mandatory, title may vary.
+
+This section is the core of the report.
+
+### Indicators of the Stock Status
+
+Mandatory for stock status updates, title may vary.
+
+## CONCLUSIONS
+
+Mandatory.
+
+**Highlight key conclusions and recommendations** with the necessary explanations and rationales. As an example, for reviews of Environmental Impact studies, this section would include an overview of the Science comments. Also **highlight the uncertainties** **related to the recommendations/views** and the **need to conduct further analysis/peer review in the future.** This point is particularly important when a Science Response process was conducted because the deadline to provide the answer was too short for proceeding with the necessary preparatory work and peer review.
+
+## OTHER EVIDENCE-BASED INTERPRETATIONS
+
+Optional.
+
+The [CSAS Guidance on Other Evidence-Based Interpretations](https://intranet.ent.dfo-mpo.ca/science/en/node/2270) provides detailed information about this **non-mandatory** section.
+
+## LIST OF MEETING PARTICIPANTS
+
+Mandatory. Include the name of each participant and their affiliation.
+
+## SOURCES OF INFORMATION
+
+Mandatory.
+
+References must follow the instructions to authors for the *Canadian Journal of Fisheries and Aquatic Sciences*, at [Canadian Science Publishing](https://cdnsciencepub.com/journal/cjfas/authors#guidelines). When using a reference managing tool (such as Zotero, Mendeley, Endnote, etc.), use the Canadian Journal of Fisheries and Aquatic Sciences (CJFAS) style for best results. Include hyperlinks only if the site is hosted by the Government of Canada or a DOI handle system is used. 
+
+## APPENDIX (OR APPENDICES)
+
+Optional.

@@ -1,0 +1,4 @@
+name:  SR
+description: >
+  Template for creating DFO SR report using R Markdown
+  using the R bookdown package.

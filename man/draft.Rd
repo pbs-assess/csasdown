@@ -5,7 +5,7 @@
 \title{Create a new CSAS document based on a template}
 \usage{
 draft(
-  type = c("resdoc", "fsar", "techreport"),
+  type = c("resdoc", "fsar", "sr", "techreport"),
   directory = ".",
   edit = FALSE,
   ...
@@ -13,7 +13,7 @@ draft(
 }
 \arguments{
 \item{type}{The type of document to draft. Must be one of \code{resdoc}, \code{fsar},
-or \code{techreport}.}
+\code{sr}, or \code{techreport}.}
 
 \item{directory}{The directory to place the draft document files.
 Current directory by default}

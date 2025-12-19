@@ -4,6 +4,21 @@ toggle_french <- function(index_file = "index.Rmd") {
   writeLines(index_content, index_file)
 }
 
+test_that("sr builds", {
+  wd <- getwd()
+  testing_path <- file.path(tempdir(), "sr")
+  unlink(testing_path, recursive = TRUE, force = TRUE)
+  dir.create(testing_path, showWarnings = FALSE)
+  setwd(testing_path)
+  suppressMessages(draft("sr", create_dir = FALSE, edit = FALSE))
+  suppressWarnings(csasdown2::render())
+  if (FALSE) {
+    system("open _book/sr.docx")
+  }
+  expect_true(file.exists("_book/sr.docx"))
+  setwd(wd)
+})
+
 test_that("FSAR builds", {
   skip_on_ci()
   wd <- getwd()
