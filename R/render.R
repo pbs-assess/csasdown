@@ -13,6 +13,7 @@ render <- function(
     ...) {
 
   type <- detect_doc_type("index.Rmd")
+  check_yaml(index_fn = "index.Rmd", type = type, verbose = verbose)
 
   if (type == "fsar") {
     return(render_sar(config_file = config_file, ...))
@@ -57,9 +58,7 @@ render <- function(
 render_sar <- function(config_file = "_bookdown.yml", ...) {
   cat("\n")
 
-  # Make sure all YAML entries are present in `index.Rmd`
-  render_type <- "fsar_word"
-  # check_yaml(type = render_type, verbose = TRUE)
+  check_yaml(index_fn = "index.Rmd", type = "fsar", verbose = TRUE)
 
   # Find out what language is set to and set the option 'french' here
   # so that it works on the first compilation in a workspace
