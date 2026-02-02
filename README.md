@@ -18,6 +18,7 @@ csasdown2 is a rewrite of [csasdown](https://github.com/pbs-assess/csasdown) tha
 - 📚 **Multi-file support**: Organize large documents across multiple R Markdown files
 - 📊 **Automatic numbering**: Figures, tables, and cross-references handled automatically
 - 📖 **Bibliography management**: Integrated citation and reference formatting
+- ∑ **Mathematical equations**: Appropriate formatting of mathematical equations
 
 ## 📦 Installation
 
@@ -82,7 +83,7 @@ After running `csasdown2::draft()`, your project will contain:
 ### Core Files
 
 - **`index.Rmd`**
-  Main file containing YAML metadata (title, authors, dates, report numbers) and the abstract. This is where you configure document-wide settings.
+  Main file containing YAML metadata (title, authors, dates). This is where you configure document-wide settings.
 
 - **`_bookdown.yml`**
   Configuration file specifying the order of R Markdown files to merge, output filename, and other bookdown settings.
@@ -148,7 +149,7 @@ rmd_files:
 Use R code chunks with captions:
 
 ````markdown
-```{r my-figure, fig.cap="My caption."}
+```{r my-figure, fig.cap="My figure caption."}
 plot(year, abundance)
 ```
 ````
@@ -158,7 +159,7 @@ Reference with `Figure \@ref(fig:my-figure)`.
 Include an existing figure:
 
 ````markdown
-```{r my-other-figure, fig.cap="My other caption."}
+```{r my-other-figure, fig.cap="My other figure caption."}
 knitr::include_graphics("figs/myfigure.png", dpi = NA)
 ```
 ````
@@ -170,7 +171,7 @@ Create a table:
 ````markdown
 ```{r my-table}
 flextable::flextable(data) |> 
-    set_caption(caption = "My caption.")
+    set_caption(caption = "My table caption.")
 ```
 ````
 
@@ -192,7 +193,7 @@ Reference with `Equation \@ref(eq:example-eq)`.
 Inline math:
 
 ```markdown
-The symbol $\beta$ represents...
+The symbol $\beta$ represents ...
 ```
 
 ### References
@@ -225,7 +226,7 @@ csasdown2 uses a multi-stage rendering pipeline:
 
 1. [**bookdown**](https://bookdown.org/) merges multiple R Markdown files
 2. [**officedown**](https://davidgohel.github.io/officedown/) converts to Word with CSAS styles
-3. [**officer**](https://davidgohel.github.io/officer/) post-processes the document (injects frontmatter, replaces bookmarks, assembles final document)
+3. [**officer**](https://davidgohel.github.io/officer/) post-processes the document (injects frontmatter, replaces bookmarks, and assembles the final document)
 
 ## Contributing
 
