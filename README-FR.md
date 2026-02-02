@@ -15,7 +15,7 @@ csasdown2 est une réécriture de [csasdown](https://github.com/pbs-assess/csasd
 - 🎨 **Formatage conforme au SCAS**: Produire des fichiers Word .docx qui utilisent les styles officiels
 - 🌍 **Support bilingue**: Configurations linguistiques anglaise et française
 - ♿ **Accessibilité**: Construit en tenant compte des normes d’accessibilité
-- 📚 **Support multi-fichiers **: Organise de gros documents à travers plusieurs fichiers R Markdown
+- 📚 **Support multi-fichiers**: Organise de gros documents à travers plusieurs fichiers R Markdown
 - 📊 **Numérotation automatique**: Les figures, tableaux et références croisées sont gérés automatiquement
 - 📖 **Gestion de bibliographie**: Formatage intégré des citations et des références
 - ∑ **Équations mathématiques**: Formatage approprié des équations mathématiques
