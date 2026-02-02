@@ -8,6 +8,8 @@
 
 csasdown2 is a rewrite of [csasdown](https://github.com/pbs-assess/csasdown) that focuses on generating .docx output compliant with [CSAS](https://www.dfo-mpo.gc.ca/csas-sccs/index-eng.htm) (Canadian Science Advisory Secretariat) formatting requirements, bilingual-language support, and accessibility standards.
 
+*Ce fichier README est également [disponible en français](README-FR.md).*
+
 ## Features
 
 - 📄 **Four document types**: Research Documents, Fisheries Science Advisory Reports (FSARs), Technical Reports, and Science Responses
