@@ -3,7 +3,7 @@
 > Rapports SCAS Reproductibles avec sortie en format .docx
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/seananderson/csasdown/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/seananderson/csasdown/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/pbs-assess/csasdown/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pbs-assess/csasdown/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 csasdown est un package R permettant de produire des documents reproductibles conformes aux exigences du SCCS à l’aide de R Markdown. Il prend en charge la préparation des Documents de recherche, des Réponses des sciences, des Rapports d’avis scientifique sur les pêches et des Rapports techniques, avec une sortie générée sous forme de fichiers `.docx`.
