@@ -1,12 +1,16 @@
-# csasdown2 <img src="man/figures/logo.png" align="right" height="138" alt="csasdown" />
+# csasdown <img src="man/figures/logo.png" align="right" height="138" alt="csasdown" />
 
 > Reproducible CSAS Reports with .docx output
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/seananderson/csasdown2/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/seananderson/csasdown2/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/seananderson/csasdown/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/seananderson/csasdown/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-csasdown2 is a rewrite of [csasdown](https://github.com/pbs-assess/csasdown) that focuses on generating .docx output compliant with [CSAS](https://www.dfo-mpo.gc.ca/csas-sccs/index-eng.htm) (Canadian Science Advisory Secretariat) formatting requirements, bilingual-language support, and accessibility standards.
+csasdown is an R package for producing reproducible CSAS-compliant documents using R Markdown. It supports the preparation of Research Documents, Science Responses, Fisheries Science Advisory Reports, and Technical Reports, with output generated as .docx files.
+
+The package enforces formatting requirements set by the [Canadian Science Advisory Secretariat (CSAS)](https://www.dfo-mpo.gc.ca/csas-sccs/index-eng.htm), includes built-in bilingual (English/French) support, and meets accessibility standards required for CSAS submissions.
+
+The original csasdown, which focused on LaTeX and PDF output, is still available as [csasdowntex](https://github.com/pbs-assess/csasdown) and can be used to reproduce legacy reports or create Technical Reports. It should not be used for submitting new CSAS Research Documents or Science Responses.
 
 *Ce fichier README est également [disponible en français](README-FR.md).*
 
@@ -28,10 +32,10 @@ Install the development version from GitHub:
 
 ``` r
 # Using pak (recommended)
-pak::pak("pbs-assess/csasdown2")
+pak::pak("pbs-assess/csasdown")
 
 # Or using remotes
-remotes::install_github("pbs-assess/csasdown2")
+remotes::install_github("pbs-assess/csasdown")
 ```
 
 ## 🚀 Quick Start
@@ -41,31 +45,31 @@ remotes::install_github("pbs-assess/csasdown2")
 Create a new Research Document in the current working directory:
 
 ``` r
-csasdown2::draft("resdoc")
+csasdown::draft("resdoc")
 ```
 
 Or specify an existing custom directory:
 
 ``` r
-csasdown2::draft("resdoc", directory = "my-research-doc")
+csasdown::draft("resdoc", directory = "my-research-doc")
 ```
 
 ### Create a Fisheries Science Advisory Report (FSAR)
 
 ``` r
-csasdown2::draft("fsar")
+csasdown::draft("fsar")
 ```
 
 ### Create a Technical Report
 
 ``` r
-csasdown2::draft("techreport")
+csasdown::draft("techreport")
 ```
 
 ### Create a Science Response
 
 ``` r
-csasdown2::draft("sr")
+csasdown::draft("sr")
 ```
 
 ### Render your document
@@ -73,14 +77,14 @@ csasdown2::draft("sr")
 Open `index.Rmd` and click the "Knit" button in RStudio, or run:
 
 ``` r
-csasdown2::render()
+csasdown::render()
 ```
 
 Your compiled .docx file will appear in the `_book/` directory.
 
 ## 📁 Project Structure
 
-After running `csasdown2::draft()`, your project will contain:
+After running `csasdown::draft()`, your project will contain:
 
 ### Core Files
 
@@ -224,7 +228,7 @@ Reference with `Appendix \@ref(app:additional)`
 
 ## Under the Hood
 
-csasdown2 uses a multi-stage rendering pipeline:
+csasdown uses a multi-stage rendering pipeline:
 
 1. [**bookdown**](https://bookdown.org/) merges multiple R Markdown files
 2. [**officedown**](https://davidgohel.github.io/officedown/) converts to Word with CSAS styles
@@ -232,7 +236,7 @@ csasdown2 uses a multi-stage rendering pipeline:
 
 ## Contributing
 
-Bug reports and feature requests are welcome on the [GitHub issue tracker](https://github.com/pbs-assess/csasdown2/issues).
+Bug reports and feature requests are welcome on the [GitHub issue tracker](https://github.com/pbs-assess/csasdown/issues).
 
 ## License
 
