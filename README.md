@@ -1,6 +1,6 @@
 # csasdown <img src="man/figures/logo.png" align="right" height="138" alt="csasdown" />
 
-> Reproducible CSAS Reports with .docx output
+> Reproducible CSAS Reports
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/pbs-assess/csasdown/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pbs-assess/csasdown/actions/workflows/R-CMD-check.yaml)
