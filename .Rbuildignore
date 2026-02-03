@@ -6,3 +6,4 @@
 ^\.github$
 ^scratch/
 ^data-raw/
+^README-FR\.md$
