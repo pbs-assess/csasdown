@@ -49,7 +49,7 @@ add_techreport_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml",
 
   # Read the tech report cover template and replace bookmarks
   cover_file <- if (french) "01-tech-report-cover-french.docx" else "01-tech-report-cover-english.docx"
-  frontmatter <- officer::read_docx(system.file("tech-report-docx", cover_file, package = "csasdown2")) |>
+  frontmatter <- officer::read_docx(system.file("tech-report-docx", cover_file, package = "csasdown")) |>
     replace_bookmark_with_markdown("title", title) |>
     replace_bookmark_with_markdown("authors", author) |>
     replace_bookmark_with_markdown("address", address) |>
@@ -67,7 +67,7 @@ add_techreport_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml",
   address_clean <- address
 
   titlepage_file <- if (french) "03-tech-report-titlepage-french.docx" else "03-tech-report-titlepage-english.docx"
-  titlepage <- officer::read_docx(system.file("tech-report-docx", titlepage_file, package = "csasdown2")) |>
+  titlepage <- officer::read_docx(system.file("tech-report-docx", titlepage_file, package = "csasdown")) |>
     replace_bookmark_with_markdown("title", title_clean) |>
     replace_bookmark_with_markdown("authors", authors_clean) |>
     replace_bookmark_with_markdown("address", address_clean) |>
@@ -96,7 +96,7 @@ add_techreport_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml",
   citation_bkm <- if (french) "citation_french" else "citation_english"
 
   colophon_file <- if (french) "04-tech-report-colophon-french.docx" else "04-tech-report-colophon-english.docx"
-  colophon <- officer::read_docx(system.file("tech-report-docx", colophon_file, package = "csasdown2")) |>
+  colophon <- officer::read_docx(system.file("tech-report-docx", colophon_file, package = "csasdown")) |>
     officer::body_replace_text_at_bkm("year", as.character(x$year)) |>
     officer::body_replace_text_at_bkm(cat_no_bkm, cat_no) |>
     officer::body_replace_text_at_bkm(isbn_bkm, isbn) |>

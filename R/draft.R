@@ -38,7 +38,7 @@ draft <- function(
 
   rmarkdown::draft("index.Rmd",
     template = type,
-    package = "csasdown2",
+    package = "csasdown",
     edit = edit,
     ...
   )

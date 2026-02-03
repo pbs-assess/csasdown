@@ -3,7 +3,7 @@ test_that("replace_bookmark_with_markdown replaces plain text", {
 
   # Use the actual tech report template which has proper bookmark structure
   template_path <- system.file("tech-report-docx", "01-tech-report-cover-english.docx",
-                               package = "csasdown2")
+                               package = "csasdown")
 
   if (!file.exists(template_path)) {
     skip("Tech report template not found")
@@ -27,7 +27,7 @@ test_that("replace_bookmark_with_markdown handles italic markdown", {
 
   # Use the actual tech report template which has proper bookmark structure
   template_path <- system.file("tech-report-docx", "01-tech-report-cover-english.docx",
-                               package = "csasdown2")
+                               package = "csasdown")
 
   if (!file.exists(template_path)) {
     skip("Tech report template not found")
@@ -73,7 +73,7 @@ test_that("replace_bookmark_with_markdown preserves original formatting", {
   skip_on_cran()
 
   template_path <- system.file("tech-report-docx", "01-tech-report-cover-english.docx",
-                               package = "csasdown2")
+                               package = "csasdown")
 
   if (!file.exists(template_path)) {
     skip("Tech report template not found")
@@ -119,7 +119,7 @@ test_that("replace_bookmark_with_markdown handles multiple italic sections", {
   skip_on_cran()
 
   template_path <- system.file("tech-report-docx", "01-tech-report-cover-english.docx",
-                               package = "csasdown2")
+                               package = "csasdown")
 
   if (!file.exists(template_path)) {
     skip("Tech report template not found")
@@ -167,7 +167,7 @@ test_that("replace_bookmark_with_markdown handles text without italics", {
   skip_on_cran()
 
   template_path <- system.file("tech-report-docx", "01-tech-report-cover-english.docx",
-                               package = "csasdown2")
+                               package = "csasdown")
 
   if (!file.exists(template_path)) {
     skip("Tech report template not found")
@@ -196,7 +196,7 @@ test_that("replace_bookmark_with_markdown returns officer rdocx object", {
   skip_on_cran()
 
   template_path <- system.file("tech-report-docx", "01-tech-report-cover-english.docx",
-                               package = "csasdown2")
+                               package = "csasdown")
 
   if (!file.exists(template_path)) {
     skip("Tech report template not found")
@@ -212,7 +212,7 @@ test_that("replace_bookmark_with_markdown handles superscript markdown", {
   skip_on_cran()
 
   template_path <- system.file("tech-report-docx", "01-tech-report-cover-english.docx",
-                               package = "csasdown2")
+                               package = "csasdown")
 
   if (!file.exists(template_path)) {
     skip("Tech report template not found")
@@ -255,7 +255,7 @@ test_that("replace_bookmark_with_markdown handles both italic and superscript", 
   skip_on_cran()
 
   template_path <- system.file("tech-report-docx", "01-tech-report-cover-english.docx",
-                               package = "csasdown2")
+                               package = "csasdown")
 
   if (!file.exists(template_path)) {
     skip("Tech report template not found")
@@ -291,7 +291,7 @@ test_that("replace_bookmark_with_markdown handles empty italic markers", {
   skip_on_cran()
 
   template_path <- system.file("tech-report-docx", "01-tech-report-cover-english.docx",
-                               package = "csasdown2")
+                               package = "csasdown")
 
   if (!file.exists(template_path)) {
     skip("Tech report template not found")
@@ -318,7 +318,7 @@ test_that("replace_bookmark_with_markdown handles line breaks", {
   skip_on_cran()
 
   template_path <- system.file("tech-report-docx", "01-tech-report-cover-english.docx",
-                               package = "csasdown2")
+                               package = "csasdown")
 
   if (!file.exists(template_path)) {
     skip("Tech report template not found")
@@ -358,7 +358,7 @@ test_that("replace_bookmark_with_markdown handles complex formatting", {
   skip_on_cran()
 
   template_path <- system.file("tech-report-docx", "01-tech-report-cover-english.docx",
-                               package = "csasdown2")
+                               package = "csasdown")
 
   if (!file.exists(template_path)) {
     skip("Tech report template not found")

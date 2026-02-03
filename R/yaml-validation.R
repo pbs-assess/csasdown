@@ -9,7 +9,7 @@ OPTIONAL_FIELDS <- c("knit", "bibliography", "title")
 get_skeleton_fields <- function(type) {
   skeleton_path <- system.file(
     "rmarkdown", "templates", type, "skeleton", "skeleton.Rmd",
-    package = "csasdown2"
+    package = "csasdown"
   )
 
   if (!file.exists(skeleton_path)) {
@@ -102,7 +102,7 @@ check_yaml <- function(index_fn = "index.Rmd", type = NULL, verbose = FALSE) {
 get_language_setting <- function(yaml_data, type) {
   if (type == "fsar") return(FALSE)
 
-  output_name <- paste0("csasdown2::", type, "_docx")
+  output_name <- paste0("csasdown::", type, "_docx")
   if (!is.null(yaml_data$output[[output_name]]$french)) {
     return(isTRUE(yaml_data$output[[output_name]]$french))
   }
@@ -113,7 +113,7 @@ get_language_setting <- function(yaml_data, type) {
 report_missing_fields <- function(missing, type, index_fn) {
   skeleton_path <- system.file(
     "rmarkdown", "templates", type, "skeleton", "skeleton.Rmd",
-    package = "csasdown2"
+    package = "csasdown"
   )
 
   cli::cli_abort(c(

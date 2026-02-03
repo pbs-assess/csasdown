@@ -1,4 +1,4 @@
-Package: csasdown2
+Package: csasdown
 Title: Reproducible CSAS Reports
 Version: 0.0.0.9006
 Authors@R: c(

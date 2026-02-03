@@ -70,9 +70,9 @@ abstract: |
   Start new paragraphs after a blank line and with 2 spaces indent.
 
 output:
- csasdown2::techreport_docx:
+ csasdown::techreport_docx:
    french: false
-knit: (function(input, ...) csasdown2::render())
+knit: (function(input, ...) csasdown::render())
 bibliography: bib/refs.bib
 ---
 
@@ -89,7 +89,7 @@ opts_chunk$set(
 ```
 
 ```{r load-libraries-csasdown}
-library(csasdown2) # for new_appendix(), current_appendix(), appendix_table_caption()
+library(csasdown) # for new_appendix(), current_appendix(), appendix_table_caption()
 library(flextable) # recommended package for adding tables
 ```
 

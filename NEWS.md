@@ -1,4 +1,4 @@
-# csasdown2 0.0.0.9006
+# csasdown 0.0.0.9006
 
 * Add Science Response template. English only at first.
 

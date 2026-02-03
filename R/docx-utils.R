@@ -781,7 +781,7 @@ fix_table_caption_alignment <- function(docx_file, reference_docx = NULL) {
     reference_docx <- system.file(
       "csas-docx",
       reference_docx,
-      package = "csasdown2"
+      package = "csasdown"
     )
   }
 
@@ -1110,7 +1110,7 @@ insert_section_break_after_abstract <- function(docx_path, french = FALSE) {
   pandoc_args <- c(default_pandoc_args, user_pandoc_args)
   dots$pandoc_args <- NULL
 
-  ref_docx_path <- system.file(template_dir, reference_docx, package = "csasdown2")
+  ref_docx_path <- system.file(template_dir, reference_docx, package = "csasdown")
 
   args <- c(
     dots,

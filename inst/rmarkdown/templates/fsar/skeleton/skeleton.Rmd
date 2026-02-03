@@ -29,8 +29,8 @@ context: |
 inuktitut_citation: "Inuktitut citation here"
 
 output:
-  csasdown2::fsar_docx
-knit: (function(input, ...) {csasdown2::render_fsar()})
+  csasdown::fsar_docx
+knit: (function(input, ...) {csasdown::render_fsar()})
 bibliography: bib/refs.bib
 title: ""
 ---

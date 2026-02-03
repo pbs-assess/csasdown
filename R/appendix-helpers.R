@@ -19,7 +19,7 @@
 #' # Use in heading: # APPENDIX `r new_appendix()`. BIOLOGICAL DATA
 #' }
 new_appendix <- function() {
-  current <- getOption("csasdown2_current_appendix", NULL)
+  current <- getOption("csasdown_current_appendix", NULL)
 
   if (is.null(current)) {
     next_letter <- "A"
@@ -53,7 +53,7 @@ new_appendix <- function() {
 #' # Use in heading: # APPENDIX `r current_appendix()`. TITLE HERE
 #' }
 current_appendix <- function() {
-  getOption("csasdown2_current_appendix", "A")
+  getOption("csasdown_current_appendix", "A")
 }
 
 #' Set the current appendix letter
@@ -82,7 +82,7 @@ set_appendix <- function(letter) {
   if (!is.character(letter) || length(letter) != 1) {
     cli::cli_abort("{.arg letter} must be a single character string")
   }
-  options(csasdown2_current_appendix = letter)
+  options(csasdown_current_appendix = letter)
 
   # Automatically configure both figure and table numbering
   appendix_fig_opts(letter)
@@ -105,7 +105,7 @@ set_appendix <- function(letter) {
 #' @keywords internal
 appendix_fig_opts <- function(appendix_letter = NULL) {
   if (is.null(appendix_letter)) {
-    appendix_letter <- getOption("csasdown2_current_appendix")
+    appendix_letter <- getOption("csasdown_current_appendix")
     if (is.null(appendix_letter)) {
       cli::cli_abort(
         c("No appendix letter specified",
@@ -115,7 +115,7 @@ appendix_fig_opts <- function(appendix_letter = NULL) {
   }
 
   # Store the current appendix letter for use by individual chunks
-  options(csasdown2_current_appendix = appendix_letter)
+  options(csasdown_current_appendix = appendix_letter)
 
   # Set default chunk options for figures in this appendix
   knitr::opts_chunk$set(
@@ -141,7 +141,7 @@ appendix_fig_opts <- function(appendix_letter = NULL) {
 #' @keywords internal
 appendix_tab_opts <- function(appendix_letter = NULL) {
   if (is.null(appendix_letter)) {
-    appendix_letter <- getOption("csasdown2_current_appendix")
+    appendix_letter <- getOption("csasdown_current_appendix")
     if (is.null(appendix_letter)) {
       cli::cli_abort(
         c("No appendix letter specified",
@@ -188,7 +188,7 @@ appendix_tab_opts <- function(appendix_letter = NULL) {
 #' }
 appendix_table_caption <- function(caption, appendix_letter = NULL) {
   if (is.null(appendix_letter)) {
-    appendix_letter <- getOption("csasdown2_current_appendix")
+    appendix_letter <- getOption("csasdown_current_appendix")
     if (is.null(appendix_letter)) {
       cli::cli_abort(
         c("No appendix letter specified",

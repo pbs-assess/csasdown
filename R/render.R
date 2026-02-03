@@ -51,7 +51,7 @@ render <- function(
   }
 
   # Reset appendix counter for next render
-  options(csasdown2_current_appendix = NULL)
+  options(csasdown_current_appendix = NULL)
 
   # Clean up bookdown artifacts
   unlink(file.path("_book", "reference-keys.txt"))
@@ -184,7 +184,7 @@ render_sar <- function(config_file = "_bookdown.yml", ...) {
   cli_alert_success("Render complete!")
 
   # Reset appendix counter for next render
-  options(csasdown2_current_appendix = NULL)
+  options(csasdown_current_appendix = NULL)
 
   invisible()
 }

@@ -37,7 +37,7 @@ add_sr_end_matter <- function(index_fn, yaml_fn = "_bookdown.yml", verbose = FAL
   address <- x$address
   email <- x$email
 
-  end <- officer::read_docx(system.file("csas-docx", "SRR-RS2026-eng-end.docx", package = "csasdown2")) |>
+  end <- officer::read_docx(system.file("csas-docx", "SRR-RS2026-eng-end.docx", package = "csasdown")) |>
     body_replace_text_at_bkm("english_name_of_region", x$english_region) |>
     body_replace_text_at_bkm("email", x$email) |>
     body_replace_text_at_bkm("english_address", x$english_csa_address) |>

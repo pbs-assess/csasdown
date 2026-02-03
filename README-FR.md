@@ -1,12 +1,16 @@
-# csasdown2 <img src="man/figures/logo.png" align="right" height="138" alt="csasdown" />
+# csasdown <img src="man/figures/logo.png" align="right" height="138" alt="csasdown" />
 
 > Rapports SCAS Reproductibles avec sortie en format .docx
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/seananderson/csasdown2/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/seananderson/csasdown2/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/seananderson/csasdown/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/seananderson/csasdown/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-csasdown2 est une réécriture de [csasdown](https://github.com/pbs-assess/csasdown) qui se concentre sur la génération d'une sortie en format .docx qui est conforme aux exigences de formatage du [SCAS](https://www.dfo-mpo.gc.ca/csas-sccs/index-fra.htm) (Secrétariat canadien des avis scientifiques), qui supporte la création de documents bilingues et qui respecte les normes d'accessibilité.
+csasdown est un package R permettant de produire des documents reproductibles conformes aux exigences du SCCS à l’aide de R Markdown. Il prend en charge la préparation des Documents de recherche, des Réponses des sciences, des Rapports d’avis scientifique sur les pêches et des Rapports techniques, avec une sortie générée sous forme de fichiers `.docx`.
+
+Le package applique les exigences de mise en forme établies par le [Secrétariat canadien des avis scientifiques (SCAS)](https://www.dfo-mpo.gc.ca/csas-sccs/index-fra.htm), offre une prise en charge bilingue intégrée (français/anglais) et respecte les normes d'accessibilité requises pour les soumissions au SCAS.
+
+La version originale de csasdown, axée sur les sorties LaTeX et PDF, est toujours disponible sous le nom de [csasdowntex](https://github.com/pbs-assess/csasdown). Elle peut être utilisée pour reproduire des rapports antérieurs ou pour créer des Rapports techniques, mais ne doit pas être utilisée pour la soumission de nouveaux Documents de recherche ou de Réponses des sciences au SCCS.
 
 *This README file is also [available in English](README.md).*
 
@@ -28,10 +32,10 @@ Installez la version de développement disponible sur GitHub:
 
 ``` r
 # En utilisant pak (recommandé)
-pak::pak("pbs-assess/csasdown2")
+pak::pak("pbs-assess/csasdown")
 
 # Ou en utilisant remotes
-remotes::install_github("pbs-assess/csasdown2")
+remotes::install_github("pbs-assess/csasdown")
 ```
 
 ## 🚀 Démarrage rapide
@@ -41,31 +45,31 @@ remotes::install_github("pbs-assess/csasdown2")
 Créer un nouveau document de recherche dans le répertoire de travail courant:
 
 ``` r
-csasdown2::draft("resdoc")
+csasdown::draft("resdoc")
 ```
 
 Ou spécifier un répertoire personnalisé existant:
 
 ``` r
-csasdown2::draft("resdoc", directory = "my-research-doc")
+csasdown::draft("resdoc", directory = "my-research-doc")
 ```
 
 ### Créer un rapport d'avis scientifique (FSAR)
 
 ``` r
-csasdown2::draft("fsar")
+csasdown::draft("fsar")
 ```
 
 ### Créer un Rapport Technique
 
 ``` r
-csasdown2::draft("techreport")
+csasdown::draft("techreport")
 ```
 
 ### Créer une Réponse des Sciences
 
 ``` r
-csasdown2::draft("sr")
+csasdown::draft("sr")
 ```
 
 ### Rendre votre document
@@ -73,14 +77,14 @@ csasdown2::draft("sr")
 Ouvrez `index.Rmd` et cliquez sur le bouton "Knit" dans RStudio, ou invoquez:
 
 ``` r
-csasdown2::render()
+csasdown::render()
 ```
 
 Votre fichier .docx compilé apparaîtra dans le répertoire `_book/`.
 
 ## 📁 Structure de Projet 
 
-Après avoir fait roulé `csasdown2::draft()`, votre projet contiendra:
+Après avoir fait roulé `csasdown::draft()`, votre projet contiendra:
 
 ### Fichiers Principaux
 
@@ -224,7 +228,7 @@ Faites référence à cette annexe en utilisant `Annexe \@ref(app:supplementaire
 
 ## Sous le capot
 
-csasdown2 utilise un pipeline de rendu multi-étapes:
+csasdown utilise un pipeline de rendu multi-étapes:
 
 1. [**bookdown**](https://bookdown.org/) fusionne plusieurs fichiers R Markdown
 2. [**officedown**](https://davidgohel.github.io/officedown/) convertit en Word avec les styles du SCAS
@@ -232,7 +236,7 @@ csasdown2 utilise un pipeline de rendu multi-étapes:
 
 ## Comment contribuer
 
-Les rapports de bogue et les demandes de fonctionnalités sont les bienvenus sur le [suivi des problèmes GitHub](https://github.com/pbs-assess/csasdown2/issues).
+Les rapports de bogue et les demandes de fonctionnalités sont les bienvenus sur le [suivi des problèmes GitHub](https://github.com/pbs-assess/csasdown/issues).
 
 ## Licence
 
@@ -240,4 +244,4 @@ Ce package est licencié sous licence MIT.
 
 ## 🙏 Remerciements
 
-csasdown2 est construit sur les travaux précédents du package [csasdown](https://github.com/pbs-assess/csasdown) et les excellents packages [bookdown](https://bookdown.org/), [officedown](https://davidgohel.github.io/officedown/), et [officer](https://davidgohel.github.io/officer/).
+csasdown est construit sur les travaux précédents du package [csasdown](https://github.com/pbs-assess/csasdown) et les excellents packages [bookdown](https://bookdown.org/), [officedown](https://davidgohel.github.io/officedown/), et [officer](https://davidgohel.github.io/officer/).

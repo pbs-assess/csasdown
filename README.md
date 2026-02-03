@@ -244,4 +244,4 @@ This package is licensed under the MIT License.
 
 ## 🙏 Acknowledgments
 
-csasdown2 builds on the original [csasdown](https://github.com/pbs-assess/csasdown) package and the excellent [bookdown](https://bookdown.org/), [officedown](https://davidgohel.github.io/officedown/), and [officer](https://davidgohel.github.io/officer/) packages.
+csasdown builds on the original [csasdown](https://github.com/pbs-assess/csasdown) package and the excellent [bookdown](https://bookdown.org/), [officedown](https://davidgohel.github.io/officedown/), and [officer](https://davidgohel.github.io/officer/) packages.

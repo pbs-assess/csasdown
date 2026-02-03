@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(csasdown2)
+library(csasdown)
 
-test_check("csasdown2")
+test_check("csasdown")

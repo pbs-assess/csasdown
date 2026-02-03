@@ -64,7 +64,7 @@ add_resdoc_word_frontmatter2 <- function(index_fn, yaml_fn = "_bookdown.yml", ve
   french <- isTRUE(x$output[[1]]$french)
 
   front_filename <- if (french) "resdoc-frontmatter-french2.docx" else "resdoc-frontmatter-english2.docx"
-  ref_front_file <- system.file("csas-docx", front_filename, package = "csasdown2")
+  ref_front_file <- system.file("csas-docx", front_filename, package = "csasdown")
   toc_keyword <- if (french) "TABLE DES MATI\u00c8RES" else "TABLE OF CONTENTS"
   abstract_keyword <- if (french) "R\u00c9SUM\u00c9" else "ABSTRACT"
   book_filename <- paste0("_book/", get_book_filename(yaml_fn), ".docx")

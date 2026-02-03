@@ -7,7 +7,7 @@ english_title: "Test Title"
 english_address: "Test Address"
 english_region: "Test Region"
 output:
-  csasdown2::resdoc_docx:
+  csasdown::resdoc_docx:
     french: false
 ---
 '
@@ -37,7 +37,7 @@ test_that("check_yaml detects missing English-specific fields", {
 author: "Test Author"
 year: "2025"
 output:
-  csasdown2::resdoc_docx:
+  csasdown::resdoc_docx:
     french: false
 ---
 '
@@ -63,7 +63,7 @@ test_that("check_yaml detects missing French-specific fields", {
 author: "Test Author"
 year: "2025"
 output:
-  csasdown2::resdoc_docx:
+  csasdown::resdoc_docx:
     french: true
 ---
 '
@@ -95,7 +95,7 @@ french_address: "Adresse de test"
 english_region: "Test Region"
 french_region: "Région de test"
 output:
-  csasdown2::resdoc_docx:
+  csasdown::resdoc_docx:
     french: false
 ---
 '
@@ -114,7 +114,7 @@ test_that("check_yaml handles FSAR correctly", {
   yaml_content <- '---
 english_title: "Test Report"
 output:
-  csasdown2::fsar_docx
+  csasdown::fsar_docx
 ---
 '
   writeLines(yaml_content, temp_file)
@@ -152,7 +152,7 @@ french_csa_address: "Adresse de test"
 context: "This is the context."
 inuktitut_citation: "Inuktitut text"
 output:
-  csasdown2::fsar_docx
+  csasdown::fsar_docx
 ---
 '
   writeLines(yaml_content, temp_file)
@@ -181,7 +181,7 @@ french_csa_address: "Adresse"
 english_month: "May"
 french_month: "Mai"
 output:
-  csasdown2::sr_docx:
+  csasdown::sr_docx:
     french: true
 ---
 '
@@ -209,7 +209,7 @@ french_address: "Adresse de test"
 english_region: "Test Region"
 french_region: "Région de test"
 output:
-  csasdown2::resdoc_docx:
+  csasdown::resdoc_docx:
     french: false
 ---
 '
@@ -262,7 +262,7 @@ french_address: "Adresse de test"
 english_region: "Test Region"
 french_region: "Région de test"
 output:
-  csasdown2::resdoc_docx:
+  csasdown::resdoc_docx:
     french: false
 ---
 '
@@ -285,7 +285,7 @@ author: "Test Author"
 year: "2025"
 report_number: "001"
 output:
-  csasdown2::techreport_docx:
+  csasdown::techreport_docx:
     french: false
 ---
 '
@@ -333,7 +333,7 @@ french_isbn: "978-0-12345-678-9"
 english_cat_no: "Cat123"
 french_cat_no: "Cat123"
 output:
-  csasdown2::techreport_docx:
+  csasdown::techreport_docx:
     french: false
 ---
 '
@@ -363,7 +363,7 @@ french_csa_address: "Adresse de test"
 english_month: "May"
 french_month: "Mai"
 output:
-  csasdown2::sr_docx:
+  csasdown::sr_docx:
     french: false
 ---
 '
@@ -377,7 +377,7 @@ output:
 
 # Dynamic parsing tests
 test_that("get_skeleton_fields parses skeleton correctly", {
-  fields <- csasdown2:::get_skeleton_fields("resdoc")
+  fields <- csasdown:::get_skeleton_fields("resdoc")
 
   # Should include required fields
   expect_true("author" %in% fields)
@@ -395,7 +395,7 @@ test_that("get_skeleton_fields works for all document types", {
   types <- c("resdoc", "fsar", "sr", "techreport")
 
   for (type in types) {
-    fields <- csasdown2:::get_skeleton_fields(type)
+    fields <- csasdown:::get_skeleton_fields(type)
     expect_true(length(fields) > 0)
     expect_true("output" %in% fields)
     expect_false("knit" %in% fields)
