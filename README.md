@@ -3,7 +3,7 @@
 > Reproducible CSAS Reports with .docx output
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/seananderson/csasdown/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/seananderson/csasdown/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/pbs-assess/csasdown/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pbs-assess/csasdown/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 csasdown is an R package for producing reproducible CSAS-compliant documents using R Markdown. It supports the preparation of Research Documents, Science Responses, Fisheries Science Advisory Reports, and Technical Reports, with output generated as .docx files.
