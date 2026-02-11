@@ -10,7 +10,7 @@ csasdown est un package R permettant de produire des documents reproductibles co
 
 Le package applique les exigences de mise en forme établies par le [Secrétariat canadien des avis scientifiques (SCAS)](https://www.dfo-mpo.gc.ca/csas-sccs/index-fra.htm), offre une prise en charge bilingue intégrée (français/anglais) et respecte les normes d'accessibilité requises pour les soumissions au SCAS.
 
-La version originale de csasdown, axée sur les sorties LaTeX et PDF, est toujours disponible sous le nom de [csasdowntex](https://github.com/pbs-assess/csasdown). Elle peut être utilisée pour reproduire des rapports antérieurs ou pour créer des Rapports techniques, mais ne doit pas être utilisée pour la soumission de nouveaux Documents de recherche ou de Réponses des sciences au SCCS.
+La version originale de csasdown, axée sur les sorties LaTeX et PDF, est toujours disponible sous le nom de [csasdowntex](https://github.com/pbs-assess/csasdowntex). Elle peut être utilisée pour reproduire des rapports antérieurs ou pour créer des Rapports techniques, mais ne doit pas être utilisée pour la soumission de nouveaux Documents de recherche ou de Réponses des sciences au SCCS.
 
 *This README file is also [available in English](README.md).*
 
