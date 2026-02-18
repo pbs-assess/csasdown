@@ -50,7 +50,7 @@ french_address: |
 english_region: "Pacific Region"
 french_region: "Région du Pacifique"
 
-year: "2025"
+year: "2026"
 report_number: "000"
 
 english_preamble_pages: "iv"

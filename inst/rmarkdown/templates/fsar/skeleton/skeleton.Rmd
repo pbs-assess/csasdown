@@ -8,9 +8,9 @@ french_title_short: "Short Publication Title"
 english_region: "Region Name"
 french_region: "Région Name"
 
-year: "2025"
+year: "2026"
 release_month: "May"
-meeting_date: "May 9, 2025"
+meeting_date: "May 9, 2026"
 
 report_number: "XXX"
 
