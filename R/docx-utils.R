@@ -83,6 +83,84 @@ fix_table_caption_xml <- function(xml_content) {
   xml_content
 }
 
+#' Use localized figure caption style when available
+#'
+#' @description Rewrites figure caption style IDs to the localized French style
+#' (`LgendeFigure`) when that style exists in the document.
+#'
+#' @param xml_content Character string containing document.xml content
+#' @param styles_content Character string containing styles.xml content
+#' @return Modified XML content as character string
+#' @keywords internal
+#' @noRd
+use_localized_figure_caption_style_xml <- function(xml_content, styles_content) {
+  if (is.null(styles_content) || !nzchar(styles_content)) {
+    return(xml_content)
+  }
+
+  # French frontmatter templates use this internal style ID for "Légende : Figure".
+  if (!grepl('w:styleId="LgendeFigure"', styles_content, fixed = TRUE)) {
+    return(xml_content)
+  }
+
+  xml_content <- gsub(
+    '<w:pStyle w:val="Caption-?Figure"\\s*/>',
+    '<w:pStyle w:val="LgendeFigure"/>',
+    xml_content,
+    perl = TRUE
+  )
+
+  xml_content
+}
+
+#' Use localized table caption style when available
+#'
+#' @description Rewrites standalone table caption style IDs to the localized French
+#' style (`LgendeTableau`) when that style exists in the document. This targets
+#' table captions and avoids changing table-cell paragraph styles.
+#'
+#' @param xml_content Character string containing document.xml content
+#' @param styles_content Character string containing styles.xml content
+#' @return Modified XML content as character string
+#' @keywords internal
+#' @noRd
+use_localized_table_caption_style_xml <- function(xml_content, styles_content) {
+  if (is.null(styles_content) || !nzchar(styles_content)) {
+    return(xml_content)
+  }
+
+  # French frontmatter templates use this internal style ID for "Légende : Tableau".
+  if (!grepl('w:styleId="LgendeTableau"', styles_content, fixed = TRUE)) {
+    return(xml_content)
+  }
+
+  table_caption_style_pattern <- '<w:pStyle w:val="(?:Caption-Table|CaptionTable|TableCaption)"\\s*/>'
+
+  # Primary rule: style appears in a paragraph that has keepNext (table caption).
+  xml_content <- gsub(
+    paste0(
+      table_caption_style_pattern,
+      '(?=(?:(?!</w:pPr>).)*<w:keepNext(?:\\s+w:val="[^"]+")?\\s*/>)'
+    ),
+    '<w:pStyle w:val="LgendeTableau"/>',
+    xml_content,
+    perl = TRUE
+  )
+
+  # Fallback rule: style appears in a paragraph immediately before a table.
+  xml_content <- gsub(
+    paste0(
+      table_caption_style_pattern,
+      '(?=(?:(?!</w:p>).)*</w:p>\\s*<w:tbl>)'
+    ),
+    '<w:pStyle w:val="LgendeTableau"/>',
+    xml_content,
+    perl = TRUE
+  )
+
+  xml_content
+}
+
 #' Remove empty paragraphs from Word XML
 #'
 #' @description Removes paragraph elements that contain no meaningful text content.
@@ -663,16 +741,26 @@ inject_styles_into_styles_xml <- function(styles_xml_path, style_definitions, re
 #' Process document.xml with table fixes
 #'
 #' @param doc_xml_path Path to document.xml file
+#' @param styles_xml_path Optional path to styles.xml file
 #' @keywords internal
 #' @noRd
-process_document_xml <- function(doc_xml_path) {
+process_document_xml <- function(doc_xml_path, styles_xml_path = NULL) {
   if (!file.exists(doc_xml_path)) {
     return(invisible(NULL))
   }
 
   xml_content <- readLines(doc_xml_path, warn = FALSE)
   xml_content <- paste(xml_content, collapse = "")
+
+  styles_content <- NULL
+  if (!is.null(styles_xml_path) && file.exists(styles_xml_path)) {
+    styles_content <- readLines(styles_xml_path, warn = FALSE)
+    styles_content <- paste(styles_content, collapse = "")
+  }
+
   xml_content <- fix_table_caption_xml(xml_content)
+  xml_content <- use_localized_figure_caption_style_xml(xml_content, styles_content)
+  xml_content <- use_localized_table_caption_style_xml(xml_content, styles_content)
   xml_content <- fix_table_cell_styles_xml(xml_content)
   writeLines(xml_content, doc_xml_path)
 
@@ -691,10 +779,10 @@ copy_styles_to_docx <- function(temp_dir, ref_docx_path) {
     return(invisible(NULL))
   }
 
-  # Extract both TableCaption and Caption-Table styles from reference
+  # Extract caption styles from reference
   style_definitions <- extract_styles_from_reference(
     ref_docx_path,
-    style_ids = c("TableCaption", "Caption-Table")
+    style_ids = c("TableCaption", "Caption-Table", "Caption-Figure")
   )
 
   # Inject them into the document's styles.xml
@@ -731,7 +819,8 @@ process_embedded_docx_files <- function(parent_temp_dir, ref_docx_path) {
 
     # Process its document.xml
     embedded_doc_xml <- file.path(embedded_temp, "word", "document.xml")
-    process_document_xml(embedded_doc_xml)
+    embedded_styles_xml <- file.path(embedded_temp, "word", "styles.xml")
+    process_document_xml(embedded_doc_xml, styles_xml_path = embedded_styles_xml)
 
     # Copy styles to embedded document
     copy_styles_to_docx(embedded_temp, ref_docx_path)
@@ -800,7 +889,8 @@ fix_table_caption_alignment <- function(docx_file, reference_docx = NULL) {
 
   # Process main document.xml
   doc_xml_path <- file.path(temp_dir, "word", "document.xml")
-  process_document_xml(doc_xml_path)
+  styles_xml_path <- file.path(temp_dir, "word", "styles.xml")
+  process_document_xml(doc_xml_path, styles_xml_path = styles_xml_path)
 
   # Copy styles from reference template to main document
   copy_styles_to_docx(temp_dir, reference_docx)
