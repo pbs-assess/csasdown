@@ -1,4 +1,6 @@
-# csasdown 0.0.0.9006
+# csasdown development version
+
+* Fix styles in French figure captions. #8
 
 * Add Science Response template. English only at first.
 
