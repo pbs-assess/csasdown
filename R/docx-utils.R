@@ -1201,6 +1201,9 @@ insert_section_break_after_abstract <- function(docx_path, french = FALSE) {
   dots$pandoc_args <- NULL
 
   ref_docx_path <- system.file(template_dir, reference_docx, package = "csasdown")
+  if (!nzchar(ref_docx_path)) {
+    cli::cli_abort("Reference template {.file {reference_docx}} not found in {.val {template_dir}}.")
+  }
 
   args <- c(
     dots,
@@ -1248,7 +1251,7 @@ insert_section_break_after_abstract <- function(docx_path, french = FALSE) {
   base$knitr$opts_chunk$comment <- "#>"
   base$knitr$opts_chunk$dev <- "png"
 
-  base <- add_caption_fix_postprocessor(base, reference_docx = reference_docx)
+  base <- add_caption_fix_postprocessor(base, reference_docx = ref_docx_path)
 
   base
 }

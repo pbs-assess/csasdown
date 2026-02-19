@@ -11,7 +11,7 @@ test_that("sr builds", {
   dir.create(testing_path, showWarnings = FALSE)
   setwd(testing_path)
   suppressMessages(draft("sr", create_dir = FALSE, edit = FALSE))
-  suppressWarnings(csasdown::render())
+  render()
   if (FALSE) {
     system("open _book/sr.docx")
   }
@@ -42,7 +42,7 @@ test_that("resdoc builds", {
   dir.create(testing_path, showWarnings = FALSE)
   setwd(testing_path)
   suppressMessages(draft("resdoc", create_dir = FALSE, edit = FALSE))
-  suppressWarnings(csasdown::render())
+  render()
   if (FALSE) {
     system("open _book/resdoc.docx")
   }
@@ -56,8 +56,8 @@ test_that("techreport builds", {
   unlink(testing_path, recursive = TRUE, force = TRUE)
   dir.create(testing_path, showWarnings = FALSE)
   setwd(testing_path)
-  suppressMessages(draft("techreport", create_dir = FALSE, edit = FALSE))
-  suppressWarnings(csasdown::render())
+  draft("techreport", create_dir = FALSE, edit = FALSE)
+  render()
   if (FALSE) {
     system("open _book/techreport.docx")
   }
@@ -71,9 +71,9 @@ test_that("techreport builds in French", {
   unlink(testing_path, recursive = TRUE, force = TRUE)
   dir.create(testing_path, showWarnings = FALSE)
   setwd(testing_path)
-  suppressMessages(draft("techreport", create_dir = FALSE, edit = FALSE))
+  draft("techreport", create_dir = FALSE, edit = FALSE)
   toggle_french()
-  suppressWarnings(csasdown::render())
+  render()
   if (FALSE) {
     system("open _book/techreport.docx")
   }
@@ -106,7 +106,7 @@ test_that("resdoc builds in French", {
   setwd(testing_path)
   suppressMessages(draft("resdoc", create_dir = FALSE, edit = FALSE))
   toggle_french()
-  suppressWarnings(csasdown::render())
+  render()
   if (FALSE) {
     system("open _book/resdoc.docx")
   }

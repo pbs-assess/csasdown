@@ -76,8 +76,6 @@ add_techreport_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml",
   print(titlepage, target = "tmp-titlepage.docx")
 
   # Read and process the colophon template
-  total_pages <- as.numeric(preamble_pages) + as.numeric(content_pages)
-
   # Build citation - ensure all components are single line, trimmed strings
   citation_prefix <- if (french) "Rapp. tech. can. sci. halieut. aquat. " else "Can. Tech. Rep. Fish. Aquat. Sci. "
   citation <- paste0(
@@ -137,4 +135,3 @@ add_techreport_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml",
 
   invisible()
 }
-

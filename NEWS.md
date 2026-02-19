@@ -1,5 +1,7 @@
 # csasdown development version
 
+* Eliminate warning on render of tech report. #10
+
 * Fix styles in French figure captions. #8
 
 * Add Science Response template. English only at first.
