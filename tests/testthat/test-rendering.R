@@ -30,21 +30,20 @@ test_that("sr builds", {
   setwd(wd)
 })
 
-# test_that("FSAR builds", {
-#   skip_on_ci()
-#   wd <- getwd()
-#   testing_path <- file.path(tempdir(), "fsar")
-#   unlink(testing_path, recursive = TRUE, force = TRUE)
-#   dir.create(testing_path, showWarnings = FALSE)
-#   setwd(testing_path)
-#   suppressMessages(draft("fsar", create_dir = FALSE, edit = FALSE))
-#   suppressWarnings(render())
-#   if (FALSE) {
-#     system("open _book/fsar.docx")
-#   }
-#   expect_true(file.exists("_book/fsar.docx"))
-#   setwd(wd)
-# })
+test_that("FSAR builds", {
+  wd <- getwd()
+  testing_path <- file.path(tempdir(), "fsar")
+  unlink(testing_path, recursive = TRUE, force = TRUE)
+  dir.create(testing_path, showWarnings = FALSE)
+  setwd(testing_path)
+  draft("fsar", create_dir = FALSE, edit = FALSE)
+  render()
+  if (FALSE) {
+    system("open _book/fsar.docx")
+  }
+  expect_true(file.exists("_book/fsar.docx"))
+  setwd(wd)
+})
 
 test_that("resdoc builds", {
   wd <- getwd()
@@ -92,22 +91,21 @@ test_that("techreport builds in French", {
   setwd(wd)
 })
 
-# test_that("FSAR builds in French", {
-#   skip_on_ci()
-#   wd <- getwd()
-#   testing_path <- file.path(tempdir(), "fsar_french")
-#   unlink(testing_path, recursive = TRUE, force = TRUE)
-#   dir.create(testing_path, showWarnings = FALSE)
-#   setwd(testing_path)
-#   suppressMessages(draft("fsar", create_dir = FALSE, edit = FALSE))
-#   toggle_french()
-#   suppressWarnings(render())
-#   if (FALSE) {
-#     system("open _book/fsar.docx")
-#   }
-#   expect_true(file.exists("_book/fsar.docx"))
-#   setwd(wd)
-# })
+test_that("FSAR builds in French", {
+  wd <- getwd()
+  testing_path <- file.path(tempdir(), "fsar_french")
+  unlink(testing_path, recursive = TRUE, force = TRUE)
+  dir.create(testing_path, showWarnings = FALSE)
+  setwd(testing_path)
+  draft("fsar", create_dir = FALSE, edit = FALSE)
+  toggle_french()
+  render()
+  if (FALSE) {
+    system("open _book/fsar.docx")
+  }
+  expect_true(file.exists("_book/fsar.docx"))
+  setwd(wd)
+})
 
 test_that("resdoc builds in French", {
   wd <- getwd()

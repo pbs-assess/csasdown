@@ -1,5 +1,7 @@
 # csasdown development version
 
+* Fix rendering of FSARs (was missing a .docx file). #18
+
 * Allow numeric years etc. in YAML. #5
 
 * Eliminate warning on render of tech report. #10
