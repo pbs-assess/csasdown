@@ -4,13 +4,24 @@ toggle_french <- function(index_file = "index.Rmd") {
   writeLines(index_content, index_file)
 }
 
+set_numeric_year <- function(index_file = "index.Rmd") {
+  index_content <- readLines(index_file)
+  index_content <- gsub(
+    pattern = '^(\\s*year:\\s*)"([0-9]{4})"(\\s*)$',
+    replacement = "\\1\\2\\3",
+    x = index_content,
+    perl = TRUE
+  )
+  writeLines(index_content, index_file)
+}
+
 test_that("sr builds", {
   wd <- getwd()
   testing_path <- file.path(tempdir(), "sr")
   unlink(testing_path, recursive = TRUE, force = TRUE)
   dir.create(testing_path, showWarnings = FALSE)
   setwd(testing_path)
-  suppressMessages(draft("sr", create_dir = FALSE, edit = FALSE))
+  draft("sr", create_dir = FALSE, edit = FALSE)
   render()
   if (FALSE) {
     system("open _book/sr.docx")
@@ -104,12 +115,25 @@ test_that("resdoc builds in French", {
   unlink(testing_path, recursive = TRUE, force = TRUE)
   dir.create(testing_path, showWarnings = FALSE)
   setwd(testing_path)
-  suppressMessages(draft("resdoc", create_dir = FALSE, edit = FALSE))
+  draft("resdoc", create_dir = FALSE, edit = FALSE)
   toggle_french()
   render()
   if (FALSE) {
     system("open _book/resdoc.docx")
   }
+  expect_true(file.exists("_book/resdoc.docx"))
+  setwd(wd)
+})
+
+test_that("resdoc builds with numeric year", {
+  wd <- getwd()
+  testing_path <- file.path(tempdir(), "resdoc_numeric_year")
+  unlink(testing_path, recursive = TRUE, force = TRUE)
+  dir.create(testing_path, showWarnings = FALSE)
+  setwd(testing_path)
+  draft("resdoc", create_dir = FALSE, edit = FALSE)
+  set_numeric_year()
+  render()
   expect_true(file.exists("_book/resdoc.docx"))
   setwd(wd)
 })

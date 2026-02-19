@@ -43,12 +43,12 @@ add_sr_end_matter <- function(index_fn, yaml_fn = "_bookdown.yml", verbose = FAL
     body_replace_text_at_bkm("english_address", x$english_csa_address) |>
 
     replace_bookmark_with_markdown("english_title", x$english_title) |>
-    body_replace_text_at_bkm("english_year", x$year) |>
-    body_replace_text_at_bkm("english_year2", x$year) |>
+    body_replace_text_at_bkm("english_year", as.character(x$year)) |>
+    body_replace_text_at_bkm("english_year2", as.character(x$year)) |>
 
     replace_bookmark_with_markdown("french_title", x$french_title) |>
-    body_replace_text_at_bkm("french_year", x$year) |>
-    body_replace_text_at_bkm("french_year2", x$year) |>
+    body_replace_text_at_bkm("french_year", as.character(x$year)) |>
+    body_replace_text_at_bkm("french_year2", as.character(x$year)) |>
 
     docx_set_settings(even_and_odd_headers = FALSE)
   print(end, target = "tmp-end.docx")
@@ -58,7 +58,7 @@ add_sr_end_matter <- function(index_fn, yaml_fn = "_bookdown.yml", verbose = FAL
     headers_replace_text_at_bkm("english_region", x$english_region) |>
     headers_replace_text_at_bkm("english_region_rest", x$english_region) |>
     headers_replace_text_at_bkm("english_short_title", x$english_title_short) |>
-    headers_replace_text_at_bkm("year", x$year) |>
+    headers_replace_text_at_bkm("year", as.character(x$year)) |>
     docx_set_settings(even_and_odd_headers = FALSE)
 
   print(full_doc, target = book_filename)

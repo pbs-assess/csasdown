@@ -1,5 +1,7 @@
 # csasdown development version
 
+* Allow numeric years etc. in YAML. #5
+
 * Eliminate warning on render of tech report. #10
 
 * Fix styles in French figure captions. #8

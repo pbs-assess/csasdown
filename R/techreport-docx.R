@@ -54,7 +54,7 @@ add_techreport_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml",
     replace_bookmark_with_markdown("authors", author) |>
     replace_bookmark_with_markdown("address", address) |>
     officer::body_replace_text_at_bkm("year", as.character(x$year)) |>
-    officer::body_replace_text_at_bkm("number", x$report_number)
+    officer::body_replace_text_at_bkm("number", as.character(x$report_number))
 
   # Save the frontmatter temporarily
   print(frontmatter, target = "tmp-frontmatter.docx")
@@ -72,7 +72,7 @@ add_techreport_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml",
     replace_bookmark_with_markdown("authors", authors_clean) |>
     replace_bookmark_with_markdown("address", address_clean) |>
     replace_bookmark_with_markdown("year", as.character(x$year)) |>
-    replace_bookmark_with_markdown("number", x$report_number)
+    replace_bookmark_with_markdown("number", as.character(x$report_number))
   print(titlepage, target = "tmp-titlepage.docx")
 
   # Read and process the colophon template

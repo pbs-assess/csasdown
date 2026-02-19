@@ -162,10 +162,10 @@ render_sar <- function(config_file = "_bookdown.yml", ...) {
   doc <- officer::headers_replace_text_at_bkm(doc, "region_name", x$english_region)
   doc <- officer::headers_replace_text_at_bkm(doc, "region_name_rest", x$english_region) # non-first page
   doc <- officer::headers_replace_text_at_bkm(doc, "short_title", x$english_title_short) # non-first page
-  doc <- officer::headers_replace_text_at_bkm(doc, "report_year", x$year)
-  doc <- officer::headers_replace_text_at_bkm(doc, "report_number", x$report_number)
+  doc <- officer::headers_replace_text_at_bkm(doc, "report_year", as.character(x$year))
+  doc <- officer::headers_replace_text_at_bkm(doc, "report_number", as.character(x$report_number))
   doc <- officer::footers_replace_text_at_bkm(doc, "release_month", x$release_month)
-  doc <- officer::footers_replace_text_at_bkm(doc, "release_year", x$year)
+  doc <- officer::footers_replace_text_at_bkm(doc, "release_year", as.character(x$year))
   cli_alert_success("Headers and footers updated")
 
   cli_inform("Adding Mobius loop graphic...")

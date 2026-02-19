@@ -15,11 +15,38 @@
 #'
 #' @keywords internal
 #' @noRd
+coerce_bookmark_markdown_text <- function(text, bookmark) {
+  if (is.null(text)) {
+    return(character())
+  }
+
+  if (is.list(text)) {
+    text <- unlist(text, recursive = TRUE, use.names = FALSE)
+    cli::cli_warn("Bookmark {.val {bookmark}} received a list value; coercing to character text.")
+  }
+
+  if (!is.atomic(text)) {
+    cli::cli_abort(
+      "Bookmark {.val {bookmark}} must be scalar/vector text-like input; received {.val {paste(class(text), collapse = '/')}}."
+    )
+  }
+
+  if (!is.character(text)) {
+    text <- as.character(text)
+  }
+
+  text[is.na(text)] <- ""
+  text
+}
+
+#' @keywords internal
+#' @noRd
 replace_bookmark_with_markdown <- function(doc, bookmark, text) {
   # Use pandoc to convert markdown to Word XML, then extract and inject the runs
   temp_md <- tempfile(fileext = ".md")
   temp_docx <- tempfile(fileext = ".docx")
 
+  text <- coerce_bookmark_markdown_text(text, bookmark)
   writeLines(text, temp_md)
 
   # Convert markdown to docx using pandoc (preserves *italics*)
