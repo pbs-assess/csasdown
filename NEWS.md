@@ -1,5 +1,13 @@
 # csasdown development version
 
+## csasdown 0.0.0.90018
+
+* Speed up Res Doc rendering by switching the frontmatter/content
+  merge from `officer::body_import_docx()` to `officer::body_add_docx()`.
+  Note that this does not preserve the Roman numeral page numbers in the
+  frontmatter. For now, this will have to be manually fixed after the fact.
+  This switch speeds up rendering time of large documents by ~10 fold. #22
+
 ## csasdown 0.0.0.90017
 
 * Add example of how to include an externally created .png figure with the 

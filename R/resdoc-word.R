@@ -119,22 +119,6 @@ add_resdoc_word_frontmatter2 <- function(index_fn, yaml_fn = "_bookdown.yml", ve
     officer::body_remove() |>
     officer::docx_set_settings(even_and_odd_headers = FALSE)
 
-  print(content, target = "tmp-content.docx")
-
-  # Set arabic numbering for main content section, starting at 1
-  set_section_page_numbering(
-    "tmp-content.docx",
-    format = NULL,  # Use default (decimal)
-    start = 1,
-    section_index = 1
-  )
-
-  # join them together into full doc
-  full_doc <- officer::read_docx("tmp-frontmatter-with-toc.docx") |>
-    officer::cursor_end() |>
-    officer::body_import_docx("tmp-content.docx") |>
-    officer::docx_set_settings(even_and_odd_headers = FALSE)
-
   # apply Abstract Heading style by removing and re-adding with correct style
   # Handle case where template might have wrong language (e.g., ABSTRACT in template but rendering French)
   # Try to find the correct language keyword first, then fall back to the other language
@@ -147,18 +131,35 @@ add_resdoc_word_frontmatter2 <- function(index_fn, yaml_fn = "_bookdown.yml", ve
   })
   # Style name is also language-specific
   abstract_style <- if (french) "R\u00e9sum\u00e9" else "Abstract Heading"
-  # abstract_style <- "Abstract Heading"
+  if (!abstract_style %in% content$styles$style_name) {
+    abstract_style <- "Abstract Heading"
+  }
 
   # Always replace with the correct language version (abstract_keyword)
-  full_doc <- full_doc |>
+  content <- content |>
     officer::cursor_reach(keyword = search_keyword) |>
     officer::body_remove() |>
     officer::body_add_par(value = abstract_keyword, style = abstract_style, pos = "before")
 
-  print(full_doc, target = book_filename)
+  # FIXME: can we avoid writing here to save time?
+  print(content, target = "tmp-content.docx")
 
-  # Insert section break between abstract and main content
-  insert_section_break_after_abstract(book_filename, french = french)
+  # join them together into full doc
+  # par_style_mapping <- if (french) {
+  #   list("R\u00e9sum\u00e9" = "Abstract Heading")
+  # } else {
+  #   list()
+  # }
+
+  full_doc <- officer::read_docx("tmp-frontmatter-with-toc.docx") |>
+    officer::cursor_end() |>
+    # handles Roman numeral pages but is VERY slow on large documents:
+    # officer::body_import_docx("tmp-content.docx", par_style_mapping = par_style_mapping) |>
+    # much faster:
+    officer::body_add_docx("tmp-content.docx") |>
+    officer::docx_set_settings(even_and_odd_headers = FALSE)
+
+  print(full_doc, target = book_filename)
 
   # fix table caption alignment in the final assembled document
   fix_table_caption_alignment(book_filename, reference_docx = "resdoc-content-2026.docx")
