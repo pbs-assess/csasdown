@@ -22,13 +22,13 @@ Imports:
     cli,
     officedown,
     officer,
+    magick,
     rmarkdown,
     yaml
 Suggests:
     dplyr,
     flextable,
     ggplot2,
-    magick,
     knitr,
     testthat,
     tidyr
