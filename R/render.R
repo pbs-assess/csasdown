@@ -227,6 +227,9 @@ render_sar <- function(config_file = "_bookdown.yml", validate_bibliography = TR
     ...
   )
 
+  ## Revert to user input content to avoid stacking of front and backmatter
+  writeLines(content, con = first_content_fn)
+
   ## officedown outputs to the root, not the _book folder like bookdown
   if (file.exists("fsar.docx")) {
     file.rename("fsar.docx", file.path("_book", "fsar.docx"))
