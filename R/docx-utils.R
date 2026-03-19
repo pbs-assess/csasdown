@@ -1,3 +1,77 @@
+#' Read image dimensions from a PNG file header
+#' @param path Path to PNG file
+#' @return List with width and height, or NULL
+#' @keywords internal
+#' @noRd
+.read_png_dims <- function(path) {
+  con <- file(path, "rb")
+  on.exit(close(con))
+  sig <- readBin(con, "raw", 8L)
+  png_sig <- as.raw(c(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a))
+  if (!identical(sig, png_sig)) return(NULL)
+  readBin(con, "raw", 4L) # chunk length
+  readBin(con, "raw", 4L) # "IHDR"
+  width <- readBin(con, "integer", 1L, size = 4L, endian = "big")
+  height <- readBin(con, "integer", 1L, size = 4L, endian = "big")
+  list(width = width, height = height)
+}
+
+#' Read image dimensions from a JPEG file header
+#' @param path Path to JPEG file
+#' @return List with width and height, or NULL
+#' @keywords internal
+#' @noRd
+.read_jpeg_dims <- function(path) {
+  con <- file(path, "rb")
+  on.exit(close(con))
+  sig <- readBin(con, "raw", 2L)
+  if (!identical(sig, as.raw(c(0xff, 0xd8)))) return(NULL)
+  repeat {
+    byte <- readBin(con, "raw", 1L)
+    if (length(byte) == 0L) return(NULL)
+    if (byte != as.raw(0xff)) next
+    marker <- readBin(con, "raw", 1L)
+    if (length(marker) == 0L) return(NULL)
+    # SOF0 or SOF2 contain dimensions
+    if (marker %in% as.raw(c(0xc0, 0xc2))) {
+      readBin(con, "raw", 3L) # length (2) + precision (1)
+      height <- readBin(con, "integer", 1L, size = 2L, endian = "big", signed = FALSE)
+      width <- readBin(con, "integer", 1L, size = 2L, endian = "big", signed = FALSE)
+      return(list(width = width, height = height))
+    }
+    # Skip other marker segments
+    if (marker > as.raw(0x00) && marker != as.raw(0xff)) {
+      len <- readBin(con, "integer", 1L, size = 2L, endian = "big", signed = FALSE)
+      if (length(len) == 0L || is.na(len)) return(NULL)
+      readBin(con, "raw", max(0L, len - 2L))
+    }
+  }
+}
+
+#' Get image dimensions
+#'
+#' Reads width and height from PNG/JPEG files via binary headers.
+#' Falls back to magick for other formats.
+#'
+#' @param path Path to image file
+#' @return List with width and height, or NULL if unreadable
+#' @keywords internal
+#' @noRd
+get_image_dimensions <- function(path) {
+  ext <- tolower(tools::file_ext(path))
+  dims <- switch(ext,
+    png = .read_png_dims(path),
+    jpg = , jpeg = .read_jpeg_dims(path),
+    NULL
+  )
+  if (!is.null(dims)) return(dims)
+  if (requireNamespace("magick", quietly = TRUE)) {
+    info <- magick::image_info(magick::image_read(path))
+    return(list(width = info$width, height = info$height))
+  }
+  NULL
+}
+
 #' Fix list indentation in numbering XML
 #'
 #' @description Removes indentation from list level definitions in numbering.xml.
@@ -1236,6 +1310,31 @@ insert_section_break_after_abstract <- function(docx_path, french = FALSE) {
   base$knitr$opts_chunk$echo <- FALSE
   base$knitr$opts_chunk$comment <- "#>"
   base$knitr$opts_chunk$dev <- "png"
+  base$knitr$opts_chunk$auto_asp <- TRUE
+
+  base$knitr$opts_hooks$auto_asp <- function(options) {
+    if (!isTRUE(options$auto_asp)) return(options)
+    default_fig_asp <- knitr::opts_chunk$get("fig.asp")
+    has_chunk_fig_asp <- !is.null(options$fig.asp) &&
+      (is.null(default_fig_asp) || !isTRUE(all.equal(options$fig.asp, default_fig_asp)))
+    if (has_chunk_fig_asp) return(options)
+    code <- paste(options$code, collapse = "\n")
+    m <- regexpr(
+      '(?:knitr::)?include_graphics\\(\\s*["\']([^"\']+)["\']',
+      code, perl = TRUE
+    )
+    if (m == -1L) return(options)
+    path <- substr(
+      code,
+      attr(m, "capture.start")[1L],
+      attr(m, "capture.start")[1L] + attr(m, "capture.length")[1L] - 1L
+    )
+    if (!file.exists(path)) return(options)
+    dims <- get_image_dimensions(path)
+    if (is.null(dims)) return(options)
+    options$fig.asp <- dims$height / dims$width
+    options
+  }
 
   base <- add_caption_fix_postprocessor(base, reference_docx = ref_docx_path)
 

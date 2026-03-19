@@ -102,12 +102,12 @@ add_resdoc_word_frontmatter2 <- function(index_fn, yaml_fn = "_bookdown.yml", ve
   print(frontmatter, target = "tmp-frontmatter-with-toc.docx")
 
   # Set roman numbering for TOC/abstract section (section 3 of frontmatter)
-  set_section_page_numbering(
-    "tmp-frontmatter-with-toc.docx",
-    format = "lowerRoman",
-    start = 3,
-    section_index = -1
-  )
+  # set_section_page_numbering(
+  #   "tmp-frontmatter-with-toc.docx",
+  #   format = "lowerRoman",
+  #   start = 3,
+  #   section_index = -1
+  # )
 
   # fix missing namespaces
   fix_missing_namespaces("tmp-frontmatter-with-toc.docx")

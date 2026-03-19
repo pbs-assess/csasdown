@@ -1,5 +1,9 @@
 # csasdown development version
 
+## csasdown 0.0.0.90019
+
+* Add auto-detection of aspect ratio for external png/jpeg figures. #25
+
 ## csasdown 0.0.0.90018
 
 * Speed up Res Doc rendering by switching the frontmatter/content
