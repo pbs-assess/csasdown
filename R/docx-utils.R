@@ -1293,6 +1293,10 @@ insert_section_break_after_abstract <- function(docx_path, french = FALSE) {
           fp_text = officer::fp_text_lite(bold = FALSE)
         )
       ),
+      lists = list(
+        ol.style = "ol style",
+        ul.style = "ul style"
+      ),
       mapstyles = list(
         "Body Text" = c("Normal", "First Paragraph")
       ),

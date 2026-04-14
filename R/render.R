@@ -170,15 +170,10 @@ render_sar <- function(config_file = "_bookdown.yml", validate_bibliography = TR
 
   x <- rmarkdown::yaml_front_matter("index.Rmd")
 
-  extra_context <- paste0(
-    "This Science Advisory Report is from the ", x$meeting_date, " ", x$english_title, ". ",
-    "Additional publications from this meeting will be posted on the [Fisheries and Oceans Canada (DFO) Science Advisory Schedule](http://www.isdm-gdsi.gc.ca/csas-sccs/applications/events-evenements/index-eng.asp) as they become available."
-  )
-
   title_and_context <- c(
     '::: {custom-style="Heading 1"}', x$english_title, ":::\n",
     '::: {custom-style="Heading 2"}', "Context", ":::\n",
-    '::: {custom-style="Body Text"}', paste0(x$context, extra_context), ":::\n"
+    '::: {custom-style="Body Text"}', x$context, ":::\n"
   )
 
   content <- readLines(con = first_content_fn, warn = FALSE)
@@ -186,7 +181,6 @@ render_sar <- function(config_file = "_bookdown.yml", validate_bibliography = TR
   sources <- c(
     "\n## SOURCES OF INFORMATION {-}\n",
     '<div id="refs" custom-style = "citation"></div>\n',
-    extra_context,
     "\n\\pagebreak\n"
   )
 
@@ -196,20 +190,21 @@ render_sar <- function(config_file = "_bookdown.yml", validate_bibliography = TR
     x$english_csa_address,
     "E-Mail:", x$email, "\\",
     "Internet address: [www.dfo-mpo.gc.ca/csas-sccs/](www.dfo-mpo.gc.ca/csas-sccs/)\n",
-    "ISSN xxxx-xxxx\\",
+    "ISSN 1919-5087\\",
     paste0("ISBN 978-0-660-xxxxx-x&#9;Cat. No. Fs70-6/", x$year, "-nnnE-PDF\\"),
     "\u00a9 His Majesty the King in Right of Canada, as represented by the Minister of the\\
                   Department of Fisheries and Oceans,", x$year, "\n",
+    "DOI: xxx.xxx.xxx\n",
     "This report is published under the [Open Government Licence - Canada](https://open.canada.ca/en/open-government-licence-canada)\n",
     "MOBIUS", # To be replaced below with image using officer
     ":::\n",
     "\nCorrect citation for this publication:\n",
     '::: {custom-style="citation"}',
-    paste0("DFO. ", x$year, ". ", x$english_title, ". DFO Can. Sci. Advis. Sec. Sci. Advis. Rep. ", x$year, "/", x$report_number, ". iv + xx p."),
+    paste0("DFO. ", x$year, ". ", x$english_title, ". DFO Can. Sci. Advis. Sec. Sci. Advis. Rep. ", x$year, "/", x$report_number, ". doi: xxx.xxx.xxx."),
     ":::",
     "\n*Aussi disponible en fran\u00e7ais:*\n",
     '::: {custom-style="citation"}',
-    paste0("*MPO. ", x$year, ". ", x$french_title, ". Secr. can. des avis sci. du MPO. Avis sci. ", x$year, "/", x$report_number, ". iv + xx p.*"),
+    paste0("*MPO. ", x$year, ". ", x$french_title, ". Secr. can. des avis sci. du MPO. Avis sci. ", x$year, "/", x$report_number, ". doi: xxx.xxx.xxx.*"),
     ":::",
     "\nInuktitut Atuinnaummijuq:\n",
     '::: {custom-style="citation"}',

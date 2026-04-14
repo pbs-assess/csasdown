@@ -49,6 +49,55 @@ fix_missing_namespaces <- function(docx_path) {
   invisible()
 }
 
+
+#' Extract abstract body text from an officer Word document
+#'
+#' Extracts the paragraph text between the first and second Heading 1
+#' sections in a Word document represented as an `rdocx` object from
+#' the `officer` package (assumes the abstract is the first section).
+#'
+#' @param doc An `rdocx` object created by `officer::read_docx()`.
+#'
+#' @return A character vector containing abstract paragraphs.
+#'
+#' @noRd
+extract_abstract <- function(doc) {
+
+  s <- officer::docx_summary(doc)
+
+  h1_idx <- s$doc_index[!is.na(s$style_name) & s$style_name == "heading 1"]
+
+  abstract_text <- s$text[s$doc_index > h1_idx[1] & s$doc_index < h1_idx[2]]
+
+  abstract_text
+}
+
+#' Remove abstract section from an officer Word document
+#'
+#' Removes the first Heading 1 section (assumed to be the abstract)
+#' from an `rdocx` object created by `officer::read_docx()`.
+#'
+#' @param doc An `rdocx` object created by `officer::read_docx()`.
+#'
+#' @return An `rdocx` object with the abstract section removed.
+#'
+#' @noRd
+remove_abstract <- function(doc) {
+
+  s <- officer::docx_summary(doc)
+
+  h1_idx <- s$doc_index[!is.na(s$style_name) & s$style_name == "heading 1"]
+
+  doc <- officer::cursor_begin(doc)
+
+  for (i in seq_len(h1_idx[2])) {
+    doc <- officer::body_remove(doc)
+  }
+
+  doc
+}
+
+
 add_resdoc_word_frontmatter2 <- function(index_fn, yaml_fn = "_bookdown.yml", verbose = FALSE, keep_files = FALSE) {
   if (verbose) cli_inform("Adding frontmatter to the Research Document using the officer package...")
 
@@ -94,69 +143,39 @@ add_resdoc_word_frontmatter2 <- function(index_fn, yaml_fn = "_bookdown.yml", ve
     replace_bookmark_with_markdown("french_title", x$french_title)
 
   # add table of contents
-  frontmatter <- frontmatter |>
+  frontmatter_with_toc <- frontmatter |>
     officer::cursor_reach(keyword = toc_keyword) |>
-    officer::body_add_toc() |>
-    officer::body_add_break(pos = "after")
+    officer::body_add_toc()
 
-  print(frontmatter, target = "tmp-frontmatter-with-toc.docx")
+  # add abstract
+  content_with_abstract <- officer::read_docx(book_filename)
+  abstract_pars <- extract_abstract(content_with_abstract)
 
-  # Set roman numbering for TOC/abstract section (section 3 of frontmatter)
-  # set_section_page_numbering(
-  #   "tmp-frontmatter-with-toc.docx",
-  #   format = "lowerRoman",
-  #   start = 3,
-  #   section_index = -1
-  # )
+  frontmatter_with_abstract <- frontmatter_with_toc |>
+    officer::cursor_reach(keyword = abstract_keyword) |>
+    officer::body_add_par(abstract_pars[1], style = "Body Text")
 
-  # fix missing namespaces
-  fix_missing_namespaces("tmp-frontmatter-with-toc.docx")
-
-  content <- officer::read_docx(book_filename) |>
-    officer::cursor_begin() |>
-    officer::body_remove() |>
-    officer::body_remove() |>
-    officer::body_remove() |>
-    officer::docx_set_settings(even_and_odd_headers = FALSE)
-
-  # apply Abstract Heading style by removing and re-adding with correct style
-  # Handle case where template might have wrong language (e.g., ABSTRACT in template but rendering French)
-  # Try to find the correct language keyword first, then fall back to the other language
-  search_keyword <- tryCatch({
-    content_tmp <- officer::cursor_reach(content, keyword = abstract_keyword)
-    abstract_keyword  # Found the correct one
-  }, error = function(e) {
-    # Correct keyword not found, try the other language
-    if (french) "ABSTRACT" else "R\u00c9SUM\u00c9"
-  })
-  # Style name is also language-specific
-  abstract_style <- if (french) "R\u00e9sum\u00e9" else "Abstract Heading"
-  if (!abstract_style %in% content$styles$style_name) {
-    abstract_style <- "Abstract Heading"
+  if (length(abstract_pars) > 1) {
+    for (i in 2:length(abstract_pars)) {
+      frontmatter_with_abstract <- frontmatter_with_abstract |>
+        officer::body_add_par(abstract_pars[i], style = "Body Text")
+    }
   }
 
-  # Always replace with the correct language version (abstract_keyword)
-  content <- content |>
-    officer::cursor_reach(keyword = search_keyword) |>
-    officer::body_remove() |>
-    officer::body_add_par(value = abstract_keyword, style = abstract_style, pos = "before")
+  print(frontmatter_with_abstract, target = "tmp-frontmatter.docx")
+
+  # fix missing namespaces
+  fix_missing_namespaces("tmp-frontmatter.docx")
+
+  content <- remove_abstract(content_with_abstract) |>
+    officer::docx_set_settings(even_and_odd_headers = FALSE)
 
   # FIXME: can we avoid writing here to save time?
   print(content, target = "tmp-content.docx")
 
-  # join them together into full doc
-  # par_style_mapping <- if (french) {
-  #   list("R\u00e9sum\u00e9" = "Abstract Heading")
-  # } else {
-  #   list()
-  # }
-
-  full_doc <- officer::read_docx("tmp-frontmatter-with-toc.docx") |>
+  full_doc <- officer::read_docx("tmp-frontmatter.docx") |>
     officer::cursor_end() |>
-    # handles Roman numeral pages but is VERY slow on large documents:
-    # officer::body_import_docx("tmp-content.docx", par_style_mapping = par_style_mapping) |>
-    # much faster:
-    officer::body_add_docx("tmp-content.docx") |>
+    officer::body_add_docx("tmp-content.docx", pos = "on") |>
     officer::docx_set_settings(even_and_odd_headers = FALSE)
 
   print(full_doc, target = book_filename)
