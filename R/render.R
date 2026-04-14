@@ -170,15 +170,10 @@ render_sar <- function(config_file = "_bookdown.yml", validate_bibliography = TR
 
   x <- rmarkdown::yaml_front_matter("index.Rmd")
 
-  extra_context <- paste0(
-    "This Science Advisory Report is from the ", x$meeting_date, " ", x$english_title, ". ",
-    "Additional publications from this meeting will be posted on the [Fisheries and Oceans Canada (DFO) Science Advisory Schedule](http://www.isdm-gdsi.gc.ca/csas-sccs/applications/events-evenements/index-eng.asp) as they become available."
-  )
-
   title_and_context <- c(
     '::: {custom-style="Heading 1"}', x$english_title, ":::\n",
     '::: {custom-style="Heading 2"}', "Context", ":::\n",
-    '::: {custom-style="Body Text"}', paste0(x$context, extra_context), ":::\n"
+    '::: {custom-style="Body Text"}', x$context, ":::\n"
   )
 
   content <- readLines(con = first_content_fn, warn = FALSE)
@@ -186,7 +181,6 @@ render_sar <- function(config_file = "_bookdown.yml", validate_bibliography = TR
   sources <- c(
     "\n## SOURCES OF INFORMATION {-}\n",
     '<div id="refs" custom-style = "citation"></div>\n',
-    extra_context,
     "\n\\pagebreak\n"
   )
 
