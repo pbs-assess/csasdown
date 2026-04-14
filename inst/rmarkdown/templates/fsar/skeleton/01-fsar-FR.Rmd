@@ -6,7 +6,9 @@
 
 ::: {custom-style="fsar-bullet"}
 
--   [Point(s) sommaire(s) obligatoire(s)]
+- [Point(s) sommaire(s) obligatoire(s)]
+
+- 
 
 :::
 
@@ -14,7 +16,9 @@
 
 ::: {custom-style="List Bullet"}
 
--   [Point(s) sommaire(s) obligatoire(s)]
+- [Point(s) sommaire(s) obligatoire(s)]
+
+- 
 
 :::
 
@@ -22,7 +26,9 @@
 
 ::: {custom-style="List Bullet"}
 
--   [Point(s) sommaire(s) obligatoire(s), section facultative pour la RSP]
+- [Point(s) sommaire(s) obligatoire(s), section facultative pour la RSP]
+
+- 
 
 :::
 
@@ -30,7 +36,9 @@
 
 ::: {custom-style="List Bullet"}
 
--   [Point(s) sommaire(s) obligatoire(s)]
+- [Point(s) sommaire(s) obligatoire(s)]
+
+- 
 
 :::
 
@@ -38,7 +46,9 @@
 
 ::: {custom-style="List Bullet"}
 
--   [Autres points sommaires le cas échéant]
+- [Autres points sommaires le cas échéant]
+
+- 
 
 :::
 
@@ -96,13 +106,13 @@
 
 ::: {custom-style="List Bullet"}
 
--   Point de référence limite (PRL)&nbsp;:
+- Point de référence limite (PRL)&nbsp;:
 
--   Point de référence supérieur du stock (PRS)&nbsp;:
+- Point de référence supérieur du stock (PRS)&nbsp;:
 
--   Taux d'exploitation de référence (TER)&nbsp;:
+- Taux d'exploitation de référence (TER)&nbsp;:
 
--   Point de référence cible (PRC)&nbsp;:
+- Point de référence cible (PRC)&nbsp;:
 
 :::
 

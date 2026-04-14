@@ -9,6 +9,8 @@
 
 - [Mandatory bullet(s)] 
 
+- 
+
 :::
 
 ### Trends
@@ -16,6 +18,8 @@
 ::: {custom-style="List Bullet"}
 
 - [Mandatory bullet(s)] 
+
+- 
 
 :::
 
@@ -25,6 +29,8 @@
 
 - [Mandatory bullet(s)] 
 
+- 
+
 :::
 
 ### Stock Advice
@@ -33,6 +39,8 @@
 
 - [Mandatory bullet(s)] 
 
+- 
+
 :::
 
 ### Other Management Questions [if applicable, otherwise do not include] {-}
@@ -40,6 +48,8 @@
 ::: {custom-style="List Bullet"}
 
 - [Other bullets if applicable]
+
+- 
 
 :::
 
