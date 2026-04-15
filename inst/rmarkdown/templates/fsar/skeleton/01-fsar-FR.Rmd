@@ -4,43 +4,23 @@
 
 ### État du stock
 
-::: {custom-style="fsar-bullet"}
-
 - [Point(s) sommaire(s) obligatoire(s)]
-
-:::
 
 ### Tendances du stock
 
-::: {custom-style="List Bullet"}
-
 - [Point(s) sommaire(s) obligatoire(s)]
-
-:::
 
 ### Considérations liées à l'écosystème et aux changements climatiques
 
-::: {custom-style="List Bullet"}
-
 - [Point(s) sommaire(s) obligatoire(s), section facultative pour la RSP]
-
-:::
 
 ### Avis sur le stock
 
-::: {custom-style="List Bullet"}
-
 - [Point(s) sommaire(s) obligatoire(s)]
-
-:::
 
 ### Autres questions de gestion [le cas échéant, ne pas inclure sinon]
 
-::: {custom-style="List Bullet"}
-
 - [Autres points sommaires le cas échéant]
-
-:::
 
 ## FONDEMENT DE L'ÉVALUATION
 
@@ -58,22 +38,14 @@
 
 #### Date de l'évaluation la plus récente
 
-::: {custom-style="List Bullet"}
-
 1.  Dernière évaluation complète&nbsp;: [date et référence]
 2.  Dernière mise à jour de l'année intermédiaire&nbsp;: [date et référence]
 
-:::
-
 #### Approche d'évaluation du stock
-
-::: {custom-style="List Bullet"}
 
 1.  Catégorie générale&nbsp;: [Sélectionnez l'une des options suivantes&nbsp;: pauvre en données (p.&nbsp;ex. prises-RMD, données très limitées), fondée sur un indice (tendances dans les indices empiriques seulement), modèle d'évaluation d'un stock unique, ensemble de modèles, ESG (complète ou allégée), évaluation intégrée selon la Politique concernant le saumon sauvage, approches multiples, autre (précisez).]
 
 2.  Catégorie spécifique&nbsp;: [Sélectionnez une ou plusieurs options&nbsp;: aucune donnée, fondée sur des indices (indices dépendants de la pêche seulement), fondée sur des indices (y compris les indices dépendants de la pêche et les indices indépendants de la pêche), modèle de différence des décalages, dynamique de la biomasse, analyse de population virtuelle, modèle statistique des prises selon la longueur, modèle statistique des prises selon l'âge, modèle d'espace-état, analyse séquentielle de population, production excédentaire, relation stock-recrutement, prélèvement biologique potentiel, autre (veuillez expliquer).]
-
-:::
 
 [Sommaire facultatif en langage clair de la méthodologie d'évaluation du stock. Ajoutez une référence à un document de recherche ou à une autre publication, et/ou une note de bas de page au document de travail. Moins de 100&nbsp;mots.]
 
@@ -93,14 +65,10 @@
 
 [Obligatoire. Vous pouvez remplacer les points sommaires par un tableau pour cette section. Consultez les autres instructions dans le document d'orientation.]
 
-::: {custom-style="List Bullet"}
-
 - Point de référence limite (PRL)&nbsp;:
 - Point de référence supérieur du stock (PRS)&nbsp;:
 - Taux d'exploitation de référence (TER)&nbsp;:
 - Point de référence cible (PRC)&nbsp;:
-
-:::
 
 #### Autres points de référence du stock
 

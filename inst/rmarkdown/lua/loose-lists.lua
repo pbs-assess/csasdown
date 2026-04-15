@@ -21,9 +21,17 @@ local function loosen_items(items)
 end
 
 function BulletList(el)
-  return pandoc.BulletList(loosen_items(el.content))
+  local loose = pandoc.BulletList(loosen_items(el.content))
+  return pandoc.Div(
+    { loose },
+    pandoc.Attr("", {}, { ["custom-style"] = "List Bullet" })
+  )
 end
 
 function OrderedList(el)
-  return pandoc.OrderedList(loosen_items(el.content), el.listAttributes)
+  local loose = pandoc.OrderedList(loosen_items(el.content), el.listAttributes)
+  return pandoc.Div(
+    { loose },
+    pandoc.Attr("", {}, { ["custom-style"] = "List Number" })
+  )
 end
