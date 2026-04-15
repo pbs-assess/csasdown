@@ -10,26 +10,15 @@ Research Documents explain technical information and data to support the advice.
 
 CSAS allows ordered lists:
 
-::: {custom-style="List Number"}
-
 1. Item 1
-
 1. Item 2
-
-:::
 
 and bulleted lists:
 
-::: {custom-style="List Bullet"}
-
 - Item 1
-
 - Item 2
 
-:::
-
-
-Note that you *must* have blank lines between the list elements for the proper CSAS styles to be applied. Sub-list items are not supported (you would have to manually apply the List Number 2 or List Bullet 2 style after).
+Note that sub-list items are not supported (you would have to manually apply the List Number 2 or List Bullet 2 style after).
 
 This is a reference to a figure: Figure \@ref(fig:example-fig).
 
@@ -84,14 +73,10 @@ Here's a reference: [@francis2011]. This `francis2011` entry appears in a file c
 
 **Tips for Bibliographies**
 
-::: {custom-style="List Bullet"}
-
 - The cite key (a citation's label) needs to be unique from the other entries.
 
 - Bibliographies made using BibTeX (whether manually or using a manager) accept LaTeX markup, so you can italicize and add symbols as necessary.
 
 - To force capitalization in an article title or where all lowercase is generally used, bracket the capitalized word in curly braces. E.g. `{Pacific Cod}`.
-
-:::
 
 CSAS style requires the bibliography to be before the appendices and before tables and figures if you keep those together at the end of your document.
