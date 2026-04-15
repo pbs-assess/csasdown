@@ -24,25 +24,15 @@ This section is the core of the report.
 
 CSAS allows ordered lists:
 
-::: {custom-style="List Number"}
-
 1. Item 1
-
 1. Item 2
-
-:::
 
 and bulleted lists:
 
-::: {custom-style="List Bullet"}
-
 - Item 1
-
 - Item 2
 
-:::
-
-Note that you *must* have blank lines between the list elements for the proper CSAS styles to be applied. Sub-list items are not supported (you would have to manually apply the List Number 2 or List Bullet 2 style after).
+Note that sub-list items are not supported (you would have to manually apply the List Number 2 or List Bullet 2 style after).
 
 This is a reference to a figure: Figure \@ref(fig:example-fig).
 
@@ -85,7 +75,7 @@ Mandatory. Include the name of each participant and their affiliation.
 
 Mandatory.
 
-References must follow the instructions to authors for the *Canadian Journal of Fisheries and Aquatic Sciences*, at [Canadian Science Publishing](https://cdnsciencepub.com/journal/cjfas/authors#guidelines). When using a reference managing tool (such as Zotero, Mendeley, Endnote, etc.), use the Canadian Journal of Fisheries and Aquatic Sciences (CJFAS) style for best results. Include hyperlinks only if the site is hosted by the Government of Canada or a DOI handle system is used. 
+References must follow the instructions to authors for the *Canadian Journal of Fisheries and Aquatic Sciences*, at [Canadian Science Publishing](https://cdnsciencepub.com/journal/cjfas/authors#guidelines). When using a reference managing tool (such as Zotero, Mendeley, Endnote, etc.), use the Canadian Journal of Fisheries and Aquatic Sciences (CJFAS) style for best results. Include hyperlinks only if the site is hosted by the Government of Canada or a DOI handle system is used.
 
 ## APPENDIX (OR APPENDICES)
 
