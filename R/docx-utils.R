@@ -1245,7 +1245,18 @@ insert_section_break_after_abstract <- function(docx_path, french = FALSE) {
   dots$french <- NULL
   csl_path <- if (french) "csl/csas-french.csl" else "csl/csas.csl"
 
+  lua_filter <- system.file(
+    "rmarkdown", "lua", "loose-lists.lua",
+    package = "csasdown"
+  )
+
   default_pandoc_args <- c()
+  if (nzchar(lua_filter)) {
+    default_pandoc_args <- c(
+      default_pandoc_args,
+      "--lua-filter", lua_filter
+    )
+  }
   if (use_pandoc_highlight) {
     default_pandoc_args <- c(default_pandoc_args, get_pandoc_highlight_arg())
   }

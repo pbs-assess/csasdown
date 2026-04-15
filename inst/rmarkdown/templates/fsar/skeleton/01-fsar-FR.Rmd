@@ -8,8 +8,6 @@
 
 - [Point(s) sommaire(s) obligatoire(s)]
 
-- 
-
 :::
 
 ### Tendances du stock
@@ -17,8 +15,6 @@
 ::: {custom-style="List Bullet"}
 
 - [Point(s) sommaire(s) obligatoire(s)]
-
-- 
 
 :::
 
@@ -28,8 +24,6 @@
 
 - [Point(s) sommaire(s) obligatoire(s), section facultative pour la RSP]
 
-- 
-
 :::
 
 ### Avis sur le stock
@@ -38,8 +32,6 @@
 
 - [Point(s) sommaire(s) obligatoire(s)]
 
-- 
-
 :::
 
 ### Autres questions de gestion [le cas échéant, ne pas inclure sinon]
@@ -47,8 +39,6 @@
 ::: {custom-style="List Bullet"}
 
 - [Autres points sommaires le cas échéant]
-
-- 
 
 :::
 
@@ -71,7 +61,6 @@
 ::: {custom-style="List Bullet"}
 
 1.  Dernière évaluation complète&nbsp;: [date et référence]
-
 2.  Dernière mise à jour de l'année intermédiaire&nbsp;: [date et référence]
 
 :::
@@ -107,11 +96,8 @@
 ::: {custom-style="List Bullet"}
 
 - Point de référence limite (PRL)&nbsp;:
-
 - Point de référence supérieur du stock (PRS)&nbsp;:
-
 - Taux d'exploitation de référence (TER)&nbsp;:
-
 - Point de référence cible (PRC)&nbsp;:
 
 :::

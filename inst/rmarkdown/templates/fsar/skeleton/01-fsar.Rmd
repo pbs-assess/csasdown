@@ -9,8 +9,6 @@
 
 - [Mandatory bullet(s)] 
 
-- 
-
 :::
 
 ### Trends
@@ -18,8 +16,6 @@
 ::: {custom-style="List Bullet"}
 
 - [Mandatory bullet(s)] 
-
-- 
 
 :::
 
@@ -29,8 +25,6 @@
 
 - [Mandatory bullet(s)] 
 
-- 
-
 :::
 
 ### Stock Advice
@@ -39,8 +33,6 @@
 
 - [Mandatory bullet(s)] 
 
-- 
-
 :::
 
 ### Other Management Questions [if applicable, otherwise do not include] {-}
@@ -48,8 +40,6 @@
 ::: {custom-style="List Bullet"}
 
 - [Other bullets if applicable]
-
-- 
 
 :::
 
@@ -73,7 +63,6 @@
 ::: {custom-style="List Number"}
 
 1.  Last Full Assessment: [date and reference]
-
 2.  Last Interim-Year Update: [date and reference]
 
 :::
@@ -109,11 +98,8 @@
 ::: {custom-style="List Bullet"}
 
 - Limit Reference Point (LRP):
-
 - Upper Stock Reference (USR):
-
 - Removal Reference (RR):
-
 - Target Reference Point (TRP):
 
 :::
