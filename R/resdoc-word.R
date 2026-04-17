@@ -124,11 +124,12 @@ add_resdoc_word_frontmatter2 <- function(index_fn, yaml_fn = "_bookdown.yml", ve
   authors <- if (french) x$french_author else x$english_author
   address <- if (french) x$french_address else x$english_address
   frontmatter <- officer::read_docx(ref_front_file) |>
-    replace_bookmark_with_markdown("region", region) |>
     replace_bookmark_with_markdown("title", title) |>
     replace_bookmark_with_markdown("authors", authors) |>
-    replace_bookmark_with_markdown("address", address) |>
-    officer::body_replace_text_at_bkm("year", as.character(x$year))
+    replace_bookmark_with_markdown("address", address)
+  frontmatter <- frontmatter |>
+    officer::headers_replace_text_at_bkm("region", region) |>
+    officer::headers_replace_text_at_bkm("year", as.character(x$year))
 
   # citation page (works for both languages because bookmarks are different)
   frontmatter <- frontmatter |>

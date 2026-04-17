@@ -1,5 +1,10 @@
 # csasdown development version
 
+## csasdown 0.0.0.90020
+
+* Fix resdoc frontmatter region and year substitution by replacing the
+  cover-page header bookmarks instead of trying to edit the document body.
+
 ## csasdown 0.0.0.90019
 
 * Add auto-detection of aspect ratio for external png/jpeg figures. #25
