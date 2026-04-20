@@ -403,3 +403,115 @@ test_that("replace_bookmark_with_markdown handles complex formatting", {
   # Cleanup
   unlink(c(temp_doc, temp_dir), recursive = TRUE)
 })
+
+
+test_that("replace_bookmarks_with_markdown replaces multiple bookmarks", {
+  skip_on_cran()
+
+  template_path <- system.file(
+    "tech-report-docx",
+    "01-tech-report-cover-english.docx",
+    package = "csasdown"
+  )
+
+  if (!file.exists(template_path)) {
+    skip("Tech report template not found")
+  }
+
+  doc <- officer::read_docx(template_path)
+
+  result <- replace_bookmarks_with_markdown(
+    doc,
+    title = "New Title",
+    authors = "Author One^1^",
+    address = "Line 1\\\nLine 2"
+  )
+
+  doc_summary <- officer::docx_summary(result)
+
+  expect_true(any(grepl("New Title", doc_summary$text)))
+  expect_true(any(grepl("Author One", doc_summary$text)))
+  expect_true(any(grepl("Line 1", doc_summary$text)))
+})
+
+
+test_that("replace_bookmarks_with_markdown errors on duplicate names", {
+  skip_on_cran()
+
+  doc <- officer::read_docx()
+
+  expect_error(
+    replace_bookmarks_with_markdown(doc, title = "A", title = "B"),
+    "Duplicate bookmark"
+  )
+})
+
+test_that("replace_bookmarks_with_markdown warns on missing bookmark", {
+  skip_on_cran()
+
+  doc <- officer::read_docx()
+
+  expect_warning(
+    replace_bookmarks_with_markdown(doc, not_a_real_bookmark = "Test"),
+    "not found"
+  )
+})
+
+test_that("soft line breaks become spaces", {
+  skip_on_cran()
+
+  template_path <- system.file(
+    "tech-report-docx",
+    "01-tech-report-cover-english.docx",
+    package = "csasdown"
+  )
+
+  if (!file.exists(template_path)) {
+    skip("Tech report template not found")
+  }
+
+  doc <- officer::read_docx(template_path)
+
+  result <- replace_bookmark_with_markdown(doc, "title", "Line1\nLine2")
+
+  doc_summary <- officer::docx_summary(result)
+
+  expect_true(any(grepl("Line1 Line2", doc_summary$text)))
+})
+
+
+test_that("leading whitespace is trimmed from YAML-style input", {
+  skip_on_cran()
+
+  template_path <- system.file(
+    "tech-report-docx",
+    "01-tech-report-cover-english.docx",
+    package = "csasdown"
+  )
+
+  if (!file.exists(template_path)) {
+    skip("Tech report template not found")
+  }
+
+  doc <- officer::read_docx(template_path)
+
+  text <- "Line 1\\\n     Line 2"
+
+  result <- replace_bookmark_with_markdown(doc, "title", text)
+
+  temp_doc <- tempfile(fileext = ".docx")
+  print(result, target = temp_doc)
+
+  temp_dir <- tempfile()
+  dir.create(temp_dir)
+  utils::unzip(temp_doc, exdir = temp_dir)
+
+  doc_xml <- readLines(file.path(temp_dir, "word", "document.xml"), warn = FALSE)
+  doc_xml_full <- paste(doc_xml, collapse = "")
+
+  expect_true(grepl(">Line 1<", doc_xml_full, fixed = TRUE))
+  expect_true(grepl(">Line 2<", doc_xml_full, fixed = TRUE))
+  expect_false(grepl(">     Line 2<", doc_xml_full, fixed = TRUE))
+
+  unlink(c(temp_doc, temp_dir), recursive = TRUE)
+})
