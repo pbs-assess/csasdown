@@ -118,30 +118,28 @@ add_resdoc_word_frontmatter2 <- function(index_fn, yaml_fn = "_bookdown.yml", ve
   abstract_keyword <- if (french) "R\u00c9SUM\u00c9" else "ABSTRACT"
   book_filename <- paste0("_book/", get_book_filename(yaml_fn), ".docx")
 
-  # first page
+  # first and second page
   title <- if (french) x$french_title else x$english_title
   region <- if (french) x$french_region else x$english_region
   authors <- if (french) x$french_author else x$english_author
   address <- if (french) x$french_address else x$english_address
+
   frontmatter <- officer::read_docx(ref_front_file) |>
-    replace_bookmark_with_markdown("title", title) |>
-    replace_bookmark_with_markdown("authors", authors) |>
-    replace_bookmark_with_markdown("address", address)
-  frontmatter <- frontmatter |>
+    replace_bookmarks_with_markdown(
+      title = title,
+      authors = authors,
+      address = address,
+      english_authors_list = x$english_author_list,
+      year_english_reference1 = x$year,
+      year_english_reference = x$year,
+      english_title = x$english_title,
+      french_authors_list = x$french_author_list, # citation works for both languages because bookmarks are different
+      year_french_reference1 = x$year,
+      year_french_reference = x$year,
+      french_title = x$french_title
+    ) |>
     officer::headers_replace_text_at_bkm("region", region) |>
     officer::headers_replace_text_at_bkm("year", as.character(x$year))
-
-  # citation page (works for both languages because bookmarks are different)
-  frontmatter <- frontmatter |>
-    replace_bookmark_with_markdown("english_authors_list", x$english_author_list) |>
-    replace_bookmark_with_markdown("year_english_reference1", x$year) |>
-    replace_bookmark_with_markdown("year_english_reference", x$year) |>
-    replace_bookmark_with_markdown("english_title", x$english_title)
-  frontmatter <- frontmatter |>
-    replace_bookmark_with_markdown("french_authors_list", x$french_author_list) |>
-    replace_bookmark_with_markdown("year_french_reference1", x$year) |>
-    replace_bookmark_with_markdown("year_french_reference", x$year) |>
-    replace_bookmark_with_markdown("french_title", x$french_title)
 
   # add table of contents
   frontmatter_with_toc <- frontmatter |>

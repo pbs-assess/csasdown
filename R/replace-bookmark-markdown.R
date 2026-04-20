@@ -39,13 +39,13 @@ markdown_to_tokens <- function(text) {
   for (i in seq_along(lines)) {
     line <- sub("^\\s+", "", lines[[i]])
 
-    if (grepl("^\\\\$", line)) {
+    if (grepl("^\\s*\\\\\\s*$", line)) {
       push("break")
       next
     }
 
-    hard_break <- grepl("\\\\$", line)
-    if (hard_break) line <- sub("\\\\$", "", line)
+    hard_break <- grepl("\\\\\\s*$", line)
+    if (hard_break) line <- sub("\\\\\\s*$", "", line)
 
     while (nzchar(line)) {
       m <- regexpr("\\*[^*]+\\*|\\^[^\\^]+\\^", line, perl = TRUE)
@@ -96,9 +96,18 @@ tokens_to_word_xml <- function(tokens, original_rpr = "") {
   }, character(1)), collapse = "")
 }
 
-replace_bookmark_with_markdown <- function(doc, bookmark, text) {
+replace_bookmarks_with_markdown <- function(doc, ...) {
+  vals <- list(...)
+  if (!length(vals)) return(doc)
 
-  browser()
+  nms <- names(vals)
+  if (is.null(nms) || any(!nzchar(nms))) {
+    stop("All replacements must be named as bookmark = text pairs.", call. = FALSE)
+  }
+  if (anyDuplicated(nms)) {
+    dup <- unique(nms[duplicated(nms)])
+    stop(sprintf("Duplicate bookmark name(s): %s", paste(dup, collapse = ", ")), call. = FALSE)
+  }
 
   tmp_docx <- tempfile(fileext = ".docx")
   tmp_dir <- tempfile()
@@ -110,31 +119,51 @@ replace_bookmark_with_markdown <- function(doc, bookmark, text) {
   xml_path <- file.path(tmp_dir, "word", "document.xml")
   doc_xml <- paste(readLines(xml_path, warn = FALSE), collapse = "")
 
-  pattern <- sprintf('(?s)(<w:bookmarkStart[^>]*w:name="%s"[^>]*/>)(.*?)(<w:bookmarkEnd[^>]*/>)', bookmark)
-  hit <- regmatches(doc_xml, regexpr(pattern, doc_xml, perl = TRUE))
+  for (bookmark in nms) {
+    text <- vals[[bookmark]]
+    if (is.null(text)) text <- character()
+    if (is.list(text)) text <- unlist(text, recursive = TRUE, use.names = FALSE)
+    text <- as.character(text)
+    text[is.na(text)] <- ""
 
-  if (!length(hit) || !nzchar(hit)) {
-    unlink(c(tmp_docx, tmp_dir), recursive = TRUE)
-    warning(sprintf("Bookmark '%s' not found.", bookmark), call. = FALSE)
-    return(doc)
+    pattern <- sprintf(
+      '(?s)(<w:bookmarkStart[^>]*w:name="%s"[^>]*/>)(.*?)(<w:bookmarkEnd[^>]*/>)',
+      bookmark
+    )
+    hit <- regmatches(doc_xml, regexpr(pattern, doc_xml, perl = TRUE))
+
+    if (!length(hit) || !nzchar(hit)) {
+      warning(sprintf("Bookmark '%s' not found.", bookmark), call. = FALSE)
+      next
+    }
+
+    rpr <- regmatches(hit, regexpr("<w:rPr>.*?</w:rPr>", hit, perl = TRUE))
+    if (!length(rpr) || !nzchar(rpr)) rpr <- ""
+
+    repl <- tokens_to_word_xml(markdown_to_tokens(text), rpr)
+    doc_xml <- sub(pattern, paste0("\\1", repl, "\\3"), doc_xml, perl = TRUE)
   }
 
-  rpr <- regmatches(hit, regexpr("<w:rPr>.*?</w:rPr>", hit, perl = TRUE))
-  if (!length(rpr) || !nzchar(rpr)) rpr <- ""
-
-  repl <- tokens_to_word_xml(markdown_to_tokens(text), rpr)
-  doc_xml <- sub(pattern, paste0("\\1", repl, "\\3"), doc_xml, perl = TRUE)
   writeLines(doc_xml, xml_path)
 
   old <- setwd(tmp_dir)
   on.exit(setwd(old), add = TRUE)
-  utils::zip(
-    zipfile = tmp_docx,
-    files = list.files(recursive = TRUE, full.names = FALSE, all.files = TRUE, no.. = TRUE),
-    flags = "-q"
+  files <- list.files(
+    recursive = TRUE,
+    full.names = FALSE,
+    include.dirs = FALSE,
+    all.files = TRUE,
+    no.. = TRUE
   )
+  utils::zip(zipfile = tmp_docx, files = files, flags = "-q")
 
   out <- officer::read_docx(tmp_docx)
   unlink(c(tmp_docx, tmp_dir), recursive = TRUE)
   out
+}
+
+replace_bookmark_with_markdown <- function(doc, bookmark, text) {
+  args <- list(doc = doc)
+  args[[bookmark]] <- text
+  do.call(replace_bookmarks_with_markdown, args)
 }
