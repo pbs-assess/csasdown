@@ -72,8 +72,11 @@ test_that("replace_bookmark_with_markdown handles italic markdown", {
 test_that("replace_bookmark_with_markdown preserves original formatting", {
   skip_on_cran()
 
-  template_path <- system.file("tech-report-docx", "01-tech-report-cover-english.docx",
-                               package = "csasdown")
+  template_path <- system.file(
+    "tech-report-docx",
+    "01-tech-report-cover-english.docx",
+    package = "csasdown"
+  )
 
   if (!file.exists(template_path)) {
     skip("Tech report template not found")
@@ -95,23 +98,28 @@ test_that("replace_bookmark_with_markdown preserves original formatting", {
   doc_xml <- readLines(file.path(temp_dir, "word", "document.xml"), warn = FALSE)
   doc_xml_full <- paste(doc_xml, collapse = "")
 
-  # Extract the run containing "Test" to check formatting
-  test_section <- regmatches(doc_xml_full,
-                             regexpr('<w:r>.*?<w:t[^>]*>Test</w:t>.*?</w:r>', doc_xml_full, perl = TRUE))
+  # Match the run containing "Test", allowing xml:space="preserve" and trailing space
+  test_section <- regmatches(
+    doc_xml_full,
+    regexpr('<w:r>.*?<w:t[^>]*>Test\\s*</w:t>.*?</w:r>', doc_xml_full, perl = TRUE)
+  )
 
-  # Check that original formatting is preserved (bold, size 36, Microsoft Sans Serif)
-  expect_true(grepl("<w:b/>", test_section))
+  expect_true(length(test_section) == 1 && nzchar(test_section))
+  expect_true(grepl("<w:b/>", test_section, fixed = TRUE))
   expect_true(grepl('<w:sz w:val="36"/>', test_section, fixed = TRUE))
   expect_true(grepl("Microsoft Sans Serif", test_section, fixed = TRUE))
 
-  # Check that Title has italic added while preserving other formatting
-  title_section <- regmatches(doc_xml_full,
-                              regexpr('<w:r>.*?<w:t[^>]*>Title</w:t>.*?</w:r>', doc_xml_full, perl = TRUE))
-  expect_true(grepl("<w:i/>", title_section))
-  expect_true(grepl("<w:b/>", title_section))
+  # Match the run containing "Title", allowing xml:space attr if present
+  title_section <- regmatches(
+    doc_xml_full,
+    regexpr('<w:r>.*?<w:t[^>]*>Title</w:t>.*?</w:r>', doc_xml_full, perl = TRUE)
+  )
+
+  expect_true(length(title_section) == 1 && nzchar(title_section))
+  expect_true(grepl("<w:i/>", title_section, fixed = TRUE))
+  expect_true(grepl("<w:b/>", title_section, fixed = TRUE))
   expect_true(grepl('<w:sz w:val="36"/>', title_section, fixed = TRUE))
 
-  # Cleanup
   unlink(c(temp_doc, temp_dir), recursive = TRUE)
 })
 
