@@ -1,99 +1,91 @@
 #' Replace bookmark content with markdown-formatted text
 #'
-#' Supported syntax:
-#' - *italic*
-#' - ^superscript^
-#' - plain newline -> space
-#' - trailing "\" -> line break
-#' - line containing only "\" -> one extra blank line separator
-#'
 #' @param doc An officer rdocx object
 #' @param bookmark Character string specifying the bookmark name
-#' @param text Character/string vector with limited markdown text
+#' @param text Character/string vector with markdown text
 #'
 #' @return An officer rdocx object with the bookmark content replaced
 #'
 #' @keywords internal
 #' @noRd
 
-xml_escape_text <- function(x) {
-  x <- gsub("&", "&amp;", x, fixed = TRUE)
-  x <- gsub("<", "&lt;", x, fixed = TRUE)
-  gsub(">", "&gt;", x, fixed = TRUE)
-}
-
-markdown_to_tokens <- function(text) {
+normalize_markdown_text <- function(text) {
   if (is.null(text)) text <- character()
   if (is.list(text)) text <- unlist(text, recursive = TRUE, use.names = FALSE)
   text <- as.character(text)
   text[is.na(text)] <- ""
-  lines <- strsplit(paste(text, collapse = "\n"), "\n", fixed = TRUE)[[1]]
+  paste(text, collapse = "\n")
+}
 
-  out <- list()
-  push <- function(type, text = "", italic = FALSE, superscript = FALSE) {
-    out[[length(out) + 1]] <<- list(
-      type = type, text = text, italic = italic, superscript = superscript
-    )
-  }
+escape_regex <- function(x) {
+  gsub("([][{}()+*^$|\\?.-])", "\\\\\\1", x)
+}
 
-  for (i in seq_along(lines)) {
-    line <- sub("^\\s+", "", lines[[i]])
+merge_run_properties <- function(fragment, original_rpr = "") {
+  if (!nzchar(fragment) || !nzchar(original_rpr)) return(fragment)
 
-    if (grepl("^\\s*\\\\\\s*$", line)) {
-      push("break")
+  inner <- sub("^<w:rPr>", "", original_rpr)
+  inner <- sub("</w:rPr>$", "", inner)
+
+  fragment <- gsub(
+    "<w:r>(?!<w:rPr>)",
+    paste0("<w:r>", original_rpr),
+    fragment,
+    perl = TRUE
+  )
+
+  gsub(
+    "<w:rPr>",
+    paste0("<w:rPr>", inner),
+    fragment,
+    fixed = TRUE
+  )
+}
+
+markdown_to_pandoc_fragments <- function(values) {
+  marks <- names(values)
+  tmp_md <- tempfile(fileext = ".md")
+  tmp_docx <- tempfile(fileext = ".docx")
+  tmp_dir <- tempfile()
+  dir.create(tmp_dir)
+
+  blocks <- vapply(marks, function(mark) {
+    text <- normalize_markdown_text(values[[mark]])
+    start <- sprintf("START:%s", mark)
+    end <- sprintf("END:%s", mark)
+    sprintf("`%s` %s `%s`", start, text, end)
+  }, character(1))
+
+  writeLines(blocks, tmp_md, useBytes = TRUE)
+  rmarkdown::pandoc_convert(tmp_md, to = "docx", output = tmp_docx)
+  utils::unzip(tmp_docx, exdir = tmp_dir)
+
+  md_xml_path <- file.path(tmp_dir, "word", "document.xml")
+  md_xml <- paste(readLines(md_xml_path, warn = FALSE), collapse = "")
+
+  out <- stats::setNames(vector("list", length(marks)), marks)
+
+  for (mark in marks) {
+    start <- sprintf("START:%s", mark)
+    end <- sprintf("END:%s", mark)
+    pattern <- sprintf("(?s)%s(.*?)%s", escape_regex(start), escape_regex(end))
+    hit <- regmatches(md_xml, regexpr(pattern, md_xml, perl = TRUE))
+
+    if (!length(hit) || !nzchar(hit)) {
+      out[[mark]] <- NULL
       next
     }
 
-    hard_break <- grepl("\\\\\\s*$", line)
-    if (hard_break) line <- sub("\\\\\\s*$", "", line)
+    fragment <- sub(sprintf("(?s)^%s", escape_regex(start)), "", hit, perl = TRUE)
+    fragment <- sub(sprintf("(?s)%s$", escape_regex(end)), "", fragment, perl = TRUE)
 
-    while (nzchar(line)) {
-      m <- regexpr("\\*[^*]+\\*|\\^[^\\^]+\\^", line, perl = TRUE)
-      if (m[1] < 0) {
-        push("text", line)
-        break
-      }
-      if (m[1] > 1) push("text", substr(line, 1, m[1] - 1))
-      tag <- regmatches(line, m)
-      inner <- substr(tag, 2, nchar(tag) - 1)
-      push("text", inner, italic = startsWith(tag, "*"), superscript = startsWith(tag, "^"))
-      line <- substr(line, m[1] + attr(m, "match.length"), nchar(line))
-    }
-
-    if (i < length(lines)) {
-      push(if (hard_break) "break" else "text", if (hard_break) "" else " ")
-    }
+    fragment <- sub("^</w:t>", "", fragment)
+    fragment <- sub("<w:t[^>]*>$", "", fragment)
+    out[[mark]] <- fragment
   }
 
+  unlink(c(tmp_md, tmp_docx, tmp_dir), recursive = TRUE)
   out
-}
-
-tokens_to_word_xml <- function(tokens, original_rpr = "") {
-  add_rpr <- function(rpr, italic = FALSE, superscript = FALSE) {
-    if (!nzchar(rpr)) {
-      if (!italic && !superscript) return("")
-      rpr <- "<w:rPr></w:rPr>"
-    }
-    if (italic) rpr <- sub("</w:rPr>", "<w:i/><w:iCs/></w:rPr>", rpr, fixed = TRUE)
-    if (superscript) {
-      rpr <- sub("</w:rPr>", '<w:vertAlign w:val="superscript"/></w:rPr>', rpr, fixed = TRUE)
-    }
-    rpr
-  }
-
-  paste(vapply(tokens, function(tok) {
-    if (identical(tok$type, "break")) {
-      return(if (nzchar(original_rpr)) sprintf("<w:r>%s<w:br/></w:r>", original_rpr) else "<w:r><w:br/></w:r>")
-    }
-    if (!nzchar(tok$text)) return("")
-    rpr <- add_rpr(original_rpr, tok$italic, tok$superscript)
-    txt <- xml_escape_text(tok$text)
-    if (nzchar(rpr)) {
-      sprintf('<w:r>%s<w:t xml:space="preserve">%s</w:t></w:r>', rpr, txt)
-    } else {
-      sprintf('<w:r><w:t xml:space="preserve">%s</w:t></w:r>', txt)
-    }
-  }, character(1)), collapse = "")
 }
 
 replace_bookmarks_with_markdown <- function(doc, ...) {
@@ -118,14 +110,9 @@ replace_bookmarks_with_markdown <- function(doc, ...) {
 
   xml_path <- file.path(tmp_dir, "word", "document.xml")
   doc_xml <- paste(readLines(xml_path, warn = FALSE), collapse = "")
+  pandoc_fragments <- markdown_to_pandoc_fragments(vals)
 
   for (bookmark in nms) {
-    text <- vals[[bookmark]]
-    if (is.null(text)) text <- character()
-    if (is.list(text)) text <- unlist(text, recursive = TRUE, use.names = FALSE)
-    text <- as.character(text)
-    text[is.na(text)] <- ""
-
     pattern <- sprintf(
       '(?s)(<w:bookmarkStart[^>]*w:name="%s"[^>]*/>)(.*?)(<w:bookmarkEnd[^>]*/>)',
       bookmark
@@ -137,10 +124,16 @@ replace_bookmarks_with_markdown <- function(doc, ...) {
       next
     }
 
+    repl <- pandoc_fragments[[bookmark]]
+    if (is.null(repl) || !nzchar(repl)) {
+      warning(sprintf("Could not extract pandoc content for bookmark '%s'.", bookmark), call. = FALSE)
+      next
+    }
+
     rpr <- regmatches(hit, regexpr("<w:rPr>.*?</w:rPr>", hit, perl = TRUE))
     if (!length(rpr) || !nzchar(rpr)) rpr <- ""
 
-    repl <- tokens_to_word_xml(markdown_to_tokens(text), rpr)
+    repl <- merge_run_properties(repl, rpr)
     doc_xml <- sub(pattern, paste0("\\1", repl, "\\3"), doc_xml, perl = TRUE)
   }
 
