@@ -1,16 +1,10 @@
 # csasdown development version
 
-## csasdown 0.0.0.90023
-
-* Fix pandoc bookmark fragment extraction to remove complete marker runs, avoiding malformed XML from partial run slicing.
-
-## csasdown 0.0.0.90022
-
-* Rename `markdown_fragments_to_word_xml()` to `markdown_to_pandoc_fragments()` for clearer naming.
-
 ## csasdown 0.0.0.90021
 
-* Optimize bookmark markdown replacement by vectorizing conversions through a single `rmarkdown::pandoc_convert()` call and reducing repeated docx zip/unzip work during multi-bookmark updates.
+* Optimize bookmark markdown replacement by vectorizing conversions through a 
+  single `rmarkdown::pandoc_convert()` call and reducing repeated docx zip/unzip 
+  work during multi-bookmark updates.
 
 ## csasdown 0.0.0.90020
 
