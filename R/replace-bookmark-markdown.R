@@ -68,19 +68,33 @@ markdown_to_pandoc_fragments <- function(values) {
   for (mark in marks) {
     start <- sprintf("START:%s", mark)
     end <- sprintf("END:%s", mark)
-    pattern <- sprintf("(?s)%s(.*?)%s", escape_regex(start), escape_regex(end))
-    hit <- regmatches(md_xml, regexpr(pattern, md_xml, perl = TRUE))
 
-    if (!length(hit) || !nzchar(hit)) {
+    pattern <- sprintf(
+      "(?s)<w:r\\b[^>]*>.*?<w:t[^>]*>%s</w:t>.*?</w:r>(.*?)<w:r\\b[^>]*>.*?<w:t[^>]*>%s</w:t>.*?</w:r>",
+      escape_regex(start),
+      escape_regex(end)
+    )
+
+    m <- regexpr(pattern, md_xml, perl = TRUE)
+    if (m[[1]] < 0) {
       out[[mark]] <- NULL
       next
     }
 
-    fragment <- sub(sprintf("(?s)^%s", escape_regex(start)), "", hit, perl = TRUE)
-    fragment <- sub(sprintf("(?s)%s$", escape_regex(end)), "", fragment, perl = TRUE)
+    hit <- regmatches(md_xml, m)
+    fragment <- sub(
+      sprintf("(?s)^<w:r\\b[^>]*>.*?<w:t[^>]*>%s</w:t>.*?</w:r>", escape_regex(start)),
+      "",
+      hit,
+      perl = TRUE
+    )
+    fragment <- sub(
+      sprintf("(?s)<w:r\\b[^>]*>.*?<w:t[^>]*>%s</w:t>.*?</w:r>$", escape_regex(end)),
+      "",
+      fragment,
+      perl = TRUE
+    )
 
-    fragment <- sub("^</w:t>", "", fragment)
-    fragment <- sub("<w:t[^>]*>$", "", fragment)
     out[[mark]] <- fragment
   }
 
