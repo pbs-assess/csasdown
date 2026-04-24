@@ -1,5 +1,11 @@
 # csasdown development version
 
+## csasdown 0.0.0.90021
+
+* Optimize bookmark markdown replacement by vectorizing conversions through a 
+  single `rmarkdown::pandoc_convert()` call and reducing repeated docx zip/unzip 
+  work during multi-bookmark updates.
+
 ## csasdown 0.0.0.90020
 
 * Fix resdoc frontmatter region and year substitution by replacing the
