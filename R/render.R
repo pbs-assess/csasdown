@@ -57,7 +57,19 @@ render <- function(
     return(render_sar(config_file = config_file, validate_bibliography = FALSE, ...))
   }
 
-  output_options <- list(pandoc_args = c("--metadata=title:", "--metadata=abstract:"))
+  output_options <- list(pandoc_args = c("--metadata=title:"))
+  abstract_state <- NULL
+  old_abstract_engine <- NULL
+
+  if (type == "resdoc") {
+    abstract_state <- preprocess_resdoc_abstract(config_file = config_file)
+    old_abstract_engine <- set_resdoc_abstract_engine(path = abstract_state$abstract_file)
+
+    on.exit({
+      writeLines(abstract_state$source_content, con = abstract_state$source_file, useBytes = TRUE)
+      restore_resdoc_abstract_engine(old_abstract_engine)
+    }, add = TRUE)
+  }
 
   cli_inform("Rendering document with bookdown...")
   bookdown::render_book("index.Rmd",
@@ -92,6 +104,83 @@ render <- function(
   cli_alert_success("Render complete!")
 
   cli_alert_success(positive_affirmation())
+  invisible()
+}
+
+preprocess_resdoc_abstract <- function(config_file = "_bookdown.yml") {
+  config <- yaml::read_yaml(config_file)
+  rmd_files <- config$rmd_files[basename(config$rmd_files) != "index.Rmd"]
+
+  source_file <- rmd_files[[1]]
+  abstract_file <- "tmp-abstract.md"
+
+  if (file.exists(abstract_file)) {
+    unlink(abstract_file)
+  }
+
+  content <- readLines(source_file, warn = FALSE)
+  source_content <- content
+
+  heading_idx <- grep("^#\\s+\\S", content)
+
+  if (!length(heading_idx)) {
+    cli::cli_abort("Could not find a top-level abstract heading in {.file {source_file}}.")
+  }
+
+  start_idx <- heading_idx[1]
+  end_idx <- if (length(heading_idx) >= 2) heading_idx[2] - 1 else length(content)
+
+  abstract_body <- if (start_idx < end_idx) content[(start_idx + 1):end_idx] else character()
+
+  while (length(abstract_body) && !nzchar(abstract_body[1])) {
+    abstract_body <- abstract_body[-1]
+  }
+
+  while (length(abstract_body) && !nzchar(abstract_body[length(abstract_body)])) {
+    abstract_body <- abstract_body[-length(abstract_body)]
+  }
+
+  abstract_chunk <- c("```{abstract, include=FALSE}", abstract_body, "```")
+
+  before <- if (start_idx > 1) content[seq_len(start_idx - 1)] else character()
+  after <- if (end_idx < length(content)) content[(end_idx + 1):length(content)] else character()
+
+  content <- c(before, abstract_chunk, after)
+
+  writeLines(content, con = source_file, useBytes = TRUE)
+
+  list(
+    source_file = source_file,
+    source_content = source_content,
+    abstract_file = abstract_file
+  )
+}
+
+set_resdoc_abstract_engine <- function(path = "tmp-abstract.md") {
+  old_engine <- knitr::knit_engines$get("abstract")
+
+  knitr::knit_engines$set(abstract = function(options) {
+    processed <- knitr::knit_child(
+      text = options$code,
+      quiet = TRUE,
+      envir = knitr::knit_global()
+    )
+    writeLines(processed, con = path, useBytes = TRUE)
+    ""
+  })
+
+  old_engine
+}
+
+restore_resdoc_abstract_engine <- function(old_engine) {
+  if (is.null(old_engine)) {
+    engines <- knitr::knit_engines$get()
+    engines$abstract <- NULL
+    do.call(knitr::knit_engines$set, engines)
+    return(invisible())
+  }
+
+  knitr::knit_engines$set(abstract = old_engine)
   invisible()
 }
 
