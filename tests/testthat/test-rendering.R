@@ -15,6 +15,17 @@ set_numeric_year <- function(index_file = "index.Rmd") {
   writeLines(index_content, index_file)
 }
 
+set_abstract_inline_r <- function(file = "01-introduction.Rmd") {
+  content <- readLines(file)
+  content <- gsub(
+    "The Abstract is mandatory.",
+    "Inline abstract value: `r 1 + 1`.",
+    content,
+    fixed = TRUE
+  )
+  writeLines(content, file)
+}
+
 test_that("sr builds", {
   wd <- getwd()
   testing_path <- file.path(tempdir(), "sr")
@@ -52,11 +63,15 @@ test_that("resdoc builds", {
   dir.create(testing_path, showWarnings = FALSE)
   setwd(testing_path)
   suppressMessages(draft("resdoc", create_dir = FALSE, edit = FALSE))
+  set_abstract_inline_r()
   render()
+  summary <- officer::docx_summary(officer::read_docx("_book/resdoc.docx"))
   if (FALSE) {
     system("open _book/resdoc.docx")
   }
   expect_true(file.exists("_book/resdoc.docx"))
+  expect_true(any(grepl("Inline abstract value: 2\\.", summary$text, fixed = FALSE)))
+  expect_false(any(grepl("`r 1 \\+ 1`", summary$text)))
   setwd(wd)
 })
 

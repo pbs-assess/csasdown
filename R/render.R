@@ -58,6 +58,18 @@ render <- function(
   }
 
   output_options <- list(pandoc_args = c("--metadata=title:", "--metadata=abstract:"))
+  abstract_state <- NULL
+  old_abstract_engine <- NULL
+
+  if (type == "resdoc") {
+    abstract_state <- preprocess_resdoc_abstract(config_file = config_file)
+    old_abstract_engine <- set_resdoc_abstract_engine(path = abstract_state$abstract_file)
+
+    on.exit({
+      writeLines(abstract_state$source_content, con = abstract_state$source_file, useBytes = TRUE)
+      restore_resdoc_abstract_engine(old_abstract_engine)
+    }, add = TRUE)
+  }
 
   cli_inform("Rendering document with bookdown...")
   bookdown::render_book("index.Rmd",
@@ -92,6 +104,86 @@ render <- function(
   cli_alert_success("Render complete!")
 
   cli_alert_success(positive_affirmation())
+  invisible()
+}
+
+preprocess_resdoc_abstract <- function(config_file = "_bookdown.yml") {
+  config <- yaml::read_yaml(config_file)
+  rmd_files <- config$rmd_files
+  source_file <- NULL
+  source_content <- NULL
+  abstract_file <- "tmp-abstract.md"
+
+  if (file.exists(abstract_file)) {
+    unlink(abstract_file)
+  }
+
+  for (candidate in rmd_files) {
+    if (identical(basename(candidate), "index.Rmd")) {
+      next
+    }
+    if (!file.exists(candidate)) {
+      next
+    }
+
+    content <- readLines(candidate, warn = FALSE)
+    original_content <- content
+    heading_idx <- grep("^#\\s+(ABSTRACT|RÉSUMÉ)\\s*(\\{[^}]*\\})?\\s*$", content)
+    if (!length(heading_idx)) {
+      next
+    }
+
+    start_idx <- heading_idx[1]
+    next_heading_idx <- grep("^#\\s+\\S", content)
+    next_heading_idx <- next_heading_idx[next_heading_idx > start_idx]
+    end_idx <- if (length(next_heading_idx)) next_heading_idx[1] - 1 else length(content)
+
+    abstract_body <- if (start_idx < end_idx) content[(start_idx + 1):end_idx] else character()
+    abstract_chunk <- c("```{abstract}", abstract_body, "```")
+    content[start_idx:end_idx] <- abstract_chunk
+
+    writeLines(content, con = candidate, useBytes = TRUE)
+    source_file <- candidate
+    source_content <- original_content
+    break
+  }
+
+  if (is.null(source_file)) {
+    cli_abort("Could not find a '# ABSTRACT' or '# RÉSUMÉ' section in resdoc content files.")
+  }
+
+  list(
+    source_file = source_file,
+    source_content = source_content,
+    abstract_file = abstract_file
+  )
+}
+
+set_resdoc_abstract_engine <- function(path = "tmp-abstract.md") {
+  old_engine <- knitr::knit_engines$get("abstract")
+
+  knitr::knit_engines$set(abstract = function(options) {
+    processed <- knitr::knit_child(
+      text = options$code,
+      quiet = TRUE,
+      envir = knitr::knit_global()
+    )
+    writeLines(processed, con = path, useBytes = TRUE)
+    ""
+  })
+
+  old_engine
+}
+
+restore_resdoc_abstract_engine <- function(old_engine) {
+  if (is.null(old_engine)) {
+    engines <- knitr::knit_engines$get()
+    engines$abstract <- NULL
+    do.call(knitr::knit_engines$set, engines)
+    return(invisible())
+  }
+
+  knitr::knit_engines$set(abstract = old_engine)
   invisible()
 }
 
