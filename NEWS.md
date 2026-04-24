@@ -1,11 +1,5 @@
 # csasdown development version
 
-## csasdown 0.0.0.90023
-
-* Add a standalone test that exercises resdoc abstract preprocessing and the
-  custom `{abstract}` knitr engine, including inline-R evaluation capture to
-  `tmp-abstract.md` while excluding abstract body content from rendered output.
-
 ## csasdown 0.0.0.90022
 
 * Rework resdoc abstract handling to capture and evaluate the abstract from a
