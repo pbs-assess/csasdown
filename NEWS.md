@@ -1,5 +1,12 @@
 # csasdown development version
 
+## csasdown 0.0.0.90022
+
+* Rework resdoc abstract handling to capture and evaluate the abstract from a
+  temporary `{abstract}` knitr engine sidecar file, insert it into frontmatter
+  via bookmark markdown replacement, and avoid extracting/removing abstract
+  content from rendered Word output.
+
 ## csasdown 0.0.0.90021
 
 * Optimize bookmark markdown replacement by vectorizing conversions through a 
