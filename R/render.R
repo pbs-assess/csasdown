@@ -109,48 +109,33 @@ render <- function(
 
 preprocess_resdoc_abstract <- function(config_file = "_bookdown.yml") {
   config <- yaml::read_yaml(config_file)
-  rmd_files <- config$rmd_files
-  source_file <- NULL
-  source_content <- NULL
+  rmd_files <- config$rmd_files[basename(config$rmd_files) != "index.Rmd"]
+  source_file <- rmd_files[[1]]
   abstract_file <- "tmp-abstract.md"
 
   if (file.exists(abstract_file)) {
     unlink(abstract_file)
   }
 
-  for (candidate in rmd_files) {
-    if (identical(basename(candidate), "index.Rmd")) {
-      next
-    }
-    if (!file.exists(candidate)) {
-      next
-    }
-
-    content <- readLines(candidate, warn = FALSE)
-    original_content <- content
-    heading_idx <- grep("^#\\s+(ABSTRACT|RÉSUMÉ)\\s*(\\{[^}]*\\})?\\s*$", content)
-    if (!length(heading_idx)) {
-      next
-    }
-
-    start_idx <- heading_idx[1]
-    next_heading_idx <- grep("^#\\s+\\S", content)
-    next_heading_idx <- next_heading_idx[next_heading_idx > start_idx]
-    end_idx <- if (length(next_heading_idx)) next_heading_idx[1] - 1 else length(content)
-
-    abstract_body <- if (start_idx < end_idx) content[(start_idx + 1):end_idx] else character()
-    abstract_chunk <- c("```{abstract}", abstract_body, "```")
-    content[start_idx:end_idx] <- abstract_chunk
-
-    writeLines(content, con = candidate, useBytes = TRUE)
-    source_file <- candidate
-    source_content <- original_content
-    break
+  if (is.null(source_file) || !file.exists(source_file)) {
+    cli_abort("Could not find the first resdoc content file from '{config_file}'.")
   }
 
-  if (is.null(source_file)) {
-    cli_abort("Could not find a '# ABSTRACT' or '# RÉSUMÉ' section in resdoc content files.")
+  content <- readLines(source_file, warn = FALSE)
+  source_content <- content
+
+  headings <- grep("^#\\s+\\S", content)
+  if (!length(headings)) {
+    cli_abort("Could not find a level-1 heading in '{source_file}'.")
   }
+
+  start_idx <- headings[1]
+  end_idx <- if (length(headings) > 1) headings[2] - 1 else length(content)
+  abstract_body <- if (start_idx < end_idx) content[(start_idx + 1):end_idx] else character()
+  abstract_chunk <- c("```{abstract}", abstract_body, "```")
+  content[start_idx:end_idx] <- abstract_chunk
+
+  writeLines(content, con = source_file, useBytes = TRUE)
 
   list(
     source_file = source_file,

@@ -1,5 +1,11 @@
 # csasdown development version
 
+## csasdown 0.0.0.90024
+
+* Simplify resdoc abstract preprocessing by capturing the paragraph range
+  between the first two level-1 headings in the first content file, rather
+  than searching for language-specific abstract heading text there.
+
 ## csasdown 0.0.0.90022
 
 * Rework resdoc abstract handling to capture and evaluate the abstract from a
