@@ -123,14 +123,14 @@ preprocess_resdoc_abstract <- function(config_file = "_bookdown.yml") {
 
   heading_idx <- grep("^#\\s+\\S", content)
 
-  if (length(heading_idx) < 2) {
-    cli::cli_abort("Could not find first two top-level headings in {.file {source_file}}.")
+  if (!length(heading_idx)) {
+    cli::cli_abort("Could not find a top-level abstract heading in {.file {source_file}}.")
   }
 
   start_idx <- heading_idx[1]
-  end_idx <- heading_idx[2] - 1
+  end_idx <- if (length(heading_idx) >= 2) heading_idx[2] - 1 else length(content)
 
-  abstract_body <- content[(start_idx + 1):end_idx]
+  abstract_body <- if (start_idx < end_idx) content[(start_idx + 1):end_idx] else character()
 
   while (length(abstract_body) && !nzchar(abstract_body[1])) {
     abstract_body <- abstract_body[-1]
