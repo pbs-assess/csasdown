@@ -139,6 +139,17 @@ preprocess_resdoc_abstract <- function(config_file = "_bookdown.yml") {
     end_idx <- heading_idx[2] - 1
 
     abstract_body <- content[(start_idx + 1):end_idx]
+
+    # Remove leading empty lines
+    while (length(abstract_body) && !nzchar(abstract_body[1])) {
+      abstract_body <- abstract_body[-1]
+    }
+
+    # Optional: remove trailing empty lines
+    while (length(abstract_body) && !nzchar(abstract_body[length(abstract_body)])) {
+      abstract_body <- abstract_body[-length(abstract_body)]
+    }
+
     abstract_chunk <- c("```{abstract}", abstract_body, "```")
 
     before <- if (start_idx > 1) content[seq_len(start_idx - 1)] else character()
