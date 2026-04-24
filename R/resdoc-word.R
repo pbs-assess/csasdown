@@ -105,15 +105,9 @@ add_resdoc_word_frontmatter2 <- function(index_fn, yaml_fn = "_bookdown.yml", ve
   # fix missing namespaces
   fix_missing_namespaces("tmp-frontmatter.docx")
 
-  content <- officer::read_docx(book_filename) |>
-    officer::docx_set_settings(even_and_odd_headers = FALSE)
-
-  # FIXME: can we avoid writing here to save time?
-  print(content, target = "tmp-content.docx")
-
   full_doc <- officer::read_docx("tmp-frontmatter.docx") |>
     officer::cursor_end() |>
-    officer::body_add_docx("tmp-content.docx", pos = "on") |>
+    officer::body_add_docx(book_filename, pos = "on") |>
     officer::docx_set_settings(even_and_odd_headers = FALSE)
 
   print(full_doc, target = book_filename)

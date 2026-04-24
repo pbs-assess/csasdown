@@ -57,7 +57,7 @@ render <- function(
     return(render_sar(config_file = config_file, validate_bibliography = FALSE, ...))
   }
 
-  output_options <- list(pandoc_args = c("--metadata=title:", "--metadata=abstract:"))
+  output_options <- list(pandoc_args = c("--metadata=title:"))
   abstract_state <- NULL
   old_abstract_engine <- NULL
 
