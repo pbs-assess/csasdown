@@ -128,28 +128,28 @@ preprocess_resdoc_abstract <- function(config_file = "_bookdown.yml") {
 
     content <- readLines(candidate, warn = FALSE)
     original_content <- content
-    heading_idx <- grep("^#\\s+(ABSTRACT|RÉSUMÉ)\\s*(\\{[^}]*\\})?\\s*$", content)
-    if (!length(heading_idx)) {
+
+    heading_idx <- grep("^#\\s+\\S", content)
+
+    if (length(heading_idx) < 2) {
       next
     }
 
     start_idx <- heading_idx[1]
-    next_heading_idx <- grep("^#\\s+\\S", content)
-    next_heading_idx <- next_heading_idx[next_heading_idx > start_idx]
-    end_idx <- if (length(next_heading_idx)) next_heading_idx[1] - 1 else length(content)
+    end_idx <- heading_idx[2] - 1
 
-    abstract_body <- if (start_idx < end_idx) content[(start_idx + 1):end_idx] else character()
+    abstract_body <- content[(start_idx + 1):end_idx]
     abstract_chunk <- c("```{abstract}", abstract_body, "```")
-    content[start_idx:end_idx] <- abstract_chunk
+
+    before <- if (start_idx > 1) content[seq_len(start_idx - 1)] else character()
+    after <- if (end_idx < length(content)) content[(end_idx + 1):length(content)] else character()
+
+    content <- c(before, abstract_chunk, after)
 
     writeLines(content, con = candidate, useBytes = TRUE)
     source_file <- candidate
     source_content <- original_content
     break
-  }
-
-  if (is.null(source_file)) {
-    cli_abort("Could not find a '# ABSTRACT' or '# RÉSUMÉ' section in resdoc content files.")
   }
 
   list(
