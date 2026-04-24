@@ -1,3 +1,4 @@
+
 test_that("resdoc abstract preprocessing and engine capture abstract markdown", {
   old_wd <- getwd()
   tmp <- file.path(tempdir(), "resdoc_abstract_engine")
@@ -39,8 +40,9 @@ test_that("resdoc abstract preprocessing and engine capture abstract markdown", 
   }, add = TRUE)
 
   modified_content <- readLines("01-content.Rmd", warn = FALSE)
+
   expect_false(any(grepl("^# ABSTRACT$", modified_content)))
-  expect_true(any(grepl("^```\\{abstract\\}$", modified_content)))
+  expect_true(any(grepl("^```\\{abstract, include=FALSE\\}$", modified_content)))
   expect_true(any(grepl("Inline abstract value: `r abstract_value`.", modified_content, fixed = TRUE)))
 
   assign("abstract_value", 2, envir = knitr::knit_global())
