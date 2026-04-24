@@ -123,7 +123,7 @@ add_resdoc_word_frontmatter2 <- function(index_fn, yaml_fn = "_bookdown.yml", ve
 
   if (!keep_files) {
     unlink(c(
-      "tmp-content.docx", "tmp-frontmatter-with-toc.docx", abstract_file
+      "tmp-content.docx", "tmp-frontmatter.docx", abstract_file
     ))
   }
 
