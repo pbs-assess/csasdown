@@ -6,9 +6,10 @@
 [![R-CMD-check](https://github.com/pbs-assess/csasdown/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pbs-assess/csasdown/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-csasdown is an R package for producing reproducible CSAS-compliant documents using R Markdown. It supports the preparation of Research Documents, Science Responses, Fisheries Science Advisory Reports, and Technical Reports, with output generated as .docx files.
+csasdown is an R package for producing reproducible CSAS-compliant documents using R Markdown. It supports the preparation of Research Documents, Science Responses, Fisheries Science Advisory Reports, and Technical Reports, Manuscript Reports and Data Reports, with output generated as .docx files.
 
-The package enforces formatting requirements set by the [Canadian Science Advisory Secretariat (CSAS)](https://www.dfo-mpo.gc.ca/csas-sccs/index-eng.htm), includes built-in bilingual (English/French) support, and meets accessibility standards required for CSAS submissions.
+The package enforces formatting requirements set by the [Canadian Science Advisory Secretariat (CSAS)](https://www.dfo-mpo.gc.ca/csas-sccs/index-eng.htm), includes built-in bilingual (English/French) support, and meets accessibility standards required for CSAS submissions. 
+For Technical Reports, Manuscript Reports and Data Reports, the package enforces formatting requirements set by the [DFO Library](https://science-libraries.canada.ca/eng/fisheries-oceans/) and described in the [Guide for the Production of Fisheries and Oceans Canada Science Report Series](https://cat.fsl-bsf.scitech.gc.ca/record=b4083317~S1).
 
 The original csasdown, which focused on LaTeX and PDF output, is still available as [csasdowntex](https://github.com/pbs-assess/csasdowntex) and can be used to reproduce legacy reports or create Technical Reports. It should not be used for submitting new CSAS Research Documents or Science Responses.
 
@@ -16,7 +17,7 @@ The original csasdown, which focused on LaTeX and PDF output, is still available
 
 ## Features
 
-- 📄 **Four document types**: Research Documents, Fisheries Science Advisory Reports (FSARs), Technical Reports, and Science Responses
+- 📄 **Seven document types**: Research Documents, Fisheries Science Advisory Reports (FSARs), Science Responses (SRs), Technical Reports, Manuscript Reports, and Data Reports
 - 🔄 **Reproducible workflow**: Use R Markdown to go from data to document in a reproducible pipeline
 - 🎨 **CSAS-compliant formatting**: Produce Word .docx files that use the official styles
 - 🌍 **Bilingual support**: English and French language configurations

@@ -9,6 +9,7 @@
 csasdown est un package R permettant de produire des documents reproductibles conformes aux exigences du SCCS à l’aide de R Markdown. Il prend en charge la préparation des Documents de recherche, des Réponses des sciences, des Rapports d’avis scientifique sur les pêches et des Rapports techniques, avec une sortie générée sous forme de fichiers `.docx`.
 
 Le package applique les exigences de mise en forme établies par le [Secrétariat canadien des avis scientifiques (SCAS)](https://www.dfo-mpo.gc.ca/csas-sccs/index-fra.htm), offre une prise en charge bilingue intégrée (français/anglais) et respecte les normes d'accessibilité requises pour les soumissions au SCAS.
+Pour les rapports techniques, les rapports manuscrits et les rapports statistiques, le package se conformes aux exigences établies par la [Bibliothèque du MPO](https://science-libraries.canada.ca/fra/peches-oceans/) et décrites dans le [Guide pour la préparation des séries de rapports scientifiques de Pêches et Océans Canada](https://publications.gc.ca/site/eng/9.874716/publication.html).
 
 La version originale de csasdown, axée sur les sorties LaTeX et PDF, est toujours disponible sous le nom de [csasdowntex](https://github.com/pbs-assess/csasdowntex). Elle peut être utilisée pour reproduire des rapports antérieurs ou pour créer des Rapports techniques, mais ne doit pas être utilisée pour la soumission de nouveaux Documents de recherche ou de Réponses des sciences au SCCS.
 
@@ -16,7 +17,7 @@ La version originale de csasdown, axée sur les sorties LaTeX et PDF, est toujou
 
 ## Caractéristiques
 
-- 📄 **Quatre types de documents**: Documents de Recherche, Fisheries Science Advisory Reports (FSARs), Rapports Techniques, et Réponses des Sciences
+- 📄 **Sept types de documents**: Documents de Recherche, Fisheries Science Advisory Reports (FSARs), Réponses des Sciences, Rapports Techniques, Rapports Manuscripts, et Rapports Statistiques
 - 🔄 **Flux de travail reproductible**: Utilise R Markdown pour passer des données aux documents dans un pipeline reproductible
 - 🎨 **Formatage conforme au SCAS**: Produire des fichiers Word .docx qui utilisent les styles officiels
 - 🌍 **Support bilingue**: Configurations linguistiques anglaise et française
