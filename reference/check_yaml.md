@@ -16,8 +16,8 @@ check_yaml(index_fn = "index.Rmd", type = NULL, verbose = FALSE)
 
 - type:
 
-  Document type ("resdoc", "fsar", "sr", "techreport"). If NULL
-  (default), auto-detects from YAML output field.
+  Document type ("resdoc", "fsar", "sr", "techreport", "manureport",
+  "datareport"). If NULL (default), auto-detects from YAML output field.
 
 - verbose:
 

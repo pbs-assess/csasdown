@@ -16,8 +16,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Reproducible CSAS Reports">
-<meta name="description" content="Generates CSAS (Canadian Science Advisory Secretariat) Research Documents in docx Word format that matches styling and accessibility requirements.">
-<meta property="og:description" content="Generates CSAS (Canadian Science Advisory Secretariat) Research Documents in docx Word format that matches styling and accessibility requirements.">
+<meta name="description" content="Generates CSAS (Canadian Science Advisory Secretariat) Research Documents in docx Word format that matches styling and accessibility requirements. Generates DFO Library Technical Reports, Manuscript Reports and Data Reports that match styling requirements.">
+<meta property="og:description" content="Generates CSAS (Canadian Science Advisory Secretariat) Research Documents in docx Word format that matches styling and accessibility requirements. Generates DFO Library Technical Reports, Manuscript Reports and Data Reports that match styling requirements.">
 <meta property="og:image" content="https://pbs-assess.github.io/csasdown/logo.png">
 </head>
 <body>
@@ -61,15 +61,15 @@
 </blockquote>
 <!-- badges: start -->
 
-<p>csasdown is an R package for producing reproducible CSAS-compliant documents using R Markdown. It supports the preparation of Research Documents, Science Responses, Fisheries Science Advisory Reports, and Technical Reports, with output generated as .docx files.</p>
-<p>The package enforces formatting requirements set by the <a href="https://www.dfo-mpo.gc.ca/csas-sccs/index-eng.htm" class="external-link">Canadian Science Advisory Secretariat (CSAS)</a>, includes built-in bilingual (English/French) support, and meets accessibility standards required for CSAS submissions.</p>
+<p>csasdown is an R package for producing reproducible CSAS-compliant documents using R Markdown. It supports the preparation of Research Documents, Science Responses, Fisheries Science Advisory Reports, and Technical Reports, Manuscript Reports and Data Reports, with output generated as .docx files.</p>
+<p>The package enforces formatting requirements set by the <a href="https://www.dfo-mpo.gc.ca/csas-sccs/index-eng.htm" class="external-link">Canadian Science Advisory Secretariat (CSAS)</a>, includes built-in bilingual (English/French) support, and meets accessibility standards required for CSAS submissions. For Technical Reports, Manuscript Reports and Data Reports, the package enforces formatting requirements set by the <a href="https://science-libraries.canada.ca/eng/fisheries-oceans/" class="external-link">DFO Library</a> and described in the <a href="https://cat.fsl-bsf.scitech.gc.ca/record=b4083317~S1" class="external-link">Guide for the Production of Fisheries and Oceans Canada Science Report Series</a>.</p>
 <p>The original csasdown, which focused on LaTeX and PDF output, is still available as <a href="https://github.com/pbs-assess/csasdowntex" class="external-link">csasdowntex</a> and can be used to reproduce legacy reports or create Technical Reports. It should not be used for submitting new CSAS Research Documents or Science Responses.</p>
 <p><em>Ce fichier README est également <a href="README-FR.html">disponible en français</a>.</em></p>
 <div class="section level2">
 <h2 id="features">Features<a class="anchor" aria-label="anchor" href="#features"></a>
 </h2>
 <ul>
-<li>📄 <strong>Four document types</strong>: Research Documents, Fisheries Science Advisory Reports (FSARs), Technical Reports, and Science Responses</li>
+<li>📄 <strong>Seven document types</strong>: Research Documents, Fisheries Science Advisory Reports (FSARs), Science Responses (SRs), Technical Reports, Manuscript Reports, and Data Reports</li>
 <li>🔄 <strong>Reproducible workflow</strong>: Use R Markdown to go from data to document in a reproducible pipeline</li>
 <li>🎨 <strong>CSAS-compliant formatting</strong>: Produce Word .docx files that use the official styles</li>
 <li>🌍 <strong>Bilingual support</strong>: English and French language configurations</li>

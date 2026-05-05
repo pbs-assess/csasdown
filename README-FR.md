@@ -15,7 +15,14 @@ Le package applique les exigences de mise en forme établies par le
 [Secrétariat canadien des avis scientifiques
 (SCAS)](https://www.dfo-mpo.gc.ca/csas-sccs/index-fra.htm), offre une
 prise en charge bilingue intégrée (français/anglais) et respecte les
-normes d’accessibilité requises pour les soumissions au SCAS.
+normes d’accessibilité requises pour les soumissions au SCAS. Pour les
+rapports techniques, les rapports manuscrits et les rapports
+statistiques, le package se conformes aux exigences établies par la
+[Bibliothèque du
+MPO](https://science-libraries.canada.ca/fra/peches-oceans/) et décrites
+dans le [Guide pour la préparation des séries de rapports scientifiques
+de Pêches et Océans
+Canada](https://publications.gc.ca/site/eng/9.874716/publication.html).
 
 La version originale de csasdown, axée sur les sorties LaTeX et PDF, est
 toujours disponible sous le nom de
@@ -29,9 +36,9 @@ English](https://pbs-assess.github.io/csasdown/README.md).*
 
 ## Caractéristiques
 
-- 📄 **Quatre types de documents**: Documents de Recherche, Fisheries
-  Science Advisory Reports (FSARs), Rapports Techniques, et Réponses des
-  Sciences
+- 📄 **Sept types de documents**: Documents de Recherche, Fisheries
+  Science Advisory Reports (FSARs), Réponses des Sciences, Rapports
+  Techniques, Rapports Manuscripts, et Rapports Statistiques
 - 🔄 **Flux de travail reproductible**: Utilise R Markdown pour passer
   des données aux documents dans un pipeline reproductible
 - 🎨 **Formatage conforme au SCAS**: Produire des fichiers Word .docx

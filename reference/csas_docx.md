@@ -6,7 +6,11 @@ specify the creation of a `.docx` version of a CSAS report.
 ## Usage
 
 ``` r
+datareport_docx(...)
+
 fsar_docx(...)
+
+manureport_docx(...)
 
 resdoc_docx(...)
 

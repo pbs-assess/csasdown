@@ -8,7 +8,9 @@
 - [`check_yaml()`](https://pbs-assess.github.io/csasdown/reference/check_yaml.md)
   : Validate YAML fields for CSAS documents
 
-- [`fsar_docx()`](https://pbs-assess.github.io/csasdown/reference/csas_docx.md)
+- [`datareport_docx()`](https://pbs-assess.github.io/csasdown/reference/csas_docx.md)
+  [`fsar_docx()`](https://pbs-assess.github.io/csasdown/reference/csas_docx.md)
+  [`manureport_docx()`](https://pbs-assess.github.io/csasdown/reference/csas_docx.md)
   [`resdoc_docx()`](https://pbs-assess.github.io/csasdown/reference/csas_docx.md)
   [`sr_docx()`](https://pbs-assess.github.io/csasdown/reference/csas_docx.md)
   [`techreport_docx()`](https://pbs-assess.github.io/csasdown/reference/csas_docx.md)
