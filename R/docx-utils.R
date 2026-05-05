@@ -1222,7 +1222,7 @@ insert_section_break_after_abstract <- function(docx_path, french = FALSE) {
 #' Base function for creating CSAS docx output formats
 #'
 #' @description Internal function that contains shared logic for all CSAS docx
-#' output formats (resdoc, fsar, sr, techreport). This eliminates code duplication
+#' output formats (resdoc, fsar, sr, techreport, manureport, datareport). This eliminates code duplication
 #' across the different format functions.
 #'
 #' @param reference_docx Filename of reference .docx template

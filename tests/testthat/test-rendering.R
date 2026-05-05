@@ -91,6 +91,68 @@ test_that("techreport builds in French", {
   setwd(wd)
 })
 
+test_that("manureport builds", {
+  wd <- getwd()
+  testing_path <- file.path(tempdir(), "manureport")
+  unlink(testing_path, recursive = TRUE, force = TRUE)
+  dir.create(testing_path, showWarnings = FALSE)
+  setwd(testing_path)
+  draft("manureport", create_dir = FALSE, edit = FALSE)
+  render()
+  if (FALSE) {
+    system("open _book/manureport.docx")
+  }
+  expect_true(file.exists("_book/manureport.docx"))
+  setwd(wd)
+})
+
+test_that("manureport builds in French", {
+  wd <- getwd()
+  testing_path <- file.path(tempdir(), "manureport_french")
+  unlink(testing_path, recursive = TRUE, force = TRUE)
+  dir.create(testing_path, showWarnings = FALSE)
+  setwd(testing_path)
+  draft("manureport", create_dir = FALSE, edit = FALSE)
+  toggle_french()
+  render()
+  if (FALSE) {
+    system("open _book/manureport.docx")
+  }
+  expect_true(file.exists("_book/manureport.docx"))
+  setwd(wd)
+})
+
+test_that("datareport builds", {
+  wd <- getwd()
+  testing_path <- file.path(tempdir(), "datareport")
+  unlink(testing_path, recursive = TRUE, force = TRUE)
+  dir.create(testing_path, showWarnings = FALSE)
+  setwd(testing_path)
+  draft("datareport", create_dir = FALSE, edit = FALSE)
+  render()
+  if (FALSE) {
+    system("open _book/datareport.docx")
+  }
+  expect_true(file.exists("_book/datareport.docx"))
+  setwd(wd)
+})
+
+test_that("datareport builds in French", {
+  wd <- getwd()
+  testing_path <- file.path(tempdir(), "datareport_french")
+  unlink(testing_path, recursive = TRUE, force = TRUE)
+  dir.create(testing_path, showWarnings = FALSE)
+  setwd(testing_path)
+  draft("datareport", create_dir = FALSE, edit = FALSE)
+  toggle_french()
+  render()
+  if (FALSE) {
+    system("open _book/datareport.docx")
+  }
+  expect_true(file.exists("_book/datareport.docx"))
+  setwd(wd)
+})
+
 test_that("FSAR builds in French", {
   wd <- getwd()
   testing_path <- file.path(tempdir(), "fsar_french")

@@ -1,0 +1,4 @@
+name:  DFO-ManuReport
+description: >
+  Template for creating a DFO Manuscript Report using R Markdown using the R
+  bookdown package.
