@@ -67,6 +67,18 @@ csasdown::draft("fsar")
 csasdown::draft("techreport")
 ```
 
+### Créer un Rapport Manuscrit
+
+``` r
+csasdown::draft("manureport")
+```
+
+### Créer un Rapport Statistique
+
+``` r
+csasdown::draft("datareport")
+```
+
 ### Créer une Réponse des Sciences
 
 ``` r
@@ -124,6 +136,8 @@ Après avoir fait roulé `csasdown::draft()`, votre projet contiendra:
 
 - Documents de recherche en anglais et en français
 - Rapports techniques en anglais et en français
+- Rapports manuscrits en anglais et en français
+- Rapports statistiques en anglais et en français
 - Rapports d'avis en anglais et en français
 - Réponses des sciences en anglais
 
