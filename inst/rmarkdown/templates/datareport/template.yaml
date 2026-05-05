@@ -1,0 +1,4 @@
+name:  DFO-DataReport
+description: >
+  Template for creating a DFO Data Report using R Markdown using the R
+  bookdown package.

@@ -345,6 +345,144 @@ output:
   unlink(temp_file)
 })
 
+test_that("check_yaml handles manureport correctly", {
+  temp_dir <- tempdir()
+  temp_file <- file.path(temp_dir, "index.Rmd")
+
+  yaml_content <- '---
+author: "Test Author"
+year: "2025"
+report_number: "001"
+output:
+  csasdown::manureport_docx:
+    french: false
+---
+'
+  writeLines(yaml_content, temp_file)
+
+  expect_error(
+    check_yaml(index_fn = temp_file, type = "manureport"),
+    "Missing required YAML fields"
+  )
+  expect_error(
+    check_yaml(index_fn = temp_file, type = "manureport"),
+    "abstract"
+  )
+  expect_error(
+    check_yaml(index_fn = temp_file, type = "manureport"),
+    "english_doi"
+  )
+
+  unlink(temp_file)
+})
+
+test_that("check_yaml passes for complete manureport YAML", {
+  temp_dir <- tempdir()
+  temp_file <- file.path(temp_dir, "index.Rmd")
+
+  yaml_content <- '---
+author: "Test Author"
+year: "2025"
+report_number: "001"
+abstract: "This is the abstract."
+english_title: "Test Title"
+french_title: "Titre de test"
+english_address: "Test Address"
+french_address: "Adresse de test"
+english_region: "Test Region"
+french_region: "Région de test"
+english_preamble_pages: "iv"
+french_preamble_pages: "iv"
+english_content_pages: "100"
+french_content_pages: "100"
+english_doi: "10.1234/test"
+french_doi: "10.1234/test"
+english_isbn: "978-0-12345-678-9"
+french_isbn: "978-0-12345-678-9"
+english_cat_no: "Cat123"
+french_cat_no: "Cat123"
+output:
+  csasdown::manureport_docx:
+    french: false
+---
+'
+  writeLines(yaml_content, temp_file)
+
+  expect_invisible(check_yaml(index_fn = temp_file, type = "manureport"))
+  expect_true(check_yaml(index_fn = temp_file, type = "manureport"))
+
+  unlink(temp_file)
+})
+
+test_that("check_yaml handles datareport correctly", {
+  temp_dir <- tempdir()
+  temp_file <- file.path(temp_dir, "index.Rmd")
+
+  yaml_content <- '---
+author: "Test Author"
+year: "2025"
+report_number: "001"
+output:
+  csasdown::datareport_docx:
+    french: false
+---
+'
+  writeLines(yaml_content, temp_file)
+
+  expect_error(
+    check_yaml(index_fn = temp_file, type = "datareport"),
+    "Missing required YAML fields"
+  )
+  expect_error(
+    check_yaml(index_fn = temp_file, type = "datareport"),
+    "abstract"
+  )
+  expect_error(
+    check_yaml(index_fn = temp_file, type = "datareport"),
+    "english_doi"
+  )
+
+  unlink(temp_file)
+})
+
+test_that("check_yaml passes for complete datareport YAML", {
+  temp_dir <- tempdir()
+  temp_file <- file.path(temp_dir, "index.Rmd")
+
+  yaml_content <- '---
+author: "Test Author"
+year: "2025"
+report_number: "001"
+abstract: "This is the abstract."
+english_title: "Test Title"
+french_title: "Titre de test"
+english_address: "Test Address"
+french_address: "Adresse de test"
+english_region: "Test Region"
+french_region: "Région de test"
+english_preamble_pages: "iv"
+french_preamble_pages: "iv"
+english_content_pages: "100"
+french_content_pages: "100"
+english_doi: "10.1234/test"
+french_doi: "10.1234/test"
+english_isbn: "978-0-12345-678-9"
+french_isbn: "978-0-12345-678-9"
+english_cat_no: "Cat123"
+french_cat_no: "Cat123"
+output:
+  csasdown::datareport_docx:
+    french: false
+---
+'
+  writeLines(yaml_content, temp_file)
+
+  expect_invisible(check_yaml(index_fn = temp_file, type = "datareport"))
+  expect_true(check_yaml(index_fn = temp_file, type = "datareport"))
+
+  unlink(temp_file)
+})
+
 test_that("check_yaml passes for complete SR YAML", {
   temp_dir <- tempdir()
   temp_file <- file.path(temp_dir, "index.Rmd")
@@ -392,7 +530,7 @@ test_that("get_skeleton_fields parses skeleton correctly", {
 })
 
 test_that("get_skeleton_fields works for all document types", {
-  types <- c("resdoc", "fsar", "sr", "techreport")
+  types <- c("resdoc", "fsar", "sr", "techreport", "manureport", "datareport")
 
   for (type in types) {
     fields <- csasdown:::get_skeleton_fields(type)

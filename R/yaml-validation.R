@@ -3,7 +3,7 @@ OPTIONAL_FIELDS <- c("knit", "bibliography", "title")
 
 #' Parse skeleton YAML and extract required fields
 #'
-#' @param type Document type (resdoc, fsar, sr, techreport)
+#' @param type Document type (resdoc, fsar, sr, techreport, manureport, datareport)
 #' @return Character vector of required field names
 #' @keywords internal
 get_skeleton_fields <- function(type) {
@@ -30,7 +30,7 @@ get_skeleton_fields <- function(type) {
 #' Dynamically parses `skeleton.Rmd` to determine required fields.
 #'
 #' @param index_fn Path to the index R Markdown file. Default: "index.Rmd"
-#' @param type Document type ("resdoc", "fsar", "sr", "techreport").
+#' @param type Document type ("resdoc", "fsar", "sr", "techreport", "manureport", "datareport").
 #'   If NULL (default), auto-detects from YAML output field.
 #' @param verbose Print informative message on success? Default: FALSE
 #'

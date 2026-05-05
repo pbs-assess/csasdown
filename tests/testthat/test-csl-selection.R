@@ -12,12 +12,16 @@ test_that("docx formats default to English CSL", {
   expect_equal(get_csl_arg(resdoc_docx()), "csl/csas.csl")
   expect_equal(get_csl_arg(fsar_docx()), "csl/csas.csl")
   expect_equal(get_csl_arg(techreport_docx()), "csl/csas.csl")
+  expect_equal(get_csl_arg(manureport_docx()), "csl/csas.csl")
+  expect_equal(get_csl_arg(datareport_docx()), "csl/csas.csl")
 })
 
 test_that("docx formats use French CSL when french is TRUE", {
   expect_equal(get_csl_arg(resdoc_docx(french = TRUE)), "csl/csas-french.csl")
   expect_equal(get_csl_arg(fsar_docx(french = TRUE)), "csl/csas-french.csl")
   expect_equal(get_csl_arg(techreport_docx(french = TRUE)), "csl/csas-french.csl")
+  expect_equal(get_csl_arg(manureport_docx(french = TRUE)), "csl/csas-french.csl")
+  expect_equal(get_csl_arg(datareport_docx(french = TRUE)), "csl/csas-french.csl")
 })
 
 test_that("user CSL overrides package default", {

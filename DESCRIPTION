@@ -13,7 +13,8 @@ Authors@R: c(
   )
 Description: Generates CSAS (Canadian Science Advisory Secretariat)
     Research Documents in docx Word format that matches styling and
-    accessibility requirements.
+    accessibility requirements. Generates DFO Library Technical Reports, Manuscript 
+    Reports and Data Reports that match styling requirements.
 License: MIT + file LICENSE
 Depends:
     R (>= 4.1.0)

@@ -77,6 +77,10 @@ render <- function(
     add_resdoc_word_frontmatter2("index.Rmd", yaml_fn = config_file, verbose = verbose, keep_files = FALSE)
   } else if (type == "techreport") {
     add_techreport_word_frontmatter("index.Rmd", yaml_fn = config_file, verbose = verbose, keep_files = FALSE)
+  } else if (type == "manureport") {
+    add_manureport_word_frontmatter("index.Rmd", yaml_fn = config_file, verbose = verbose, keep_files = FALSE)
+  } else if (type == "datareport") {
+    add_datareport_word_frontmatter("index.Rmd", yaml_fn = config_file, verbose = verbose, keep_files = FALSE)
   } else if (type == "sr") {
     add_sr_end_matter("index.Rmd", yaml_fn = config_file, verbose = verbose, keep_files = FALSE)
   } else {
@@ -296,8 +300,12 @@ detect_doc_type <- function(index_fn = "index.Rmd") {
     return("sr")
   } else if (any(grepl("techreport_docx", output_names))) {
     return("techreport")
+  } else if (any(grepl("manureport_docx", output_names))) {
+    return("manureport")
+  } else if (any(grepl("datareport_docx", output_names))) {
+    return("datareport")
   } else {
-    cli_abort("Could not detect document type from YAML output field. Expected one of: resdoc_docx, fsar_docx, or techreport_docx")
+    cli_abort("Could not detect document type from YAML output field. Expected one of: resdoc_docx, fsar_docx, techreport_docx, manureport_docx, or datareport_docx")
   }
 }
 
