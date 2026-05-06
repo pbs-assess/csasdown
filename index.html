@@ -117,16 +117,28 @@
 <code class="sourceCode R"><span><span class="fu">csasdown</span><span class="fu">::</span><span class="fu"><a href="reference/draft.html">draft</a></span><span class="op">(</span><span class="st">"techreport"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="create-a-science-response">Create a Science Response<a class="anchor" aria-label="anchor" href="#create-a-science-response"></a>
+<h3 id="create-a-manuscript-report">Create a Manuscript Report<a class="anchor" aria-label="anchor" href="#create-a-manuscript-report"></a>
 </h3>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">csasdown</span><span class="fu">::</span><span class="fu"><a href="reference/draft.html">draft</a></span><span class="op">(</span><span class="st">"manureport"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="create-a-data-report">Create a Data Report<a class="anchor" aria-label="anchor" href="#create-a-data-report"></a>
+</h3>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">csasdown</span><span class="fu">::</span><span class="fu"><a href="reference/draft.html">draft</a></span><span class="op">(</span><span class="st">"datareport"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="create-a-science-response">Create a Science Response<a class="anchor" aria-label="anchor" href="#create-a-science-response"></a>
+</h3>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">csasdown</span><span class="fu">::</span><span class="fu"><a href="reference/draft.html">draft</a></span><span class="op">(</span><span class="st">"sr"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="render-your-document">Render your document<a class="anchor" aria-label="anchor" href="#render-your-document"></a>
 </h3>
 <p>Open <code>index.Rmd</code> and click the “Knit” button in RStudio, or run:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">csasdown</span><span class="fu">::</span><span class="fu"><a href="reference/render.html">render</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Your compiled .docx file will appear in the <code>_book/</code> directory.</p>
 </div>
@@ -170,6 +182,8 @@
 <ul>
 <li>Research Documents in English and French</li>
 <li>Technical Reports in English and French</li>
+<li>Manuscript Reports in English and French</li>
+<li>Data Reports in English and French</li>
 <li>Fisheries Science Advisory Reports in English and French</li>
 <li>Science Responses in English</li>
 </ul>
@@ -189,53 +203,53 @@
 <li>Create a new <code>.Rmd</code> file (e.g., <code>03-results.Rmd</code>)</li>
 <li>Add it to <code>_bookdown.yml</code> in the desired order. For example:</li>
 </ol>
-<div class="sourceCode" id="cb8"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">rmd_files</span><span class="kw">:</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"index.Rmd"</span></span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"01-introduction.Rmd"</span></span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"02-methods.Rmd"</span></span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"03-results.Rmd"</span></span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"99-references.Rmd"</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">rmd_files</span><span class="kw">:</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"index.Rmd"</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"01-introduction.Rmd"</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"02-methods.Rmd"</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"03-results.Rmd"</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"99-references.Rmd"</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="figures">Figures<a class="anchor" aria-label="anchor" href="#figures"></a>
 </h3>
 <p>Use R code chunks with captions:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="in">```{r my-figure, fig.cap="My figure caption."}</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="in">plot(year, abundance)</span></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="in">```{r my-figure, fig.cap="My figure caption."}</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="in">plot(year, abundance)</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 <p>Reference with <code>Figure \@ref(fig:my-figure)</code>.</p>
 <p>Include an existing figure:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="in">```{r my-other-figure, fig.cap="My other figure caption."}</span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="in">knitr::include_graphics("figs/myfigure.png", dpi = NA)</span></span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="in">```{r my-other-figure, fig.cap="My other figure caption."}</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="in">knitr::include_graphics("figs/myfigure.png", dpi = NA)</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="tables">Tables<a class="anchor" aria-label="anchor" href="#tables"></a>
 </h3>
 <p>Create a table:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="in">```{r my-table}</span></span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="in">flextable::flextable(data) |&gt; </span></span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="in">    set_caption(caption = "My table caption.")</span></span>
-<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="in">```{r my-table}</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="in">flextable::flextable(data) |&gt; </span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="in">    set_caption(caption = "My table caption.")</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 <p>Reference with <code>Table \@ref(tab:my-table)</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="math">Math<a class="anchor" aria-label="anchor" href="#math"></a>
 </h3>
 <p>Create an equation:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>\begin{equation}</span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  1 + 1 = 2</span>
-<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  (<span class="sc">\#</span>eq:example-eq)</span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>\end{equation}</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  1 + 1 = 2</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  (<span class="sc">\#</span>eq:example-eq)</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>\end{equation}</span></code></pre></div>
 <p>Reference with <code>Equation \@ref(eq:example-eq)</code>.</p>
 <p>Inline math:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>The symbol $\beta$ represents ...</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>The symbol $\beta$ represents ...</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h3>
 <p>Include citations:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>A statement <span class="co">[</span><span class="ot">e.g., @Smith2024; @Johnson2025</span><span class="co">]</span>. @Johnson2025 said this.</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>A statement <span class="co">[</span><span class="ot">e.g., @Smith2024; @Johnson2025</span><span class="co">]</span>. @Johnson2025 said this.</span></code></pre></div>
 <p>Turns into:</p>
 <blockquote>
 <p>A statement (e.g., Smith et al. 2024, Johnson et al. 2025). Johnson et al. (2025) said this.</p>
@@ -246,7 +260,7 @@
 <h3 id="appendices">Appendices<a class="anchor" aria-label="anchor" href="#appendices"></a>
 </h3>
 <p>Start an appendix:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu"># APPENDIX `r new_appendix()`. ADDITIONAL ANALYSES {#app:additional}</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu"># APPENDIX `r new_appendix()`. ADDITIONAL ANALYSES {#app:additional}</span></span></code></pre></div>
 <p>Reference with <code>Appendix \@ref(app:additional)</code></p>
 </div>
 </div>
