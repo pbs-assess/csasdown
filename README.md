@@ -67,6 +67,18 @@ csasdown::draft("fsar")
 csasdown::draft("techreport")
 ```
 
+### Create a Manuscript Report
+
+``` r
+csasdown::draft("manureport")
+```
+
+### Create a Data Report
+
+``` r
+csasdown::draft("datareport")
+```
+
 ### Create a Science Response
 
 ``` r
@@ -124,6 +136,8 @@ After running `csasdown::draft()`, your project will contain:
 
 - Research Documents in English and French
 - Technical Reports in English and French
+- Manuscript Reports in English and French
+- Data Reports in English and French
 - Fisheries Science Advisory Reports in English and French
 - Science Responses in English
 
