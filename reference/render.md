@@ -62,43 +62,45 @@ csasdown::render()
 #> 
 #> 
 #> processing file: resdoc.Rmd
-#> 1/29                          
-#> 2/29 [setup]                  
-#> 3/29                          
-#> 4/29 [load-libraries-csasdown]
-#> 5/29                          
-#> 6/29 [table-settings]         
-#> 7/29                          
-#> 8/29 [load-libraries-user]    
-#> 9/29                          
-#> 10/29 [example-table]          
-#> 11/29                          
-#> 12/29 [example-fig]            
-#> 13/29                          
-#> 14/29 [example-fig2]           
-#> 15/29                          
-#> 16/29 [unnamed-chunk-1]        
-#> 17/29                          
-#> 18/29 [example-fig3]           
-#> 19/29                          
-#> 20/29 [fig-biology-example]    
-#> 21/29                          
-#> 22/29 [tab-biology-summary]    
-#> 23/29                          
-#> 24/29 [fig-biology-histogram]  
-#> 25/29                          
-#> 26/29 [fig-model-diagnostic]   
-#> 27/29                          
-#> 28/29 [tab-model-parameters]   
-#> 29/29                          
+#> 1/31                          
+#> 2/31 [setup]                  
+#> 3/31                          
+#> 4/31 [load-libraries-csasdown]
+#> 5/31                          
+#> 6/31 [table-settings]         
+#> 7/31                          
+#> 8/31 [load-libraries-user]    
+#> 9/31                          
+#> 10/31 [unnamed-chunk-1]        
+#> 11/31                          
+#> 12/31 [example-table]          
+#> 13/31                          
+#> 14/31 [example-fig]            
+#> 15/31                          
+#> 16/31 [example-fig2]           
+#> 17/31                          
+#> 18/31 [unnamed-chunk-2]        
+#> 19/31                          
+#> 20/31 [example-fig3]           
+#> 21/31                          
+#> 22/31 [fig-biology-example]    
+#> 23/31                          
+#> 24/31 [tab-biology-summary]    
+#> 25/31                          
+#> 26/31 [fig-biology-histogram]  
+#> 27/31                          
+#> 28/31 [fig-model-diagnostic]   
+#> 29/31                          
+#> 30/31 [tab-model-parameters]   
+#> 31/31                          
 #> output file: resdoc.knit.md
-#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS resdoc.knit.md --to docx --from markdown+autolink_bare_uris+tex_math_single_backslash --output resdoc.docx --lua-filter /home/runner/work/_temp/Library/bookdown/rmarkdown/lua/custom-environment.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --metadata-file /tmp/RtmpZ6zbJz/file1c3ddf498ba --syntax-highlighting tango --reference-doc /home/runner/work/_temp/Library/csasdown/csas-docx/resdoc-content-2026.docx --lua-filter /home/runner/work/_temp/Library/csasdown/rmarkdown/lua/loose-lists.lua --syntax-highlighting=none --metadata link-citations=true --csl csl/csas.csl '--metadata=title:' '--metadata=abstract:' --extract-media resdoc_files --citeproc 
+#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS resdoc.knit.md --to docx --from markdown+autolink_bare_uris+tex_math_single_backslash --output resdoc.docx --lua-filter /home/runner/work/_temp/Library/bookdown/rmarkdown/lua/custom-environment.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --metadata-file /tmp/RtmpnNvBip/file1c1924985737 --syntax-highlighting tango --reference-doc /home/runner/work/_temp/Library/csasdown/csas-docx/resdoc-content-2026.docx --lua-filter /home/runner/work/_temp/Library/csasdown/rmarkdown/lua/loose-lists.lua --syntax-highlighting=none --metadata link-citations=true --csl csl/csas.csl '--metadata=title:' --extract-media resdoc_files --citeproc 
 #> 
 #> Output created: resdoc.docx
 #> ✔ Bookdown rendering complete
 #> ✔ Moved output to _book/resdoc.docx
 #> ✔ Render complete!
-#> ✔ You've done it again — smooth rendering all the way 🌊
+#> ✔ You really stitched that together beautifully 🧶
 
 # return to original working directory after running example:
 setwd(wd)
