@@ -120,6 +120,19 @@ fix_table_caption_xml <- function(xml_content) {
     fixed = TRUE
   )
 
+  # Preserve paragraph spacing of Table - Caption style
+  caption_ppr_pattern <- '<w:pPr>(?:(?!</w:pPr>).)*<w:pStyle w:val="Caption-Table"\\s*/>(?:(?!</w:pPr>).)*</w:pPr>'
+  matches <- gregexpr(caption_ppr_pattern, xml_content, perl = TRUE)
+  caption_ppr <- regmatches(xml_content, matches)
+
+  if (length(caption_ppr[[1]]) && !identical(caption_ppr[[1]], character(0))) {
+    fixed_caption_ppr <- lapply(caption_ppr, function(properties) {
+      properties <- gsub('<w:spacing\\b[^>]*/>', '', properties, perl = TRUE)
+      gsub('<w:jc w:val="center"/>', '', properties, fixed = TRUE)
+    })
+    regmatches(xml_content, matches) <- fixed_caption_ppr
+  }
+
   # Fix appendix caption spacing: remove trailing space after "Table A." in <w:t> tags
   # Pattern: <w:t ...>Table A. </w:t> -> <w:t ...>Table A.</w:t>
   xml_content <- gsub(

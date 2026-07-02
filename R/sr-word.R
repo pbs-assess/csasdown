@@ -7,8 +7,7 @@
 #' @param ... Other arguments to [officedown::rdocx_document()]
 #' @rdname csas_docx
 #' @export
-#' @importFrom officer headers_replace_text_at_bkm body_replace_text_at_bkm
-#'   footers_replace_text_at_bkm docx_set_settings body_add_docx
+#' @importFrom officer headers_replace_text_at_bkm body_replace_text_at_bkm footers_replace_text_at_bkm docx_set_settings body_add_docx
 #' @return A `.docx` file
 #' @seealso [render()], [draft()]
 #' @examples
