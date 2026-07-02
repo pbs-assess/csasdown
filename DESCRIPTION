@@ -38,5 +38,5 @@ Config/testthat/parallel: true
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 8.0.0
 URL: https://pbs-assess.github.io/csasdown/
+Config/roxygen2/version: 8.0.0
