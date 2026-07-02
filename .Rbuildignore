@@ -11,3 +11,6 @@
 ^inst/paper\.pdf$
 ^AGENTS\.md$
 ^\.positai$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

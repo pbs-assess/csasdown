@@ -9,7 +9,7 @@ check_yaml(index_fn = "index.Rmd", type = NULL, verbose = FALSE)
 \arguments{
 \item{index_fn}{Path to the index R Markdown file. Default: "index.Rmd"}
 
-\item{type}{Document type ("resdoc", "fsar", "sr", "techreport").
+\item{type}{Document type ("resdoc", "fsar", "sr", "techreport", "manureport", "datareport").
 If NULL (default), auto-detects from YAML output field.}
 
 \item{verbose}{Print informative message on success? Default: FALSE}

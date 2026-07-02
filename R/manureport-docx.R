@@ -1,0 +1,137 @@
+#' @rdname csas_docx
+#' @export
+
+manureport_docx <- function(...) {
+  .csasdown_docx_base(
+    reference_docx = "manu-report-content.docx",
+    link_citations = TRUE,
+    template_dir = "manu-report-docx",
+    use_pandoc_highlight = FALSE,
+    ...
+  )
+}
+
+add_manureport_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml", verbose = FALSE, keep_files = FALSE) {
+  if (verbose) cli_inform("Adding frontmatter to the Manuscript Report using the officer package...")
+
+  x <- rmarkdown::yaml_front_matter(index_fn)
+
+  # Parse single author field into language-specific fields
+  parsed <- parse_author_field(x$author)
+  x$english_author <- parsed$english_author
+  x$french_author <- parsed$french_author
+  x$english_author_list <- parsed$english_author_list
+  x$french_author_list <- parsed$french_author_list
+
+  french <- isTRUE(x$output[[1]]$french)
+
+  # Get book filename from bookdown config
+  book_filename <- paste0("_book/", get_book_filename(yaml_fn), ".docx")
+
+  # Extract main content and remove placeholder title/abstract from beginning
+  content <- officer::read_docx(book_filename) |>
+    officer::cursor_begin() |>
+    officer::body_remove() |>
+    officer::body_remove() |>
+    officer::body_remove()
+  print(content, target = "tmp-content.docx")
+
+  # Conditional field selection based on language
+  title <- if (french) x$french_title else x$english_title
+  author <- if (french) x$french_author else x$english_author
+  address <- if (french) x$french_address else x$english_address
+  author_list <- if (french) x$french_author_list else x$english_author_list
+  preamble_pages <- if (french) x$french_preamble_pages else x$english_preamble_pages
+  content_pages <- if (french) x$french_content_pages else x$english_content_pages
+  doi <- if (french) x$french_doi else x$english_doi
+  isbn <- if (french) x$french_isbn else x$english_isbn
+  cat_no <- if (french) x$french_cat_no else x$english_cat_no
+
+  # Read the manu report cover template and replace bookmarks
+  cover_file <- if (french) "01-manu-report-cover-french.docx" else "01-manu-report-cover-english.docx"
+  frontmatter <- officer::read_docx(system.file("manu-report-docx", cover_file, package = "csasdown")) |>
+    replace_bookmark_with_markdown("title", title) |>
+    replace_bookmark_with_markdown("authors", author) |>
+    replace_bookmark_with_markdown("address", address) |>
+    officer::body_replace_text_at_bkm("year", as.character(x$year)) |>
+    officer::body_replace_text_at_bkm("number", as.character(x$report_number))
+
+  # Save the frontmatter temporarily
+  print(frontmatter, target = "tmp-frontmatter.docx")
+
+  # Read and process the titlepage template
+  # For multi-line fields, preserve backslash line breaks but collapse other newlines
+  title_clean <- trimws(gsub("\n(?!\\s*$)", " ", title, perl = TRUE))
+  authors_clean <- trimws(gsub("\n(?!\\s*$)", " ", author, perl = TRUE))
+  # For address, keep the backslash line breaks
+  address_clean <- address
+
+  titlepage_file <- if (french) "03-manu-report-titlepage-french.docx" else "03-manu-report-titlepage-english.docx"
+  titlepage <- officer::read_docx(system.file("manu-report-docx", titlepage_file, package = "csasdown")) |>
+    replace_bookmark_with_markdown("title", title_clean) |>
+    replace_bookmark_with_markdown("authors", authors_clean) |>
+    replace_bookmark_with_markdown("address", address_clean) |>
+    replace_bookmark_with_markdown("year", as.character(x$year)) |>
+    replace_bookmark_with_markdown("number", as.character(x$report_number))
+  print(titlepage, target = "tmp-titlepage.docx")
+
+  # Read and process the colophon template
+  # Build citation - ensure all components are single line, trimmed strings
+  citation_prefix <- if (french) "Rapp. manus. can. sci. halieut. aquat. " else "Can. Manuscr. Rep. Fish. Aquat. Sci. "
+  citation <- paste0(
+    trimws(gsub("\n", " ", author_list)), " ",
+    x$year, ". ",
+    trimws(gsub("\n", " ", title)), ". ",
+    citation_prefix, x$report_number, ": ",
+    preamble_pages, " + ", content_pages, " p. ",
+    "https://doi.org/", trimws(doi)
+  )
+
+  # Conditional bookmark names for colophon
+  cat_no_bkm <- if (french) "cat_no_french" else "cat_no_english"
+  isbn_bkm <- if (french) "isbn_french" else "isbn_english"
+  doi_bkm <- if (french) "doi_french" else "doi_english"
+  citation_bkm <- if (french) "citation_french" else "citation_english"
+
+  colophon_file <- if (french) "04-manu-report-colophon-french.docx" else "04-manu-report-colophon-english.docx"
+  colophon <- officer::read_docx(system.file("manu-report-docx", colophon_file, package = "csasdown")) |>
+    officer::body_replace_text_at_bkm("year", as.character(x$year)) |>
+    officer::body_replace_text_at_bkm(cat_no_bkm, cat_no) |>
+    officer::body_replace_text_at_bkm(isbn_bkm, isbn) |>
+    officer::body_replace_text_at_bkm("doi", doi) |>
+    officer::body_replace_text_at_bkm(doi_bkm, doi) |>
+    replace_bookmark_with_markdown(citation_bkm, citation)
+  print(colophon, target = "tmp-colophon.docx")
+
+  # Merge frontmatter and content with page breaks between sections
+  doc <- officer::read_docx("tmp-frontmatter.docx") |>
+    officer::body_add_break(pos = "after") |>
+    officer::body_add_docx("tmp-titlepage.docx") |>
+    officer::body_add_break(pos = "after") |>
+    officer::body_add_docx("tmp-colophon.docx") |>
+    officer::body_add_break(pos = "after") |>
+    officer::body_add_docx("tmp-content.docx") |>
+    officer::body_set_default_section(
+      officer::prop_section(
+        page_size = officer::page_size(orient = "portrait", width = 8.5, height = 11),
+        page_margins = officer::page_mar(
+          bottom = 1,
+          top = 1,
+          right = 1,
+          left = 1,
+          header = 0.5,
+          footer = 0.5
+        )
+      )
+    )
+
+  # Save final document
+  print(doc, target = book_filename)
+
+  # Cleanup temporary files
+  if (!keep_files) {
+    unlink(c("tmp-frontmatter.docx", "tmp-titlepage.docx", "tmp-colophon.docx", "tmp-content.docx"))
+  }
+
+  invisible()
+}

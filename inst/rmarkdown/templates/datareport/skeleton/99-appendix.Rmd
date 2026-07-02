@@ -1,0 +1,47 @@
+\newpage
+
+# APPENDIX `r new_appendix()`. BIOLOGICAL DATA {#app:biology}
+
+This appendix demonstrates appendix-specific figure and table numbering (A.1, A.2, etc.).
+
+## Sample Biological Data
+
+```{r fig-biology-example, fig.cap="Example plot."}
+set.seed(123)
+length_data <- data.frame(
+  length_cm = rnorm(100, mean = 45, sd = 10),
+  weight_kg = rnorm(100, mean = 2.5, sd = 0.8)
+)
+plot(length_data$length_cm, length_data$weight_kg,
+  xlab = "Length (cm)", ylab = "Weight (kg)",
+  pch = 16, col = rgb(0, 0, 1, 0.5)
+)
+```
+
+You can also create tables with appendix numbering:
+
+```{r tab-biology-summary, tab.cap="Summary statistics."}
+summary_table <- data.frame(
+  Statistic = c("Mean Length", "SD Length", "Mean Weight", "SD Weight"),
+  Value = c(
+    round(mean(length_data$length_cm), 2),
+    round(sd(length_data$length_cm), 2),
+    round(mean(length_data$weight_kg), 2),
+    round(sd(length_data$weight_kg), 2)
+  )
+)
+flextable::flextable(summary_table)
+```
+
+## Subsection Example
+
+You can have subsections within appendices as usual. The figure numbering continues within the same appendix (A.1, A.2, A.3...).
+
+```{r fig-biology-histogram, fig.cap="Length frequency distribution"}
+hist(length_data$length_cm,
+  main = "",
+  xlab = "Length (cm)",
+  col = "lightblue",
+  border = "white"
+)
+```
