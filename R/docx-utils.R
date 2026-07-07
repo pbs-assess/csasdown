@@ -1232,6 +1232,52 @@ insert_section_break_after_abstract <- function(docx_path, french = FALSE) {
   invisible(docx_path)
 }
 
+make_auto_fig_alt_hook <- function() {
+  fig_counter <- 0L
+  appendix_fig_counters <- new.env(parent = emptyenv())
+
+  function(options) {
+    if (!isTRUE(options$auto_alt_text)) return(options)
+    if (!is.null(options$fig.alt)) return(options)
+    if (is.null(options$fig.cap)) return(options)
+
+    captions <- options$fig.cap
+    captions <- captions[!is.na(captions)]
+    if (!length(captions)) return(options)
+
+    fig_count <- length(captions)
+    fig_cap_pre <- options$fig.cap.pre
+    appendix_letter <- NULL
+    if (!is.null(fig_cap_pre) && length(fig_cap_pre) && !is.na(fig_cap_pre[1])) {
+      appendix_match <- regexec("^Figure ([A-Z])\\.?$", fig_cap_pre[1], perl = TRUE)
+      appendix_parts <- regmatches(fig_cap_pre[1], appendix_match)[[1]]
+      if (length(appendix_parts) == 2L) {
+        appendix_letter <- appendix_parts[2]
+      }
+    }
+
+    if (!is.null(appendix_letter)) {
+      current <- appendix_fig_counters[[appendix_letter]]
+      if (is.null(current)) {
+        start_at <- suppressWarnings(as.integer(options$fig.autonum.start_at))
+        if (length(start_at) != 1L || is.na(start_at)) start_at <- 1L
+        current <- start_at - 1L
+      }
+      figure_numbers <- current + seq_len(fig_count)
+      appendix_fig_counters[[appendix_letter]] <- max(figure_numbers)
+      options$fig.alt <- paste0("Figure ", appendix_letter, figure_numbers)
+      if (length(options$fig.alt) == 1L) options$fig.alt <- options$fig.alt[1]
+      return(options)
+    }
+
+    figure_numbers <- fig_counter + seq_len(fig_count)
+    fig_counter <<- max(figure_numbers)
+    options$fig.alt <- paste0("Figure ", figure_numbers)
+    if (length(options$fig.alt) == 1L) options$fig.alt <- options$fig.alt[1]
+    options
+  }
+}
+
 #' Base function for creating CSAS docx output formats
 #'
 #' @description Internal function that contains shared logic for all CSAS docx
@@ -1339,6 +1385,7 @@ insert_section_break_after_abstract <- function(docx_path, french = FALSE) {
   base$knitr$opts_chunk$comment <- "#>"
   base$knitr$opts_chunk$dev <- "png"
   base$knitr$opts_chunk$auto_asp <- TRUE
+  base$knitr$opts_chunk$auto_alt_text <- TRUE
 
   base$knitr$opts_hooks$auto_asp <- function(options) {
     if (!isTRUE(options$auto_asp)) return(options)
@@ -1363,6 +1410,7 @@ insert_section_break_after_abstract <- function(docx_path, french = FALSE) {
     options$fig.asp <- dims$height / dims$width
     options
   }
+  base$knitr$opts_hooks$auto_alt_text <- make_auto_fig_alt_hook()
 
   base <- add_caption_fix_postprocessor(base, reference_docx = ref_docx_path)
 
