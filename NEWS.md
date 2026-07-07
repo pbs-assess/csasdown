@@ -3,7 +3,8 @@
 ## csasdown 0.0.0.90024
 
 * Add automatic CSAS figure alt text for numbered figures rendered through
-  knitr chunk options.
+  knitr chunk options, replacing custom `fig.alt` values with a warning when
+  needed to keep alt text aligned with CSAS formatting conventions.
 
 ## csasdown 0.0.0.90022
 
