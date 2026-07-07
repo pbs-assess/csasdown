@@ -37,16 +37,16 @@ test_that("auto_alt_text warns once and replaces custom fig.alt", {
   output <- resdoc_docx()
   hook <- output$knitr$opts_hooks$auto_alt_text
 
-  options <- expect_warning(
-    hook(list(
+  expect_warning(
+    options <- hook(list(
       auto_alt_text = TRUE,
       fig.cap = "First figure.",
       fig.alt = "Custom figure alt text"
     )),
     "csasdown automatically sets figure alt text"
   )
-  next_custom <- expect_warning(
-    hook(list(
+  expect_warning(
+    next_custom <- hook(list(
       auto_alt_text = TRUE,
       fig.cap = "Second figure.",
       fig.alt = "Another custom alt text"
@@ -67,8 +67,8 @@ test_that("auto_alt_text replaces custom appendix fig.alt", {
   output <- resdoc_docx()
   hook <- output$knitr$opts_hooks$auto_alt_text
 
-  options <- expect_warning(
-    hook(list(
+  expect_warning(
+    options <- hook(list(
       auto_alt_text = TRUE,
       fig.cap = "First appendix figure.",
       fig.cap.pre = "Figure A.",
