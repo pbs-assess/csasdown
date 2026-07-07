@@ -18,13 +18,13 @@
 ## Citation
 
 Anderson SC, Regular PM, Ricard D, Grandin CJ (2026). *csasdown:
-Reproducible CSAS Reports*. R package version 0.0.0.90023,
+Reproducible CSAS Reports*. R package version 0.0.0.90024,
 <https://pbs-assess.github.io/csasdown/>.
 
     @Manual{,
       title = {csasdown: Reproducible CSAS Reports},
       author = {Sean C. Anderson and Paul M. Regular and Daniel Ricard and Chris J. Grandin},
       year = {2026},
-      note = {R package version 0.0.0.90023},
+      note = {R package version 0.0.0.90024},
       url = {https://pbs-assess.github.io/csasdown/},
     }
