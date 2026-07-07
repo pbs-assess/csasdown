@@ -1233,12 +1233,12 @@ insert_section_break_after_abstract <- function(docx_path, french = FALSE) {
 }
 
 make_auto_fig_alt_hook <- function() {
-  fig_counter <- 0L
+  fig_counters <- new.env(parent = emptyenv())
+  fig_counters$main <- 0L
   appendix_fig_counters <- new.env(parent = emptyenv())
 
   function(options) {
     if (!isTRUE(options$auto_alt_text)) return(options)
-    if (!is.null(options$fig.alt)) return(options)
     if (is.null(options$fig.cap)) return(options)
 
     captions <- options$fig.cap
@@ -1265,13 +1265,15 @@ make_auto_fig_alt_hook <- function() {
       }
       figure_numbers <- current + seq_len(fig_count)
       appendix_fig_counters[[appendix_letter]] <- max(figure_numbers)
+      if (!is.null(options$fig.alt)) return(options)
       options$fig.alt <- paste0("Figure ", appendix_letter, figure_numbers)
       if (length(options$fig.alt) == 1L) options$fig.alt <- options$fig.alt[1]
       return(options)
     }
 
-    figure_numbers <- fig_counter + seq_len(fig_count)
-    fig_counter <<- max(figure_numbers)
+    figure_numbers <- fig_counters$main + seq_len(fig_count)
+    fig_counters$main <- max(figure_numbers)
+    if (!is.null(options$fig.alt)) return(options)
     options$fig.alt <- paste0("Figure ", figure_numbers)
     if (length(options$fig.alt) == 1L) options$fig.alt <- options$fig.alt[1]
     options

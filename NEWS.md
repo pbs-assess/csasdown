@@ -1,5 +1,10 @@
 # csasdown development version
 
+## csasdown 0.0.0.90025
+
+* Keep automatic figure alt-text numbering aligned after chunks with explicit
+  `fig.alt` values.
+
 ## csasdown 0.0.0.90024
 
 * Add automatic CSAS figure alt text for numbered figures rendered through

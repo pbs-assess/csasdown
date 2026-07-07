@@ -17,14 +17,42 @@ test_that("auto_alt_text numbers main document figures", {
 
 test_that("auto_alt_text preserves explicit fig.alt", {
   output <- resdoc_docx()
+  hook <- output$knitr$opts_hooks$auto_alt_text
 
-  options <- output$knitr$opts_hooks$auto_alt_text(list(
+  options <- hook(list(
     auto_alt_text = TRUE,
     fig.cap = "First figure.",
     fig.alt = "Custom figure alt text"
   ))
+  next_options <- hook(list(
+    auto_alt_text = TRUE,
+    fig.cap = "Second figure."
+  ))
 
   expect_equal(options$fig.alt, "Custom figure alt text")
+  expect_equal(next_options$fig.alt, "Figure 2")
+})
+
+test_that("auto_alt_text advances appendix counters with explicit fig.alt", {
+  output <- resdoc_docx()
+  hook <- output$knitr$opts_hooks$auto_alt_text
+
+  options <- hook(list(
+    auto_alt_text = TRUE,
+    fig.cap = "First appendix figure.",
+    fig.cap.pre = "Figure A.",
+    fig.autonum.start_at = 1,
+    fig.alt = "Custom appendix alt text"
+  ))
+  next_options <- hook(list(
+    auto_alt_text = TRUE,
+    fig.cap = "Second appendix figure.",
+    fig.cap.pre = "Figure A.",
+    fig.autonum.start_at = 1
+  ))
+
+  expect_equal(options$fig.alt, "Custom appendix alt text")
+  expect_equal(next_options$fig.alt, "Figure A2")
 })
 
 test_that("auto_alt_text numbers appendix figures", {
