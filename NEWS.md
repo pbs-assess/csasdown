@@ -1,5 +1,10 @@
 # csasdown development version
 
+## csasdown 0.0.0.90026
+
+* Fix bug discovered in `fix_missing_namespaces()` when
+  running unit tests.
+
 ## csasdown 0.0.0.90025
 
 * Switch from `utils::zip()` to `zip::zip()` to avoid potential

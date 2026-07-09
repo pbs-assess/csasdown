@@ -1095,7 +1095,7 @@ set_section_page_numbering <- function(docx_path, format = NULL, start = 1, sect
   on.exit(setwd(old_wd), add = TRUE)
 
   setwd(temp_dir)
-  files <- list.files(recursive = TRUE, full.names = FALSE, include.dirs = FALSE)
+  files <- list.files(recursive = TRUE, full.names = FALSE, include.dirs = FALSE, all.files = TRUE, no.. = TRUE)
   zip::zip(zipfile = file.path(old_wd, docx_path), files = files, mode = "mirror", include_directories = FALSE)
 
   invisible(docx_path)
@@ -1230,7 +1230,7 @@ insert_section_break_after_abstract <- function(docx_path, french = FALSE) {
   on.exit(setwd(old_wd), add = TRUE)
 
   setwd(temp_dir)
-  files <- list.files(recursive = TRUE, full.names = FALSE, include.dirs = FALSE)
+  files <- list.files(recursive = TRUE, full.names = FALSE, include.dirs = FALSE, all.files = TRUE, no.. = TRUE)
   zip::zip(zipfile = file.path(old_wd, docx_path), files = files, mode = "mirror", include_directories = FALSE)
 
   invisible(docx_path)
