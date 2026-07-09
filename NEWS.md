@@ -1,5 +1,10 @@
 # csasdown development version
 
+## csasdown 0.0.0.90025
+
+* Switch from `utils::zip()` to `zip::zip()` to avoid potential
+  zip failures. #44
+
 ## csasdown 0.0.0.90024
 
 * Add automatic CSAS figure alt text for numbered figures rendered through

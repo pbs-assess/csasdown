@@ -42,7 +42,7 @@ fix_missing_namespaces <- function(docx_path) {
 
   setwd(temp_dir)
   files <- list.files(recursive = TRUE, full.names = FALSE, include.dirs = FALSE)
-  utils::zip(zipfile = file.path(old_wd, docx_path), files = files, flags = "-q")
+  zip::zip(zipfile = file.path(old_wd, docx_path), files = files, mode = "mirror", include_directories = FALSE)
 
   unlink(temp_dir, recursive = TRUE)
 

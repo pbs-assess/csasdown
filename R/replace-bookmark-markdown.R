@@ -42,10 +42,11 @@ zip_docx_dir <- function(dir, target) {
     no.. = TRUE
   )
 
-  utils::zip(
+  zip::zip(
     zipfile = normalizePath(target, winslash = "/", mustWork = FALSE),
     files = files,
-    flags = "-q"
+    mode = "mirror",
+    include_directories = FALSE
   )
 
   invisible(target)

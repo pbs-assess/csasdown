@@ -909,7 +909,7 @@ process_embedded_docx_files <- function(parent_temp_dir, ref_docx_path) {
     setwd(embedded_temp)
     unlink(embedded_file)
     files_to_zip <- list.files(recursive = TRUE, all.files = TRUE, include.dirs = FALSE)
-    utils::zip(embedded_file, files_to_zip, flags = "-r9Xq")
+    zip::zip(embedded_file, files_to_zip, mode = "mirror", include_directories = FALSE)
     setwd(curr_dir)
   }
 
@@ -984,11 +984,15 @@ fix_table_caption_alignment <- function(docx_file, reference_docx = NULL) {
   # Create new zip with all files in a temp location
   temp_zip <- tempfile(fileext = ".zip")
   files_to_zip <- list.files(recursive = TRUE, all.files = TRUE, include.dirs = FALSE)
-  utils::zip(temp_zip, files_to_zip, flags = "-r9Xq")
+  zip::zip(temp_zip, files_to_zip, mode = "mirror", include_directories = FALSE)
 
   setwd(curr_dir)
 
-  # Replace original file with the fixed version
+  # Only replace the original once the re-zip has succeeded, otherwise a zip
+  # failure would leave no output file at all.
+  if (!file.exists(temp_zip)) {
+    cli::cli_abort("Failed to re-zip {.file {docx_file}}.")
+  }
   unlink(docx_file)
   file.copy(temp_zip, docx_file, overwrite = TRUE)
   unlink(temp_zip)
@@ -1092,7 +1096,7 @@ set_section_page_numbering <- function(docx_path, format = NULL, start = 1, sect
 
   setwd(temp_dir)
   files <- list.files(recursive = TRUE, full.names = FALSE, include.dirs = FALSE)
-  utils::zip(zipfile = file.path(old_wd, docx_path), files = files, flags = "-q")
+  zip::zip(zipfile = file.path(old_wd, docx_path), files = files, mode = "mirror", include_directories = FALSE)
 
   invisible(docx_path)
 }
@@ -1227,7 +1231,7 @@ insert_section_break_after_abstract <- function(docx_path, french = FALSE) {
 
   setwd(temp_dir)
   files <- list.files(recursive = TRUE, full.names = FALSE, include.dirs = FALSE)
-  utils::zip(zipfile = file.path(old_wd, docx_path), files = files, flags = "-q")
+  zip::zip(zipfile = file.path(old_wd, docx_path), files = files, mode = "mirror", include_directories = FALSE)
 
   invisible(docx_path)
 }
