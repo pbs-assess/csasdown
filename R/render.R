@@ -264,8 +264,8 @@ render_sar <- function(config_file = "_bookdown.yml", validate_bibliography = TR
   x <- rmarkdown::yaml_front_matter("index.Rmd")
 
   title_and_context <- c(
-    '::: {custom-style="Heading 1"}', x$english_title, ":::\n",
-    '::: {custom-style="Heading 2"}', "Context", ":::\n",
+    '::: {custom-style="Heading 1"}', toupper(x$english_title), ":::\n",
+    '::: {custom-style="Heading 2"}', "CONTEXT", ":::\n",
     '::: {custom-style="Body Text"}', x$context, ":::\n"
   )
 
