@@ -271,11 +271,12 @@ render_sar <- function(config_file = "_bookdown.yml", validate_bibliography = TR
 
   content <- readLines(con = first_content_fn, warn = FALSE)
 
-  sources <- c(
-    "\n## SOURCES OF INFORMATION {-}\n",
-    '<div id="refs" custom-style = "citation"></div>\n',
-    "\n\\pagebreak\n"
-  )
+  # Add "Sources of information" where you want it (for example, between
+  # the participant list and appendix, with the "This report is available.."
+  # section at the end of the report) with the following line in the YAML:
+  # link-citations: true
+  # and this line where you want the references to appear:
+  # <div id="refs"></div>
 
   backmatter <- c(
     "## THIS REPORT IS AVAILABLE FROM THE:{-}\n",
@@ -305,7 +306,7 @@ render_sar <- function(config_file = "_bookdown.yml", validate_bibliography = TR
     ":::"
   )
 
-  writeLines(c(title_and_context, content, sources, backmatter), con = first_content_fn)
+  writeLines(c(title_and_context, content, backmatter), con = first_content_fn)
   cli_alert_success("Pre-processing complete")
 
   cli_inform("Rendering the FSAR document with bookdown...")
