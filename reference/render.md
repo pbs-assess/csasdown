@@ -94,13 +94,13 @@ csasdown::render()
 #> 30/31 [tab-model-parameters]   
 #> 31/31                          
 #> output file: resdoc.knit.md
-#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS resdoc.knit.md --to docx --from markdown+autolink_bare_uris+tex_math_single_backslash --output resdoc.docx --lua-filter /home/runner/work/_temp/Library/bookdown/rmarkdown/lua/custom-environment.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --metadata-file /tmp/RtmpiTuoOq/file1bb46910d212 --syntax-highlighting tango --reference-doc /home/runner/work/_temp/Library/csasdown/csas-docx/resdoc-content-2026.docx --lua-filter /home/runner/work/_temp/Library/csasdown/rmarkdown/lua/loose-lists.lua --syntax-highlighting=none --metadata link-citations=true --csl csl/csas.csl '--metadata=title:' --extract-media resdoc_files --citeproc 
+#> /opt/hostedtoolcache/pandoc/3.8.3/x64/pandoc +RTS -K512m -RTS resdoc.knit.md --to docx --from markdown+autolink_bare_uris+tex_math_single_backslash --output resdoc.docx --lua-filter /home/runner/work/_temp/Library/bookdown/rmarkdown/lua/custom-environment.lua --lua-filter /home/runner/work/_temp/Library/rmarkdown/rmarkdown/lua/pagebreak.lua --metadata-file /tmp/RtmpYTM9zH/file1bb56e6058a5 --syntax-highlighting tango --reference-doc /home/runner/work/_temp/Library/csasdown/csas-docx/resdoc-content-2026.docx --lua-filter /home/runner/work/_temp/Library/csasdown/rmarkdown/lua/loose-lists.lua --syntax-highlighting=none --metadata link-citations=true --csl csl/csas.csl '--metadata=title:' --extract-media resdoc_files --citeproc 
 #> 
 #> Output created: resdoc.docx
 #> ✔ Bookdown rendering complete
 #> ✔ Moved output to _book/resdoc.docx
 #> ✔ Render complete!
-#> ✔ Steady hands, sharp mind — perfect output 📄
+#> ✔ You make complex things look effortless ✨
 
 # return to original working directory after running example:
 setwd(wd)
