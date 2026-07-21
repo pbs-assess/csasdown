@@ -28,6 +28,8 @@ context: |
 
 inuktitut_citation: "Inuktitut citation here"
 
+link-citations: true
+
 output:
   csasdown::fsar_docx:
     french: false

@@ -184,3 +184,12 @@ fsar_plot_base(in.df, "French")
 [Les références doivent être formatées conformément au [*Guide pour la préparation des séries de rapports scientifiques de Pêches et Océans Canada*. Inclure des hyperliens seulement si le site est hébergé par le gouvernement du Canada ou si un système de gestion des DOI est utilisé.]](https://publications.gc.ca/collections/collection_2020/mpo-dfo/Fs23-176-2019-fra.pdf)
 
 [Les références énumérées dans la section Références citées doivent être accessibles au public lorsque le rapport est publié sur le site Web. La seule exception s'applique aux livres et articles qui ont été acceptés pour publication (à l'étape de la mise en page ou s'il existe une lettre d'acceptation). Ceux-ci peuvent être énumérés, suivis de la mention «&nbsp;sous presse&nbsp;». Tous les autres doivent être inclus dans le texte en tant que données inédites ou documents de travail avec des notes de bas de page.]
+
+<!-- Ajouter les références citées: -->
+<div id="refs"></div>
+
+## APPENDIX
+
+[Section optionnelle.]
+
+\pagebreak

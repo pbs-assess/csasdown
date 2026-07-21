@@ -214,3 +214,12 @@ flextable(recent.trends) |>
 [References must be formatted according to the [*Guide for the Production of Fisheries and Oceans Canada Reports*. Include hyperlinks only if the site is hosted by the Government of Canada or a DOI handle system is used.]](https://waves-vagues.dfo-mpo.gc.ca/Library/333125.pdf)
 
 [References listed in the References Cited section should be publicly available when the report is posted on the website. The only exception is for books or articles that have been accepted for publication (page proof stage or where there is an acceptance letter). These can be listed followed by the notation "in press". All others should be included in the text as unpublished data or working papers with footnotes.]
+
+<!-- Add references cited: -->
+<div id="refs"></div>
+
+## APPENDIX
+
+[Optional section.]
+
+\pagebreak
