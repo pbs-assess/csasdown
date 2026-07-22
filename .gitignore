@@ -10,3 +10,4 @@ templates/RES2021-eng-content.docx
 ~$*
 .positai
 docs
+inst/csas-docx/csasdocs-*/*.docx
