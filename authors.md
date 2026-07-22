@@ -11,20 +11,22 @@
 
 - **Chris J. Grandin**. Author.
 
+- **Matthew H. Grinnell**. Author.
+
 - **His Majesty the King in Right of Canada, as represented by the
   Minister of the Department of Fisheries and Oceans**. Copyright
   holder.
 
 ## Citation
 
-Anderson SC, Regular PM, Ricard D, Grandin CJ (2026). *csasdown:
-Reproducible CSAS Reports*. R package version 0.0.0.90026,
+Anderson SC, Regular PM, Ricard D, Grandin CJ, Grinnell MH (2026).
+*csasdown: Reproducible CSAS Reports*. R package version 0.0.0.90027,
 <https://pbs-assess.github.io/csasdown/>.
 
     @Manual{,
       title = {csasdown: Reproducible CSAS Reports},
-      author = {Sean C. Anderson and Paul M. Regular and Daniel Ricard and Chris J. Grandin},
+      author = {Sean C. Anderson and Paul M. Regular and Daniel Ricard and Chris J. Grandin and Matthew H. Grinnell},
       year = {2026},
-      note = {R package version 0.0.0.90026},
+      note = {R package version 0.0.0.90027},
       url = {https://pbs-assess.github.io/csasdown/},
     }
