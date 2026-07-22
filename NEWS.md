@@ -1,5 +1,14 @@
 # csasdown development version
 
+## csasdown 0.0.0.90027
+
+* Remove the Inuktitut citation field and generated section from FSAR templates.
+
+* Move `<div id="refs"></div>` into the FSAR template so it can be placed before
+  an optional Appendix.
+  
+* Treat `link-citations` as an optional YAML field during validation.
+
 ## csasdown 0.0.0.90026
 
 * Fix bug discovered in `fix_missing_namespaces()` when

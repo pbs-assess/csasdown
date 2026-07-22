@@ -1,5 +1,5 @@
 # Optional fields that should not be validated
-OPTIONAL_FIELDS <- c("knit", "bibliography", "title")
+OPTIONAL_FIELDS <- c("knit", "bibliography", "title", "link-citations")
 
 #' Parse skeleton YAML and extract required fields
 #'

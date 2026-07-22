@@ -26,8 +26,6 @@ context: |
   \
   [See Guidance Document for examples of additional information to provide in the Context section.
 
-inuktitut_citation: "Inuktitut citation here"
-
 link-citations: true
 
 output:

@@ -299,10 +299,6 @@ render_sar <- function(config_file = "_bookdown.yml", validate_bibliography = TR
     "\n*Aussi disponible en fran\u00e7ais:*\n",
     '::: {custom-style="citation"}',
     paste0("*MPO. ", x$year, ". ", x$french_title, ". Secr. can. des avis sci. du MPO. Avis sci. ", x$year, "/", x$report_number, ". doi: xxx.xxx.xxx.*"),
-    ":::",
-    "\nInuktitut Atuinnaummijuq:\n",
-    '::: {custom-style="citation"}',
-    x$inuktitut_citation,
     ":::"
   )
 

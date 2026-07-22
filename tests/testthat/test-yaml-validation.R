@@ -150,7 +150,6 @@ email: "test@example.com"
 english_csa_address: "Test Address"
 french_csa_address: "Adresse de test"
 context: "This is the context."
-inuktitut_citation: "Inuktitut text"
 output:
   csasdown::fsar_docx
 ---
@@ -527,6 +526,7 @@ test_that("get_skeleton_fields parses skeleton correctly", {
   # Should NOT include optional fields
   expect_false("knit" %in% fields)
   expect_false("bibliography" %in% fields)
+  expect_false("link-citations" %in% fields)
 })
 
 test_that("get_skeleton_fields works for all document types", {
@@ -538,6 +538,6 @@ test_that("get_skeleton_fields works for all document types", {
     expect_true("output" %in% fields)
     expect_false("knit" %in% fields)
     expect_false("bibliography" %in% fields)
+    expect_false("link-citations" %in% fields)
   }
 })
-
