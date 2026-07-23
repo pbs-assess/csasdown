@@ -16,8 +16,14 @@ report_number: "XXX"
 
 email: "email@csa-email.com"
 
-english_csa_address: "CSA Address goes here"
-french_csa_address: "CSA Address goes here"
+english_csa_address: |
+  | Centre for Science Advice (CSA)
+  | [Region]
+  | [Address]
+french_csa_address: |
+  | Centre des avis scientifiques (CAS) 
+  | [Région]
+  | [Addresse]
 
 context: |
   Mandatory. Maximum length 150 words. Include only information about the request for advice, including the meeting objectives and the date of the peer-review meeting.] [Include link to IFMP/rebuilding/management plan(s)]\
