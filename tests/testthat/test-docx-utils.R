@@ -49,3 +49,35 @@ test_that("fix_table_cell_styles_xml is idempotent and de-duplicates styles", {
   expect_identical(once, twice)
   expect_equal(count_fixed_matches(once, '<w:pStyle w:val="Caption-Table"/>'), 1L)
 })
+
+appendix_ref_xml <- function(heading) {
+  paste0(
+    '<w:document>',
+    '<w:p><w:r><w:t>', heading, '</w:t></w:r></w:p>',
+    '<w:p><w:r><w:t>Appendix</w:t></w:r>',
+    '<w:r><w:t> </w:t></w:r><w:r><w:t>3</w:t></w:r></w:p>',
+    '</w:document>'
+  )
+}
+
+test_that("appendix section refs accept headings with or without a period", {
+  headings <- c(
+    "APPENDIX A. ADDITIONAL ANALYSES",
+    "APPENDIX A ADDITIONAL ANALYSES"
+  )
+
+  for (heading in headings) {
+    output <- csasdown:::fix_appendix_section_refs_xml(appendix_ref_xml(heading))
+
+    expect_true(grepl('<w:t>A</w:t>', output, fixed = TRUE))
+    expect_true(grepl(heading, output, fixed = TRUE))
+  }
+})
+
+test_that("appendix section refs do not match alphanumeric appendix labels", {
+  output <- csasdown:::fix_appendix_section_refs_xml(
+    appendix_ref_xml("APPENDIX A1 ADDITIONAL ANALYSES")
+  )
+
+  expect_true(grepl('<w:t>3</w:t>', output, fixed = TRUE))
+})

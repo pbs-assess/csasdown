@@ -1,5 +1,8 @@
 # csasdown development version
 
+* Allow appendix section headers to omit a period after the letter
+  (although CSAS style is to have these periods). #46
+
 ## csasdown 0.0.0.90027
 
 * Remove the Inuktitut citation field and generated section from FSAR templates.

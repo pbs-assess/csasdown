@@ -528,6 +528,7 @@ fix_appendix_section_refs_xml <- function(xml_content) {
   # Build a mapping from bookmark names to appendix letters
   # Pattern: Find bookmarks like app:biology that are near "APPENDIX A." text
   bookmark_to_letter <- list()
+  appendix_heading_pattern <- '<w:t[^>]*>APPENDIX ([A-Z])(?=\\.|\\s|</w:t>)'
 
   # Find all appendix bookmarks (bookmarks that start with "app:")
   bookmark_pattern <- '<w:bookmarkStart[^>]+w:name="(app:[^"]+)"'
@@ -554,8 +555,7 @@ fix_appendix_section_refs_xml <- function(xml_content) {
         # It should appear within ~500 characters after the bookmark
         text_chunk <- substr(xml_content, pos, min(nchar(xml_content), pos + 500))
 
-        appendix_pattern <- '<w:t[^>]*>APPENDIX ([A-Z])\\.'
-        appendix_match <- regexpr(appendix_pattern, text_chunk, perl = TRUE)
+        appendix_match <- regexpr(appendix_heading_pattern, text_chunk, perl = TRUE)
 
         if (appendix_match > 0) {
           # Extract the letter
@@ -589,7 +589,6 @@ fix_appendix_section_refs_xml <- function(xml_content) {
   appendix_letters_in_order <- c()
 
   # Find appendix headings in document order
-  appendix_heading_pattern <- '<w:t[^>]*>APPENDIX ([A-Z])\\.'
   appendix_heading_matches <- gregexpr(appendix_heading_pattern, xml_content, perl = TRUE)
 
   if (appendix_heading_matches[[1]][1] != -1) {
@@ -601,7 +600,7 @@ fix_appendix_section_refs_xml <- function(xml_content) {
       full_match <- substr(xml_content, pos, pos + match_len - 1)
 
       # Extract letter
-      letter_match <- regexpr('>APPENDIX ([A-Z])\\.', full_match, perl = TRUE)
+      letter_match <- regexpr('>APPENDIX ([A-Z])', full_match, perl = TRUE)
       if (letter_match > 0) {
         letter_start <- attr(letter_match, "capture.start")[1]
         letter_len <- attr(letter_match, "capture.length")[1]
