@@ -45,6 +45,23 @@ test_that("FSAR builds", {
   setwd(wd)
 })
 
+test_that("FSRR builds", {
+  wd <- getwd()
+  testing_path <- file.path(tempdir(), "fsrr")
+  unlink(testing_path, recursive = TRUE, force = TRUE)
+  dir.create(testing_path, showWarnings = FALSE)
+  setwd(testing_path)
+  draft("fsrr", create_dir = FALSE, edit = FALSE)
+  render()
+  expect_true(file.exists("_book/fsrr.docx"))
+
+  header <- paste(readLines(unz("_book/fsrr.docx", "word/header3.xml"), warn = FALSE), collapse = "")
+  body <- paste(readLines(unz("_book/fsrr.docx", "word/document.xml"), warn = FALSE), collapse = "")
+  expect_match(header, "Response")
+  expect_match(body, "Sci\\. Resp\\.")
+  setwd(wd)
+})
+
 test_that("resdoc builds", {
   wd <- getwd()
   testing_path <- file.path(tempdir(), "resdoc")

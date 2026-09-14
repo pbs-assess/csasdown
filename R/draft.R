@@ -3,7 +3,7 @@
 #' Create a draft of an R Markdown CSAS document.
 #'
 #' @param type The type of document to draft. Must be one of `resdoc`, `fsar`,
-#' `sr`, `techreport`, `manureport` or `datareport`.
+#' `fsrr`, `sr`, `techreport`, `manureport` or `datareport`.
 #' @param directory The directory to place the draft document files.
 #' Current directory by default
 #' @param edit `TRUE` to edit the template immediately.
@@ -36,7 +36,7 @@
 #' }
 #' @export
 draft <- function(
-    type = c("resdoc", "fsar", "sr", "techreport", "manureport", "datareport"),
+    type = c("resdoc", "fsar", "fsrr", "sr", "techreport", "manureport", "datareport"),
     directory = ".",
     edit = FALSE,
     create_rstudio_project = TRUE,
@@ -48,14 +48,49 @@ draft <- function(
   on.exit(setwd(wd))
   setwd(directory)
 
+  type <- match.arg(type)
+  template <- if (type == "fsrr") "fsar" else type
+
   cli_alert_success("Drafting a new {type} project")
 
   rmarkdown::draft("index.Rmd",
-    template = type,
+    template = template,
     package = "csasdown",
     edit = edit,
     ...
   )
+
+  if (type == "fsrr") {
+    index_content <- readLines("index.Rmd", warn = FALSE)
+    index_content <- gsub(
+      "csasdown::fsar_docx",
+      "csasdown::fsrr_docx",
+      index_content,
+      fixed = TRUE
+    )
+    index_content <- gsub(
+      "This Science Advisory Report is from the",
+      "This Science Response Report results from the",
+      index_content,
+      fixed = TRUE
+    )
+    index_content <- gsub(
+      " peer review of [meeting date",
+      " peer review [meeting date",
+      index_content,
+      fixed = TRUE
+    )
+    writeLines(index_content, "index.Rmd")
+
+    bookdown_content <- readLines("_bookdown.yml", warn = FALSE)
+    bookdown_content <- gsub(
+      'book_filename: "fsar"',
+      'book_filename: "fsrr"',
+      bookdown_content,
+      fixed = TRUE
+    )
+    writeLines(bookdown_content, "_bookdown.yml")
+  }
 
   if (!file.exists(".gitignore")) {
     gitignore_content <- ".Rproj.user

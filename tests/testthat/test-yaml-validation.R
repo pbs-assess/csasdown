@@ -162,6 +162,38 @@ output:
   unlink(temp_file)
 })
 
+test_that("check_yaml passes for complete FSRR YAML", {
+  temp_dir <- tempdir()
+  temp_file <- file.path(temp_dir, "index.Rmd")
+
+  yaml_content <- '---
+english_title: "Test Report"
+french_title: "Titre français"
+english_title_short: "Short Title"
+french_title_short: "Titre court"
+english_region: "Test Region"
+french_region: "Région de test"
+year: "2025"
+release_month: "May"
+meeting_date: "May 1, 2025"
+report_number: "001"
+email: "test@example.com"
+english_csa_address: "Test Address"
+french_csa_address: "Adresse de test"
+context: "This is the context."
+output:
+  csasdown::fsrr_docx
+---
+'
+  writeLines(yaml_content, temp_file)
+
+  expect_invisible(check_yaml(index_fn = temp_file, type = "fsrr"))
+  expect_true(check_yaml(index_fn = temp_file, type = "fsrr"))
+  expect_equal(detect_doc_type(temp_file), "fsrr")
+
+  unlink(temp_file)
+})
+
 test_that("check_yaml rejects French SR", {
   temp_dir <- tempdir()
   temp_file <- file.path(temp_dir, "index.Rmd")
@@ -530,7 +562,7 @@ test_that("get_skeleton_fields parses skeleton correctly", {
 })
 
 test_that("get_skeleton_fields works for all document types", {
-  types <- c("resdoc", "fsar", "sr", "techreport", "manureport", "datareport")
+  types <- c("resdoc", "fsar", "fsrr", "sr", "techreport", "manureport", "datareport")
 
   for (type in types) {
     fields <- csasdown:::get_skeleton_fields(type)

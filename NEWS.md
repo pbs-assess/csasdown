@@ -1,5 +1,8 @@
 # csasdown development version
 
+* Add FSRR drafting and rendering by reusing the FSAR pipeline with
+  response-specific context, header, and citation text.
+
 * Allow appendix section headers to omit a period after the letter
   (although CSAS style is to have these periods). #46
 

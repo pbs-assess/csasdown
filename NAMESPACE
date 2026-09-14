@@ -6,6 +6,7 @@ export(current_appendix)
 export(datareport_docx)
 export(draft)
 export(fsar_docx)
+export(fsrr_docx)
 export(manureport_docx)
 export(new_appendix)
 export(render)
@@ -14,12 +15,16 @@ export(set_appendix)
 export(sr_docx)
 export(techreport_docx)
 import(bookdown)
-importFrom(cli,cli_abort)
-importFrom(cli,cli_alert_success)
-importFrom(cli,cli_inform)
-importFrom(cli,cli_warn)
-importFrom(officer,body_add_docx)
-importFrom(officer,body_replace_text_at_bkm)
-importFrom(officer,docx_set_settings)
-importFrom(officer,footers_replace_text_at_bkm)
-importFrom(officer,headers_replace_text_at_bkm)
+importFrom(cli,
+  cli_abort,
+  cli_alert_success,
+  cli_inform,
+  cli_warn
+)
+importFrom(officer,
+  body_add_docx,
+  body_replace_text_at_bkm,
+  docx_set_settings,
+  footers_replace_text_at_bkm,
+  headers_replace_text_at_bkm
+)

@@ -53,8 +53,13 @@ render <- function(
   cli_alert_success("YAML validation passed")
   check_bibliography_for_unescaped_doi_angles("index.Rmd")
 
-  if (type == "fsar") {
-    return(render_sar(config_file = config_file, validate_bibliography = FALSE, ...))
+  if (type %in% c("fsar", "fsrr")) {
+    return(render_sar(
+      config_file = config_file,
+      document_type = type,
+      validate_bibliography = FALSE,
+      ...
+    ))
   }
 
   output_options <- list(pandoc_args = c("--metadata=title:"))
@@ -239,10 +244,14 @@ positive_affirmation <- function(success = TRUE) {
 #'
 #' @keywords internal
 #' @noRd
-render_sar <- function(config_file = "_bookdown.yml", validate_bibliography = TRUE, ...) {
+render_sar <- function(
+    config_file = "_bookdown.yml",
+    document_type = "fsar",
+    validate_bibliography = TRUE,
+    ...) {
   cat("\n")
 
-  check_yaml(index_fn = "index.Rmd", type = "fsar", verbose = TRUE)
+  check_yaml(index_fn = "index.Rmd", type = document_type, verbose = TRUE)
   cli_alert_success("YAML validation passed")
   if (validate_bibliography) {
     check_bibliography_for_unescaped_doi_angles("index.Rmd")
@@ -256,12 +265,31 @@ render_sar <- function(config_file = "_bookdown.yml", validate_bibliography = TR
   # Set up the console Render message
   cat("\n")
 
-  y <- yaml::read_yaml("_bookdown.yml")
+  y <- yaml::read_yaml(config_file)
   first_content_fn <- y$rmd_files[!grepl("index", y$rmd_files)][[1]]
 
   cli_inform("Pre-processing Rmd files...")
 
   x <- rmarkdown::yaml_front_matter("index.Rmd")
+
+  is_fsrr <- identical(document_type, "fsrr")
+  if (is_fsrr) {
+    x$context <- gsub(
+      "This Science Advisory Report is from the",
+      "This Science Response Report results from the",
+      x$context,
+      fixed = TRUE
+    )
+    x$context <- gsub(
+      " peer review of [meeting date",
+      " peer review [meeting date",
+      x$context,
+      fixed = TRUE
+    )
+  }
+
+  english_citation_type <- if (is_fsrr) "Sci. Resp." else "Sci. Advis. Rep."
+  french_citation_type <- if (is_fsrr) "Rép. des Sci." else "Avis sci."
 
   title_and_context <- c(
     '::: {custom-style="Heading 1"}', toupper(x$english_title), ":::\n",
@@ -294,21 +322,21 @@ render_sar <- function(config_file = "_bookdown.yml", validate_bibliography = TR
     ":::\n",
     "\nCorrect citation for this publication:\n",
     '::: {custom-style="citation"}',
-    paste0("DFO. ", x$year, ". ", x$english_title, ". DFO Can. Sci. Advis. Sec. Sci. Advis. Rep. ", x$year, "/", x$report_number, ". doi: xxx.xxx.xxx."),
+    paste0("DFO. ", x$year, ". ", x$english_title, ". DFO Can. Sci. Advis. Sec. ", english_citation_type, " ", x$year, "/", x$report_number, ". doi: xxx.xxx.xxx."),
     ":::",
     "\n*Aussi disponible en fran\u00e7ais:*\n",
     '::: {custom-style="citation"}',
-    paste0("*MPO. ", x$year, ". ", x$french_title, ". Secr. can. des avis sci. du MPO. Avis sci. ", x$year, "/", x$report_number, ". doi: xxx.xxx.xxx.*"),
+    paste0("*MPO. ", x$year, ". ", x$french_title, ". Secr. can. des avis sci. du MPO. ", french_citation_type, " ", x$year, "/", x$report_number, ". doi: xxx.xxx.xxx.*"),
     ":::"
   )
 
   writeLines(c(title_and_context, content, backmatter), con = first_content_fn)
   cli_alert_success("Pre-processing complete")
 
-  cli_inform("Rendering the FSAR document with bookdown...")
+  cli_inform("Rendering the {toupper(document_type)} document with bookdown...")
 
   render_book("index.Rmd",
-    config_file = "_bookdown.yml",
+    config_file = config_file,
     ...
   )
 
@@ -316,11 +344,12 @@ render_sar <- function(config_file = "_bookdown.yml", validate_bibliography = TR
   writeLines(content, con = first_content_fn)
 
   ## officedown outputs to the root, not the _book folder like bookdown
-  if (file.exists("fsar.docx")) {
-    file.rename("fsar.docx", file.path("_book", "fsar.docx"))
+  book_filename <- paste0(get_book_filename(config_file), ".docx")
+  if (file.exists(book_filename)) {
+    file.rename(book_filename, file.path("_book", book_filename))
   }
 
-  fn <- "_book/fsar.docx"
+  fn <- file.path("_book", book_filename)
   if (file.exists(fn)) {
     cli_alert_success("Bookdown rendering complete")
   } else {
@@ -328,7 +357,15 @@ render_sar <- function(config_file = "_bookdown.yml", validate_bibliography = TR
   }
 
   cli_inform("Updating headers and footers...")
-  doc <- officer::read_docx("_book/fsar.docx")
+  doc <- officer::read_docx(fn)
+  if (is_fsrr) {
+    doc <- officer::headers_replace_all_text(
+      doc,
+      "Advisory Report",
+      "Response",
+      warn = FALSE
+    )
+  }
   doc <- officer::headers_replace_text_at_bkm(doc, "region_name", x$english_region)
   doc <- officer::headers_replace_text_at_bkm(doc, "region_name_rest", x$english_region) # non-first page
   doc <- officer::headers_replace_text_at_bkm(doc, "short_title", x$english_title_short) # non-first page
@@ -345,7 +382,7 @@ render_sar <- function(config_file = "_bookdown.yml", validate_bibliography = TR
     officer::cursor_backward() |>
     officer::body_add_docx(src = system.file("graphics", "mobius_loop.docx", package = "csasdown"))
 
-  print(doc, target = "_book/fsar.docx")
+  print(doc, target = fn)
   cli_alert_success("Mobius loop graphic added")
 
   # Clean up bookdown artifacts
@@ -380,6 +417,8 @@ detect_doc_type <- function(index_fn = "index.Rmd") {
 
   if (any(grepl("resdoc_docx", output_names))) {
     return("resdoc")
+  } else if (any(grepl("fsrr_docx", output_names))) {
+    return("fsrr")
   } else if (any(grepl("fsar_docx", output_names))) {
     return("fsar")
   } else if (any(grepl("sr_docx", output_names))) {
@@ -391,7 +430,7 @@ detect_doc_type <- function(index_fn = "index.Rmd") {
   } else if (any(grepl("datareport_docx", output_names))) {
     return("datareport")
   } else {
-    cli_abort("Could not detect document type from YAML output field. Expected one of: resdoc_docx, fsar_docx, techreport_docx, manureport_docx, or datareport_docx")
+    cli_abort("Could not detect document type from YAML output field. Expected one of: resdoc_docx, fsar_docx, fsrr_docx, techreport_docx, manureport_docx, or datareport_docx")
   }
 }
 

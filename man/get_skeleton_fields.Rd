@@ -7,7 +7,7 @@
 get_skeleton_fields(type)
 }
 \arguments{
-\item{type}{Document type (resdoc, fsar, sr, techreport, manureport, datareport)}
+\item{type}{Document type (resdoc, fsar, fsrr, sr, techreport, manureport, datareport)}
 }
 \value{
 Character vector of required field names

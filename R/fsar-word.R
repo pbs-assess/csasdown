@@ -10,3 +10,15 @@ fsar_docx <- function(...) {
     ...
   )
 }
+
+#' @rdname csas_docx
+#' @export
+fsrr_docx <- function(...) {
+  .csasdown_docx_base(
+    reference_docx = "fsar-template.docx",
+    link_citations = FALSE,
+    template_dir = "csas-docx",
+    use_pandoc_highlight = TRUE,
+    ...
+  )
+}

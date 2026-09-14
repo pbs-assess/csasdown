@@ -3,17 +3,18 @@ OPTIONAL_FIELDS <- c("knit", "bibliography", "title", "link-citations")
 
 #' Parse skeleton YAML and extract required fields
 #'
-#' @param type Document type (resdoc, fsar, sr, techreport, manureport, datareport)
+#' @param type Document type (resdoc, fsar, fsrr, sr, techreport, manureport, datareport)
 #' @return Character vector of required field names
 #' @keywords internal
 get_skeleton_fields <- function(type) {
+  skeleton_type <- if (type == "fsrr") "fsar" else type
   skeleton_path <- system.file(
-    "rmarkdown", "templates", type, "skeleton", "skeleton.Rmd",
+    "rmarkdown", "templates", skeleton_type, "skeleton", "skeleton.Rmd",
     package = "csasdown"
   )
 
   if (!file.exists(skeleton_path)) {
-    cli::cli_abort("Skeleton file not found for document type: {type}")
+    cli::cli_abort("Skeleton file not found for document type: {skeleton_type}")
   }
 
   yaml_data <- rmarkdown::yaml_front_matter(skeleton_path)
@@ -30,7 +31,7 @@ get_skeleton_fields <- function(type) {
 #' Dynamically parses `skeleton.Rmd` to determine required fields.
 #'
 #' @param index_fn Path to the index R Markdown file. Default: "index.Rmd"
-#' @param type Document type ("resdoc", "fsar", "sr", "techreport", "manureport", "datareport").
+#' @param type Document type ("resdoc", "fsar", "fsrr", "sr", "techreport", "manureport", "datareport").
 #'   If NULL (default), auto-detects from YAML output field.
 #' @param verbose Print informative message on success? Default: FALSE
 #'
@@ -257,7 +258,7 @@ get_line_number <- function(text, position) {
 }
 
 get_language_setting <- function(yaml_data, type) {
-  if (type == "fsar") return(FALSE)
+  if (type %in% c("fsar", "fsrr")) return(FALSE)
 
   output_name <- paste0("csasdown::", type, "_docx")
   if (!is.null(yaml_data$output[[output_name]]$french)) {
@@ -268,8 +269,9 @@ get_language_setting <- function(yaml_data, type) {
 }
 
 report_missing_fields <- function(missing, type, index_fn) {
+  skeleton_type <- if (type == "fsrr") "fsar" else type
   skeleton_path <- system.file(
-    "rmarkdown", "templates", type, "skeleton", "skeleton.Rmd",
+    "rmarkdown", "templates", skeleton_type, "skeleton", "skeleton.Rmd",
     package = "csasdown"
   )
 

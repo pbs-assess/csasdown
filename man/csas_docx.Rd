@@ -4,6 +4,7 @@
 \name{datareport_docx}
 \alias{datareport_docx}
 \alias{fsar_docx}
+\alias{fsrr_docx}
 \alias{manureport_docx}
 \alias{resdoc_docx}
 \alias{sr_docx}
@@ -13,6 +14,8 @@
 datareport_docx(...)
 
 fsar_docx(...)
+
+fsrr_docx(...)
 
 manureport_docx(...)
 
