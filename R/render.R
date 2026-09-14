@@ -289,7 +289,7 @@ render_sar <- function(
   }
 
   english_citation_type <- if (is_fsrr) "Sci. Resp." else "Sci. Advis. Rep."
-  french_citation_type <- if (is_fsrr) "Rép. des Sci." else "Avis sci."
+  french_citation_type <- if (is_fsrr) "R\u00e9p. des Sci." else "Avis sci."
 
   title_and_context <- c(
     '::: {custom-style="Heading 1"}', toupper(x$english_title), ":::\n",

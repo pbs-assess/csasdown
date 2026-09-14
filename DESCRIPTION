@@ -1,6 +1,6 @@
 Package: csasdown
 Title: Reproducible CSAS Reports
-Version: 0.0.0.90029
+Version: 0.0.0.90030
 Authors@R: c(
     person(c("Sean", "C."), "Anderson", , "sean.anderson@dfo-mpo.gc.ca", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9563-1937")),

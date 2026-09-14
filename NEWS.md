@@ -1,5 +1,8 @@
 # csasdown development version
 
+* Escape the accented French citation text in `R/render.R` so the package code
+  remains ASCII-portable.
+
 * Add FSRR drafting and rendering by reusing the FSAR pipeline with
   response-specific context, header, and citation text.
 
