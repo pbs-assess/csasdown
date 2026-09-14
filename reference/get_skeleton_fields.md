@@ -12,7 +12,8 @@ get_skeleton_fields(type)
 
 - type:
 
-  Document type (resdoc, fsar, sr, techreport, manureport, datareport)
+  Document type (resdoc, fsar, fsrr, sr, techreport, manureport,
+  datareport)
 
 ## Value
 

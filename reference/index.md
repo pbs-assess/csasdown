@@ -10,6 +10,7 @@
 
 - [`datareport_docx()`](https://pbs-assess.github.io/csasdown/reference/csas_docx.md)
   [`fsar_docx()`](https://pbs-assess.github.io/csasdown/reference/csas_docx.md)
+  [`fsrr_docx()`](https://pbs-assess.github.io/csasdown/reference/csas_docx.md)
   [`manureport_docx()`](https://pbs-assess.github.io/csasdown/reference/csas_docx.md)
   [`resdoc_docx()`](https://pbs-assess.github.io/csasdown/reference/csas_docx.md)
   [`sr_docx()`](https://pbs-assess.github.io/csasdown/reference/csas_docx.md)

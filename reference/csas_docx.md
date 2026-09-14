@@ -10,6 +10,8 @@ datareport_docx(...)
 
 fsar_docx(...)
 
+fsrr_docx(...)
+
 manureport_docx(...)
 
 resdoc_docx(...)

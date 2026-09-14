@@ -6,7 +6,7 @@ Create a draft of an R Markdown CSAS document.
 
 ``` r
 draft(
-  type = c("resdoc", "fsar", "sr", "techreport", "manureport", "datareport"),
+  type = c("resdoc", "fsar", "fsrr", "sr", "techreport", "manureport", "datareport"),
   directory = ".",
   edit = FALSE,
   create_rstudio_project = TRUE,
@@ -18,8 +18,8 @@ draft(
 
 - type:
 
-  The type of document to draft. Must be one of `resdoc`, `fsar`, `sr`,
-  `techreport`, `manureport` or `datareport`.
+  The type of document to draft. Must be one of `resdoc`, `fsar`,
+  `fsrr`, `sr`, `techreport`, `manureport` or `datareport`.
 
 - directory:
 
