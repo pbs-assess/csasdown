@@ -57,6 +57,15 @@ test_that("Multiple authors with Oxford comma (English, multi-line)", {
   expect_equal(result$french_author_list, "Last, F.M., Smith, A.B., Tremblay, S.A., et Deschoses, J.C.")
 })
 
+test_that("Multiple authors without a conjunction (multi-line)", {
+  author <- "First M. Last^1^,\nAlex B. Smith^2^,\nSuzanne A. Tremblay^3^"
+  result <- parse_author_field(author)
+
+  expect_equal(result$english_author, author)
+  expect_equal(result$english_author_list, "Last, F.M., Smith, A.B., and Tremblay, S.A.")
+  expect_equal(result$french_author_list, "Last, F.M., Smith, A.B., et Tremblay, S.A.")
+})
+
 test_that("Multiple authors with Oxford comma (English, single-line)", {
   author <- "First M. Last^1^, Alex B. Smith^2^, Suzanne A. Tremblay^3^, and Jean C. Deschoses^4^"
   result <- parse_author_field(author)

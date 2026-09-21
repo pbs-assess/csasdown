@@ -1,5 +1,8 @@
 # csasdown development version
 
+* Parse newline-separated Technical Report authors even when the display
+  byline omits a final conjunction.
+
 * Escape the accented French citation text in `R/render.R` so the package code
   remains ASCII-portable.
 

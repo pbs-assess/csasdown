@@ -34,7 +34,10 @@ normalize_author_string <- function(author_string) {
   conj <- detect_conjunction(author_string)
 
   if (is.null(conj)) {
-    return(list(authors = list(author_string), conjunction = NULL))
+    authors <- strsplit(author_string, ",\\s*\\n\\s*", perl = TRUE)[[1]]
+    authors <- trimws(authors)
+    authors <- authors[nchar(authors) > 0]
+    return(list(authors = as.list(authors), conjunction = NULL))
   }
 
   if (conj == "and") {
