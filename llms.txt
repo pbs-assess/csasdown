@@ -178,8 +178,7 @@ your project will contain:
 ### Modify YAML metadata
 
 Edit the YAML header in `index.Rmd` to customize: - Title - Author names
-and affiliations - Report numbers and dates - Language settings -
-Abstract text
+and affiliations - Report numbers and dates - Language settings
 
 ### Add chapters
 
@@ -283,6 +282,17 @@ csasdown uses a multi-stage rendering pipeline:
 3.  [**officer**](https://davidgohel.github.io/officer/) post-processes
     the document (injects frontmatter, replaces bookmarks, and assembles
     the final document)
+
+## Transitioning from LaTeX csasdown to .docx csasdown
+
+There are [some
+notes](https://github.com/pbs-assess/csasdown/wiki/Tips-for-transitioning-from-.tex-to-.docx-output)
+on the wiki about transitioning from the older LaTeX-based csasdown to
+the csasdown with .docx output.
+
+Note that it is still completely fine to use
+[csasdowntex](https://github.com/pbs-assess/csasdowntex) for Tech Report
+output since Tech Reports are not CSAS based.
 
 ## Contributing
 
