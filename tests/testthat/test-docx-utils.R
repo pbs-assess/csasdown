@@ -81,3 +81,21 @@ test_that("appendix section refs do not match alphanumeric appendix labels", {
 
   expect_true(grepl('<w:t>3</w:t>', output, fixed = TRUE))
 })
+
+test_that("equation numbers are right-aligned and restart in appendices", {
+  eq <- function(n) {
+    paste0(
+      "<m:oMath><m:r><m:t>y</m:t></m:r><m:r><m:t>  </m:t></m:r>",
+      "<m:r><m:t>(</m:t></m:r><m:r><m:t>", n, "</m:t></m:r><m:r><m:t>)</m:t></m:r></m:oMath>"
+    )
+  }
+  xml <- paste0(
+    eq(1), "<w:t>See Equation (2).</w:t>",
+    "<w:t>APPENDIX A</w:t>", eq(2), "<w:t>APPENDIX B</w:t>", eq(3)
+  )
+  out <- csasdown:::fix_equation_numbers_xml(xml)
+  expect_equal(lengths(regmatches(out, gregexpr("<m:eqArr>", out))), 3)
+  expect_match(out, "<m:t>A.1</m:t>", fixed = TRUE)
+  expect_match(out, "<m:t>B.1</m:t>", fixed = TRUE)
+  expect_match(out, "See Equation (A.1).", fixed = TRUE)
+})

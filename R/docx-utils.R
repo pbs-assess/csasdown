@@ -164,6 +164,8 @@ fix_table_caption_xml <- function(xml_content) {
   # Fix appendix cross-references
   xml_content <- fix_appendix_crossrefs_xml(xml_content)
 
+  xml_content <- fix_equation_numbers_xml(xml_content)
+
   # Remove empty paragraphs (moves page breaks into following paragraph)
   # xml_content <- remove_empty_paragraphs_xml(xml_content)
 
@@ -1600,4 +1602,78 @@ assemble_report_docx <- function(target, frontmatter = "tmp-frontmatter.docx",
   set_section_page_numbering(target, format = "lowerRoman", start = 1, section_index = 3)
   set_section_page_numbering(target, format = "decimal", start = 1, section_index = -1)
   invisible(target)
+}
+
+#' Right-align equation numbers and number appendix equations
+#'
+#' @description Bookdown appends a centred, plain-text "(n)" to labelled
+#' equations, numbered continuously through the appendices. This moves the
+#' number to the right margin with Word's equation-array `#` separator,
+#' restarts the numbering in each appendix (A.1, A.2, ...), and updates the
+#' matching "Equation (n)" cross-references.
+#'
+#' @param xml_content Character string of document.xml content.
+#' @return Modified XML content.
+#' @noRd
+fix_equation_numbers_xml <- function(xml_content) {
+  space <- "[\\s\u2000-\u200a\u00a0]"
+  spacer <- paste0("<m:r>\\s*<m:t[^>]*>", space, "+</m:t>")
+  math_pattern <- "(?s)<m:oMath>(?:(?!</m:oMath>).)*</m:oMath>"
+  tag_pattern <- paste0("(?s)", spacer, "\\s*</m:r>(?:\\s*<m:r>(?:(?!</m:r>).)*</m:r>)*\\s*</m:oMath>$")
+
+  math_pos <- gregexpr(math_pattern, xml_content, perl = TRUE)[[1]]
+  if (math_pos[1] == -1) return(xml_content)
+  math <- regmatches(xml_content, list(math_pos))[[1]]
+
+  tag_text <- function(x) {
+    tag <- sub(paste0("(?s).*(", spacer, ".*)$"), "\\1", x, perl = TRUE)
+    t <- regmatches(tag, gregexpr("(?<=>)[^<>]+(?=</m:t>)", tag, perl = TRUE))[[1]]
+    sub("^\\((\\d+)\\)$", "\\1", gsub(paste0(space, "+"), "", paste(t, collapse = ""), perl = TRUE))
+  }
+  old <- ifelse(grepl(tag_pattern, math, perl = TRUE), vapply(math, tag_text, ""), NA)
+  numbered <- grepl("^\\d+$", old)
+  if (!any(numbered)) return(xml_content)
+
+  heading_pos <- gregexpr("<w:t[^>]*>APPENDIX [A-Z](?=\\.|\\s|</w:t>)", xml_content, perl = TRUE)[[1]]
+  letters_found <- if (heading_pos[1] == -1) {
+    character(0)
+  } else {
+    sub(".*APPENDIX ([A-Z]).*", "\\1", regmatches(xml_content, list(heading_pos))[[1]])
+  }
+
+  group <- vapply(math_pos, function(p) {
+    n <- sum(heading_pos != -1 & heading_pos < p)
+    if (n > 0) letters_found[n] else ""
+  }, "")
+  new <- rep(NA_character_, length(math))
+  idx <- ave(seq_along(math), group, FUN = function(i) cumsum(numbered[i]))
+  new[numbered] <- ifelse(group[numbered] == "", idx[numbered], paste0(group[numbered], ".", idx[numbered]))
+
+  run <- function(text) {
+    paste0('<m:r><m:rPr><m:sty m:val="p"/></m:rPr><m:t>', text, "</m:t></m:r>")
+  }
+  label_run <- function(text) {
+    paste0(
+      '<m:r><m:rPr><m:nor/></m:rPr><w:rPr><w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/></w:rPr><m:t>',
+      text, "</m:t></m:r>"
+    )
+  }
+  math[numbered] <- vapply(which(numbered), function(i) {
+    body <- sub(paste0("(?s)^<m:oMath>(.*)", spacer, ".*$"), "\\1", math[i], perl = TRUE)
+    paste0(
+      '<m:oMath><m:eqArr><m:eqArrPr><m:maxDist m:val="1"/></m:eqArrPr><m:e>',
+      body, run("#"), "<m:d><m:e>", label_run(new[i]), "</m:e></m:d></m:e></m:eqArr></m:oMath>"
+    )
+  }, "")
+  regmatches(xml_content, list(math_pos)) <- list(math)
+
+  renumber <- setNames(new[numbered], old[numbered])
+  ref_pattern <- "(?<=Equation )\\((\\d+)\\)"
+  ref_pos <- gregexpr(ref_pattern, xml_content, perl = TRUE)
+  refs <- regmatches(xml_content, ref_pos)[[1]]
+  if (length(refs)) {
+    key <- gsub("[()]", "", refs)
+    regmatches(xml_content, ref_pos) <- list(paste0("(", ifelse(key %in% names(renumber), renumber[key], key), ")"))
+  }
+  xml_content
 }

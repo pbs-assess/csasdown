@@ -45,3 +45,11 @@ hist(length_data$length_cm,
   border = "white"
 )
 ```
+
+
+Equation numbering also restarts within each appendix. The relationship between length and weight is given by Equation \@ref(eq:appendix-eq):
+
+\begin{equation}
+  W = a L^b
+  (\#eq:appendix-eq)
+\end{equation}

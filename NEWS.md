@@ -1,5 +1,9 @@
 # csasdown development version
 
+* Right-align equation numbers in Word output and restart equation numbering in
+  each appendix (A.1, A.2, ...), including `Equation \@ref()` cross-references.
+  Add an appendix equation example to the resdoc skeleton. #35
+
 * Fix FSAR/FSRR headers and footers appearing only on every second page by
   turning off Word's different odd and even pages setting. #49
 
