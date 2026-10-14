@@ -175,6 +175,18 @@ fsar_plot_base(in.df, "French")
 
 [Obligatoire. La liste doit comprendre le nom de chaque participant et son organisme d'appartenance.]
 
+```{r participants-table, echo=FALSE}
+participants <- tibble::tibble(
+  NOM = c("Prénom Nom", "Prénom Nom"),
+  RÔLE = c("", ""),
+  AFFILIATION = c("Sciences du MPO, Région", "Organisation")
+)
+
+flextable(participants) |>
+  theme_box() |>
+  set_table_properties(layout = "autofit", width = 1)
+```
+
 ## SOURCES DE RENSEIGNEMENTS
 
 [Obligatoire.]

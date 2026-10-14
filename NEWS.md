@@ -1,5 +1,19 @@
 # csasdown development version
 
+* Fix FSAR/FSRR headers and footers appearing only on every second page by
+  turning off Word's different odd and even pages setting. #49
+
+* Apply the CSAS table cell styles (`Caption-Table` header, `BodyText` body) to
+  flextable tables whose XML contains whitespace between tags, as in FSAR/FSRR.
+  #49
+
+* Add a formatted list of meeting participants table (name, role, affiliation)
+  to the FSAR/FSRR skeletons. #49
+
+* Add an abstract and table of contents to technical reports. #48 #33
+
+* Fix #45.
+
 * Parse newline-separated Technical Report authors even when the display
   byline omits a final conjunction.
 

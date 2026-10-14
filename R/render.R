@@ -382,6 +382,8 @@ render_sar <- function(
     officer::cursor_backward() |>
     officer::body_add_docx(src = system.file("graphics", "mobius_loop.docx", package = "csasdown"))
 
+  doc <- officer::docx_set_settings(doc, even_and_odd_headers = FALSE)
+
   print(doc, target = fn)
   cli_alert_success("Mobius loop graphic added")
 

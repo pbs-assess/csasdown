@@ -205,6 +205,18 @@ flextable(recent.trends) |>
 
 [Mandatory. The list is to include the name of each participant and their role and affiliation.]
 
+```{r participants-table, echo=FALSE}
+participants <- tibble::tibble(
+  NAME = c("First Last", "First Last"),
+  ROLE = c("", ""),
+  AFFILIATION = c("DFO Science, Region", "Organization")
+)
+
+flextable(participants) |>
+  theme_box() |>
+  set_table_properties(layout = "autofit", width = 1)
+```
+
 ## SOURCES OF INFORMATION
 
 [Mandatory.]

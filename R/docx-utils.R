@@ -342,8 +342,8 @@ fix_table_cell_styles_xml <- function(xml_content) {
       style_name <- if (is_header) "Caption-Table" else "BodyText"
 
       row_matches[row_idx] <- gsub(
-        '(</w:tcPr><w:p><w:pPr>)(?!<w:pStyle)',
-        paste0('</w:tcPr><w:p><w:pPr><w:pStyle w:val="', style_name, '"/>'),
+        '(</w:tcPr>\\s*<w:p>\\s*<w:pPr>)(?!\\s*<w:pStyle)',
+        paste0('\\1<w:pStyle w:val="', style_name, '"/>'),
         row_matches[row_idx],
         perl = TRUE
       )
