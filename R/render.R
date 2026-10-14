@@ -7,6 +7,7 @@
 #' @param ... Arguments to pass to [bookdown::render_book()].
 #'
 #' @importFrom cli cli_alert_success cli_inform cli_abort
+#' @importFrom stats ave setNames
 #'
 #' @details
 #' `render()` automatically detects
@@ -132,8 +133,13 @@ preprocess_resdoc_abstract <- function(config_file = "_bookdown.yml") {
 
   heading_idx <- grep("^#\\s+\\S", content)
 
-  if (!length(heading_idx)) {
-    cli::cli_abort("Could not find a top-level abstract heading in {.file {source_file}}.")
+  if (!length(heading_idx) ||
+    !grepl("^#\\s+(ABSTRACT|R\u00c9SUM\u00c9)\\s*$", content[heading_idx[1]], ignore.case = TRUE)) {
+    cli::cli_abort(c(
+      "Could not find the abstract section at the start of {.file {source_file}}.",
+      "i" = "The first top-level heading must be {.code # ABSTRACT} (or {.code # R\u00c9SUM\u00c9} for French documents).",
+      "i" = "The abstract section is required for research documents."
+    ))
   }
 
   start_idx <- heading_idx[1]

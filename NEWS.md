@@ -1,5 +1,9 @@
 # csasdown development version
 
+* Require the resdoc abstract section to be the first top-level heading
+  (`# ABSTRACT`, or `# RÉSUMÉ` in French) and give a clearer error message
+  when it is missing.
+
 * Right-align equation numbers in Word output and restart equation numbering in
   each appendix (A.1, A.2, ...), including `Equation \@ref()` cross-references.
   Add an appendix equation example to the resdoc skeleton. #35

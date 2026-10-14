@@ -28,3 +28,7 @@ importFrom(officer,
   footers_replace_text_at_bkm,
   headers_replace_text_at_bkm
 )
+importFrom(stats,
+  ave,
+  setNames
+)

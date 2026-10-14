@@ -64,3 +64,17 @@ test_that("resdoc abstract preprocessing and engine capture abstract markdown", 
   abstract_lines <- readLines(state$abstract_file, warn = FALSE)
   expect_true(any(grepl("Inline abstract value: 2\\.", abstract_lines)))
 })
+
+test_that("resdoc abstract preprocessing errors helpfully when the abstract heading is missing", {
+  old_wd <- getwd()
+  tmp <- file.path(tempdir(), "resdoc_abstract_missing")
+  unlink(tmp, recursive = TRUE, force = TRUE)
+  dir.create(tmp, recursive = TRUE)
+  setwd(tmp)
+  on.exit(setwd(old_wd), add = TRUE)
+
+  writeLines(c("book_filename: \"resdoc\"", "rmd_files:", "  - index.Rmd", "  - 01-content.Rmd"), "_bookdown.yml")
+  writeLines(c("# INTRODUCTION", "", "Text."), "01-content.Rmd")
+
+  expect_error(preprocess_resdoc_abstract("_bookdown.yml"), "abstract section")
+})
