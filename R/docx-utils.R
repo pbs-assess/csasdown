@@ -1078,12 +1078,11 @@ set_section_page_numbering <- function(docx_path, format = NULL, start = 1, sect
     pgnum_tag <- sprintf('<w:pgNumType w:start="%d"/>', start)
   }
 
-  target_section_modified <- sub(
-    '(<w:sectPr[^>]*>)',
-    paste0('\\1\n      ', pgnum_tag),
-    target_section_modified,
-    perl = TRUE
-  )
+  target_section_modified <- if (grepl("<w:cols", target_section_modified, fixed = TRUE)) {
+    sub("<w:cols", paste0(pgnum_tag, "<w:cols"), target_section_modified, fixed = TRUE)
+  } else {
+    sub("</w:sectPr>", paste0(pgnum_tag, "</w:sectPr>"), target_section_modified, fixed = TRUE)
+  }
 
   escaped_pattern <- gsub("([\\[\\](){}^$.|*+?\\\\])", "\\\\\\1", target_section, perl = TRUE)
   doc_content <- gsub(escaped_pattern, target_section_modified, doc_content, perl = TRUE)
@@ -1432,4 +1431,57 @@ make_auto_fig_alt_hook <- function() {
   base <- add_caption_fix_postprocessor(base, reference_docx = ref_docx_path)
 
   base
+}
+
+#' Assemble a tech/data/manuscript report from its parts with page numbering
+#'
+#' Cover and series pages are unnumbered, the title page and colophon use
+#' lower roman numerals (hidden on the title page), and the content restarts
+#' at arabic 1.
+#'
+#' @param target Output .docx path
+#' @keywords internal
+#' @noRd
+assemble_report_docx <- function(target, frontmatter = "tmp-frontmatter.docx",
+                                 titlepage = "tmp-titlepage.docx",
+                                 colophon = "tmp-colophon.docx",
+                                 content = "tmp-content.docx") {
+  page_footer <- officer::block_list(
+    officer::fpar(
+      officer::run_word_field("PAGE", prop = officer::fp_text_lite(font.size = 10)),
+      fp_p = officer::fp_par(text.align = "center", border.top = officer::fp_border(width = 0.5))
+    )
+  )
+  section <- function(type = "nextPage", ...) {
+    officer::prop_section(
+      page_size = officer::page_size(orient = "portrait", width = 8.5, height = 11),
+      page_margins = officer::page_mar(
+        bottom = 1, top = 1, right = 1, left = 1, header = 0.5, footer = 0.5
+      ),
+      type = type,
+      ...
+    )
+  }
+
+  officer::read_docx(content) |>
+    officer::body_set_default_section(section()) |>
+    print(target = content)
+
+  doc <- officer::read_docx(frontmatter) |>
+    officer::body_end_block_section(officer::block_section(section(type = "continuous"))) |>
+    officer::body_add_docx(titlepage) |>
+    officer::body_add_break(pos = "after") |>
+    officer::body_add_docx(colophon) |>
+    officer::body_end_block_section(officer::block_section(section(
+      footer_default = page_footer,
+      footer_first = officer::block_list(officer::fpar(""))
+    ))) |>
+    officer::body_add_docx(content) |>
+    officer::body_set_default_section(section(footer_default = page_footer)) |>
+    officer::docx_set_settings(even_and_odd_headers = FALSE)
+  print(doc, target = target)
+
+  set_section_page_numbering(target, format = "lowerRoman", start = 1, section_index = 3)
+  set_section_page_numbering(target, format = "decimal", start = 1, section_index = -1)
+  invisible(target)
 }

@@ -103,30 +103,7 @@ add_techreport_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml",
     replace_bookmark_with_markdown(citation_bkm, citation)
   print(colophon, target = "tmp-colophon.docx")
 
-  # Merge frontmatter and content with page breaks between sections
-  doc <- officer::read_docx("tmp-frontmatter.docx") |>
-    officer::body_add_break(pos = "after") |>
-    officer::body_add_docx("tmp-titlepage.docx") |>
-    officer::body_add_break(pos = "after") |>
-    officer::body_add_docx("tmp-colophon.docx") |>
-    officer::body_add_break(pos = "after") |>
-    officer::body_add_docx("tmp-content.docx") |>
-    officer::body_set_default_section(
-      officer::prop_section(
-        page_size = officer::page_size(orient = "portrait", width = 8.5, height = 11),
-        page_margins = officer::page_mar(
-          bottom = 1,
-          top = 1,
-          right = 1,
-          left = 1,
-          header = 0.5,
-          footer = 0.5
-        )
-      )
-    )
-
-  # Save final document
-  print(doc, target = book_filename)
+  assemble_report_docx(book_filename)
 
   # Cleanup temporary files
   if (!keep_files) {
