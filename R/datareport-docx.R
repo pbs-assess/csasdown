@@ -28,21 +28,12 @@ add_datareport_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml",
   # Get book filename from bookdown config
   book_filename <- paste0("_book/", get_book_filename(yaml_fn), ".docx")
 
-  # Extract main content and remove placeholder title/abstract from beginning
-  content <- officer::read_docx(book_filename) |>
-    officer::cursor_begin() |>
-    officer::body_remove() |>
-    officer::body_remove() |>
-    officer::body_remove()
-  print(content, target = "tmp-content.docx")
+  file.copy(book_filename, "tmp-content.docx", overwrite = TRUE)
 
   # Conditional field selection based on language
   title <- if (french) x$french_title else x$english_title
   author <- if (french) x$french_author else x$english_author
   address <- if (french) x$french_address else x$english_address
-  author_list <- if (french) x$french_author_list else x$english_author_list
-  preamble_pages <- if (french) x$french_preamble_pages else x$english_preamble_pages
-  content_pages <- if (french) x$french_content_pages else x$english_content_pages
   doi <- if (french) x$french_doi else x$english_doi
   isbn <- if (french) x$french_isbn else x$english_isbn
   cat_no <- if (french) x$french_cat_no else x$english_cat_no
@@ -75,16 +66,15 @@ add_datareport_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml",
     replace_bookmark_with_markdown("number", as.character(x$report_number))
   print(titlepage, target = "tmp-titlepage.docx")
 
-  # Read and process the colophon template
-  # Build citation - ensure all components are single line, trimmed strings
-  citation_prefix <- if (french) "Rapp. stat. can. sci. halieut. aquat. " else "Can. Data Rep. Fish. Aquat. Sci. "
-  citation <- paste0(
-    trimws(gsub("\n", " ", author_list)), " ",
-    x$year, ". ",
-    trimws(gsub("\n", " ", title)), ". ",
-    citation_prefix, x$report_number, ": ",
-    preamble_pages, " + ", content_pages, " p. ",
-    "https://doi.org/", trimws(doi)
+  prefixes <- c(
+    english = "Can. Data Rep. Fish. Aquat. Sci.",
+    french = "Rapp. stat. can. sci. halieut. aquat."
+  )
+  citation <- report_citation(x, french, prefixes[[if (french) "french" else "english"]])
+  build_report_abstracts_docx(
+    x, french, prefixes,
+    reference_docx = system.file("data-report-docx", "data-report-content.docx", package = "csasdown"),
+    target = "tmp-abstracts.docx"
   )
 
   # Conditional bookmark names for colophon
@@ -107,7 +97,7 @@ add_datareport_word_frontmatter <- function(index_fn, yaml_fn = "_bookdown.yml",
 
   # Cleanup temporary files
   if (!keep_files) {
-    unlink(c("tmp-frontmatter.docx", "tmp-titlepage.docx", "tmp-colophon.docx", "tmp-content.docx"))
+    unlink(c("tmp-frontmatter.docx", "tmp-titlepage.docx", "tmp-colophon.docx", "tmp-abstracts.docx", "tmp-content.docx"))
   }
 
   invisible()

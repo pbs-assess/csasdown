@@ -1433,10 +1433,121 @@ make_auto_fig_alt_hook <- function() {
   base
 }
 
+#' Build the citation string for a tech/data/manuscript report
+#'
+#' @param x Parsed index.Rmd YAML with `parse_author_field()` results added
+#' @param french Use the French fields?
+#' @param prefix Series abbreviation, e.g. "Can. Tech. Rep. Fish. Aquat. Sci."
+#' @keywords internal
+#' @noRd
+report_citation <- function(x, french, prefix) {
+  lang <- if (french) "french" else "english"
+  one_line <- function(v) trimws(gsub("\n", " ", v))
+  paste0(
+    one_line(x[[paste0(lang, "_author_list")]]), " ",
+    x$year, ". ",
+    one_line(x[[paste0(lang, "_title")]]), ". ",
+    prefix, " ", x$report_number, ": ",
+    x[[paste0(lang, "_preamble_pages")]], " + ", x[[paste0(lang, "_content_pages")]], " p. ",
+    "https://doi.org/", trimws(x[[paste0(lang, "_doi")]])
+  )
+}
+
+#' Remove all-caps from the TOC styles of a .docx
+#'
+#' The TOC styles capitalise whole entries, which also makes roman page
+#' numbers uppercase.
+#'
+#' @keywords internal
+#' @noRd
+uncap_toc_styles <- function(docx_path) {
+  dir <- tempfile()
+  on.exit(unlink(dir, recursive = TRUE), add = TRUE)
+  utils::unzip(docx_path, exdir = dir)
+  styles_path <- file.path(dir, "word", "styles.xml")
+  styles <- paste(readLines(styles_path, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+  toc <- gregexpr('(?s)<w:style [^>]*w:styleId="TOC[123]".*?</w:style>', styles, perl = TRUE)
+  regmatches(styles, toc) <- lapply(regmatches(styles, toc), sub, pattern = "<w:caps/>", replacement = "", fixed = TRUE)
+  writeLines(styles, styles_path, useBytes = TRUE)
+  zip_docx_dir(dir, docx_path)
+}
+
+#' Build the contents, abstract and resume pages of a report
+#'
+#' The pages are written as markdown, converted with pandoc using the report's
+#' content template (so heading and body styles match), and a table of contents
+#' field is inserted. The abstract in the document language comes first.
+#'
+#' @param prefixes Named character vector of series abbreviations
+#'   (`english`, `french`)
+#' @param reference_docx Path to the report's content template
+#' @param target Output .docx path
+#' @keywords internal
+#' @noRd
+build_report_abstracts_docx <- function(x, french, prefixes, reference_docx, target) {
+  page_break <- "```{=openxml}\n<w:p><w:r><w:br w:type=\"page\"/></w:r></w:p>\n```"
+  # Word only imports styles used in an embedded part; without these the
+  # TOC levels fall back to the host document's Times New Roman defaults.
+  toc_style_anchors <- paste0(
+    "```{=openxml}\n",
+    paste0('<w:p><w:pPr><w:pStyle w:val="TOC', 1:3, '"/><w:rPr><w:vanish/></w:rPr></w:pPr></w:p>', collapse = ""),
+    "\n```"
+  )
+  abstract_md <- function(lang) {
+    is_french <- lang == "french"
+    c(
+      paste("#", if (is_french) "R\u00c9SUM\u00c9" else "ABSTRACT"),
+      "",
+      paste0("::: {custom-style=\"citation\"}\n", report_citation(x, is_french, prefixes[[lang]]), "\n:::"),
+      "",
+      trimws(x[[paste0(lang, "_abstract")]])
+    )
+  }
+  langs <- if (french) c("french", "english") else c("english", "french")
+
+  md <- c(
+    paste0("::: {custom-style=\"TABLE OF CONTENTS\"}\n",
+      if (french) "TABLE DES MATI\u00c8RES" else "CONTENTS", "\n:::"),
+    "",
+    "TOCPLACEHOLDER",
+    "",
+    page_break,
+    "",
+    abstract_md(langs[1]),
+    "",
+    page_break,
+    "",
+    abstract_md(langs[2]),
+    "",
+    toc_style_anchors
+  )
+
+  md_file <- tempfile(fileext = ".md")
+  on.exit(unlink(md_file), add = TRUE)
+  writeLines(md, md_file, useBytes = TRUE)
+  tmp <- tempfile(fileext = ".docx")
+  on.exit(unlink(tmp), add = TRUE)
+  rmarkdown::pandoc_convert(
+    md_file, to = "docx", output = tmp,
+    options = c("--reference-doc", reference_docx)
+  )
+
+  uncap_toc_styles(tmp)
+
+  officer::read_docx(tmp) |>
+    officer::cursor_reach(keyword = "TOCPLACEHOLDER") |>
+    officer::body_add_toc(level = 2) |>
+    officer::cursor_reach(keyword = "TOCPLACEHOLDER") |>
+    officer::body_remove() |>
+    print(target = target)
+  invisible(target)
+}
+
 #' Assemble a tech/data/manuscript report from its parts with page numbering
 #'
 #' Cover and series pages are unnumbered, the title page and colophon use
-#' lower roman numerals (hidden on the title page), and the content restarts
+#' lower roman numerals (hidden on the title page) and also cover the contents,
+#' abstract and resume pages, and the content restarts
 #' at arabic 1.
 #'
 #' @param target Output .docx path
@@ -1445,6 +1556,7 @@ make_auto_fig_alt_hook <- function() {
 assemble_report_docx <- function(target, frontmatter = "tmp-frontmatter.docx",
                                  titlepage = "tmp-titlepage.docx",
                                  colophon = "tmp-colophon.docx",
+                                 abstracts = "tmp-abstracts.docx",
                                  content = "tmp-content.docx") {
   page_footer <- officer::block_list(
     officer::fpar(
@@ -1463,15 +1575,19 @@ assemble_report_docx <- function(target, frontmatter = "tmp-frontmatter.docx",
     )
   }
 
-  officer::read_docx(content) |>
-    officer::body_set_default_section(section()) |>
-    print(target = content)
+  for (part in c(content, abstracts)) {
+    officer::read_docx(part) |>
+      officer::body_set_default_section(section()) |>
+      print(target = part)
+  }
 
   doc <- officer::read_docx(frontmatter) |>
     officer::body_end_block_section(officer::block_section(section(type = "continuous"))) |>
     officer::body_add_docx(titlepage) |>
     officer::body_add_break(pos = "after") |>
     officer::body_add_docx(colophon) |>
+    officer::body_add_break(pos = "after") |>
+    officer::body_add_docx(abstracts) |>
     officer::body_end_block_section(officer::block_section(section(
       footer_default = page_footer,
       footer_first = officer::block_list(officer::fpar(""))

@@ -328,7 +328,7 @@ output:
   )
   expect_error(
     check_yaml(index_fn = temp_file, type = "techreport"),
-    "abstract"
+    "english_abstract"
   )
   expect_error(
     check_yaml(index_fn = temp_file, type = "techreport"),
@@ -346,7 +346,8 @@ test_that("check_yaml passes for complete techreport YAML", {
 author: "Test Author"
 year: "2025"
 report_number: "001"
-abstract: "This is the abstract."
+english_abstract: "This is the abstract."
+french_abstract: "Voici le résumé."
 english_title: "Test Title"
 french_title: "Titre de test"
 english_address: "Test Address"
@@ -397,7 +398,7 @@ output:
   )
   expect_error(
     check_yaml(index_fn = temp_file, type = "manureport"),
-    "abstract"
+    "english_abstract"
   )
   expect_error(
     check_yaml(index_fn = temp_file, type = "manureport"),
@@ -415,7 +416,8 @@ test_that("check_yaml passes for complete manureport YAML", {
 author: "Test Author"
 year: "2025"
 report_number: "001"
-abstract: "This is the abstract."
+english_abstract: "This is the abstract."
+french_abstract: "Voici le résumé."
 english_title: "Test Title"
 french_title: "Titre de test"
 english_address: "Test Address"
@@ -466,7 +468,7 @@ output:
   )
   expect_error(
     check_yaml(index_fn = temp_file, type = "datareport"),
-    "abstract"
+    "english_abstract"
   )
   expect_error(
     check_yaml(index_fn = temp_file, type = "datareport"),
@@ -484,7 +486,8 @@ test_that("check_yaml passes for complete datareport YAML", {
 author: "Test Author"
 year: "2025"
 report_number: "001"
-abstract: "This is the abstract."
+english_abstract: "This is the abstract."
+french_abstract: "Voici le résumé."
 english_title: "Test Title"
 french_title: "Titre de test"
 english_address: "Test Address"
