@@ -41,4 +41,4 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 URL: https://pbs-assess.github.io/csasdown/
-Config/roxygen2/version: 8.1.0
+Config/roxygen2/version: 8.1.1
